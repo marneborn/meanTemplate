@@ -1,3 +1,5 @@
+"use strict";
+
 var express = require('express'),
 	http    = require('http'),
 	https   = require('https'),
@@ -91,4 +93,4 @@ function formatArgs () {
 		+ fg2Close;
 
 	return args;
-};
+}
