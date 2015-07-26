@@ -9,7 +9,11 @@ var express = require('express'),
 
 // First simply look for the files using the basic static middleware
 router.use(express.static(path.resolve('web')));
-router.use(express.static(path.resolve('bower_components')));
+
+router.use(
+    '/bower_components',
+    express.static('./bower_components')
+);
 
 // for all .js and .css files that aren't found by the static route, return 404 with an empty body
 router.use(/.*\.(js|css)$/, function (req, res, next) {

@@ -21,7 +21,7 @@ if (first.enabled) {
 	app.use( function (req, res, next) {
 		// Use my special formatting here and only here.
 		debug.formatArgs = formatArgs;
-		first("URL = "+req.url);
+		first("URL = "+req.method+' '+req.url);
 		debug.formatArgs = origFormat;
 		next();
 	});
