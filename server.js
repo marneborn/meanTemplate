@@ -11,6 +11,7 @@ var express    = require('express'),
 	// Create the express app
 	app = require('./server/createApp');
 
+require('./server/engine')(app);
 
 // first thing is to server static files
 app.use(require('./server/static'));

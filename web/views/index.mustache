@@ -1,0 +1,65 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+	{{ #vendorCss }}
+    <link rel="stylesheet" href="{{.}}" />
+	{{ /vendorCss }}
+
+	{{ #appCss }}
+    <link rel="stylesheet" href="{{.}}" />
+	{{ /appCss }}
+
+  </head>
+  <body ng-app="yoAngApp">
+
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a ng-href="#">Home</a></li>
+          <li><a ng-href="#/about">About</a></li>
+          <li><a ng-href="#">Contact</a></li>
+        </ul>
+        <h3 class="text-muted">yoAng</h3>
+      </div>
+
+      <div ng-view=""></div>
+
+      <div class="footer">
+        <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>
+      </div>
+    </div>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+    <script type="text/javascript" src="vendor/googleAnalytics.js"></script>
+
+    <!--[if lt IE 9]>
+	{{ #shimJs }}
+    <script type="text/javascript" src="{{.}}"></script>
+	{{ /shimJs }}
+    <![endif]-->
+
+	{{ #vendorJs }}
+    <script type="text/javascript" src="{{.}}"></script>
+	{{ /vendorJs }}
+
+	{{ #appJs }}
+    <script type="text/javascript" src="{{.}}"></script>
+	{{ /appJs }}
+
+	{{ #livereload }}
+	<script type="text/javascript" src="http://localhost:35729/livereload.js"></script>
+	{{ /livereload }}
+
+</body>
+</html>

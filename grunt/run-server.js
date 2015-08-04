@@ -9,7 +9,7 @@ module.exports = function ( grunt ) {
 				script: 'server.js',
 				options: {
 					restartable: "rs",
-					args: ['--local'],
+					args: [],
 					env: {
 						DEBUG: '*,-send,-connect:dispatcher',
 						DEBUG_COLOR: 1
