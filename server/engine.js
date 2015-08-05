@@ -7,6 +7,7 @@ module.exports = function (app) {
     app.set('view engine', 'mustache');
 
     app.locals.livereload = true;
+    app.locals.googleAnalytics = false;
 
     app.locals.vendorCss = [
         "bower_components/bootstrap/dist/css/bootstrap.css"
@@ -32,9 +33,16 @@ module.exports = function (app) {
     ];
 
     app.locals.appJs = [
-        "app.js",
-        "modules/main/main.js",
-        "modules/about/about.js"
+        "app/app.js",
+        "app/app.routes.js",
+        "modules/main/main.controller.js",
+        "modules/about/about.controller.js",
+        "modules/header/header.controller.js",
+        "modules/user/user.module.js",
+        "modules/user/user.routes.js",
+        "modules/user/user.controller.js",
+        "modules/user/signin.controller.js",
+        "modules/user/login.controller.js"
     ];
 
     app.get('/', function (req, res) {
