@@ -1,6 +1,12 @@
-var consolidate = require('consolidate');
+var path        = require('path'),
+    fs          = require('fs'),
+    consolidate = require('consolidate'),
+    wiredep     = require('wiredep'),
+    globule     = require('globule');
 
 module.exports = function (app) {
+
+    var baseDir, wiredepRes;
 
     app.engine('mustache', consolidate.mustache);
     app.set('views', './web/views');
@@ -9,41 +15,47 @@ module.exports = function (app) {
     app.locals.livereload = true;
     app.locals.googleAnalytics = false;
 
-    app.locals.vendorCss = [
-        "bower_components/bootstrap/dist/css/bootstrap.css"
+    app.locals.shimJs = [
+        "bower_components/es5-shim/es5-shim.min.js",
+        "bower_components/json3/lib/json3.min.js"
     ];
+
+    baseDir = path.join(__dirname, '..');
+
+    wiredepRes = wiredep();
+    app.locals.vendorJs = wiredepRes.js
+    .map(function (file) {
+        var min = file.replace(/\.js$/, '.min.js');
+        if (fs.existsSync(min))
+            file = min;
+        return path.relative(baseDir, file).replace(/\\/g, '/');
+    })
+    .filter(function (file) {
+        return app.locals.shimJs.indexOf(file) < 0;
+    });
+
+    app.locals.vendorCss = wiredepRes.css
+    .map(function (file) {
+        var min = file.replace(/\.css$/, '.min.css');
+        if (fs.existsSync(min))
+            file = min;
+        return path.relative(baseDir, file).replace(/\\/g, '/');
+    });
+
     app.locals.appCss = [
         "builtCss/main.css"
     ];
-    app.locals.shimJs = [
-        "bower_components/es5-shim/es5-shim.js",
-        "bower_components/json3/lib/json3.min.js"
-    ];
-    app.locals.vendorJs = [
-        "bower_components/jquery/dist/jquery.js",
-        "bower_components/angular/angular.js",
-        "bower_components/json3/lib/json3.js",
-        "bower_components/bootstrap/dist/js/bootstrap.js",
-        "bower_components/angular-resource/angular-resource.js",
-        "bower_components/angular-cookies/angular-cookies.js",
-        "bower_components/angular-sanitize/angular-sanitize.js",
-        "bower_components/angular-animate/angular-animate.js",
-        "bower_components/angular-touch/angular-touch.js",
-        "bower_components/angular-route/angular-route.js"
-    ];
 
-    app.locals.appJs = [
-        "app/app.js",
-        "app/app.routes.js",
-        "modules/main/main.controller.js",
-        "modules/about/about.controller.js",
-        "modules/header/header.controller.js",
-        "modules/user/user.module.js",
-        "modules/user/user.routes.js",
-        "modules/user/user.controller.js",
-        "modules/user/signin.controller.js",
-        "modules/user/login.controller.js"
-    ];
+    app.locals.appJs = Array.prototype.concat.call(
+        ["app/app.js"],
+        globule.find('app/**/*.*.js'             , {srcBase: "web"}),
+        globule.find('modules/**/*.module.js'    , {srcBase: "web"}),
+        globule
+        .find('modules/**/*.js', {srcBase: "web"})
+        .filter(function (file) {
+            return !file.match(/module.js$/);
+        })
+    );
 
     app.get('/', function (req, res) {
         res.render('index');

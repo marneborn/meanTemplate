@@ -1,5 +1,5 @@
 'use strict';
 
-registerModule('appUser', [
+window.registerModule('appUser', [
     'ngRoute'
 ]);

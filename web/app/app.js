@@ -1,26 +1,31 @@
 'use strict';
 
-var APPNAME = 'meanApp';
+window.registerModule = (function () {
 
-/**
- * @ngdoc overview
- * @name meanApp
- * @description
- * # meanApp
- *
- * Main module of the application.
- */
+    var APPNAME = 'meanApp';
 
-angular.module(APPNAME, [
-    'ngAnimate',
-    'ngCookies',
-    'ngResource',
-    'ngRoute',
-    'ngSanitize',
-    'ngTouch'
-]);
+    /**
+     * @ngdoc overview
+     * @name meanApp
+     * @description
+     * # meanApp
+     *
+     * Main module of the application.
+     */
 
-function registerModule (moduleName, dependencies) {
-    angular.module(moduleName, dependencies || []);
-    angular.module(APPNAME).requires.push(moduleName);
-}
+    angular.module(APPNAME, [
+        'ngAnimate',
+        'ngCookies',
+        'ngResource',
+        'ngRoute',
+        'ngSanitize',
+        'ngTouch'
+    ]);
+
+    return function (moduleName, dependencies) {
+        var module = angular.module(moduleName, dependencies || []);
+        angular.module(APPNAME).requires.push(moduleName);
+        return module;
+    };
+
+})();

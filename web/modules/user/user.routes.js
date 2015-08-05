@@ -1,4 +1,4 @@
-angular.module('appUser', [])
+angular.module('appUser')
 .config(function ($routeProvider) {
     $routeProvider
     .when('/tmp', {
