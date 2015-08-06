@@ -1,5 +1,7 @@
 angular.module('appUser')
 .config(function ($routeProvider) {
+    "use strict";
+
     $routeProvider
     .when('/tmp', {
         templateUrl: 'modules/user/user.view.html',

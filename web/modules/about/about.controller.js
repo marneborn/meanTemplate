@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @ngdoc function
  * @name meanApp.controller:AboutCtrl
@@ -8,10 +6,11 @@
  * Controller of the meanApp
  */
 angular.module('meanApp')
-  .controller('aboutCtrl', function ($scope) {
+.controller('aboutCtrl', function ($scope) {
+    'use strict';
     $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
+        'HTML5 Boilerplate',
+        'AngularJS',
+        'Karma'
     ];
-  });
+});

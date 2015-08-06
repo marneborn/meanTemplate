@@ -10,7 +10,8 @@ module.exports = function ( grunt ) {
     var config = require('../server/config');
 
     grunt.task.registerTask('openBrowser', 'open a browser', function (page) {
-        var done = this.async();
+
+        this.async();
 
         if (!page)
             page = '';

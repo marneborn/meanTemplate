@@ -16,7 +16,7 @@ module.exports = function ( grunt ) {
 					},
 					cwd: path.resolve(__dirname, '..'),
 					ext: 'js',
-					watch: ['server.js', 'server/**/*.js', 'routes/**/*.js'],
+					watch: ['server.js', 'server/**/*.js', 'routes/**/*.js', 'web/**/*.parial.mustache'],
 					delay: 1000
 				}
 			}

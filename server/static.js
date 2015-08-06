@@ -16,12 +16,14 @@ router.use(
 );
 
 // for all .js and .css files that aren't found by the static route, return 404 with an empty body
-router.use(/.*\.(js|css)$/, function (req, res, next) {
+router.use(/.*\.(js|css)$/, function (req, res) {
+    l.debug("Request for a .js|.css that don't exits");
 	res.status(404).end();
 });
 
 // for all .html files that aren't found by the static route, return the 404 page
 // FIXME - handle partials
-router.use(/.*\.html/, function (req, res, next) {
+router.use(/.*\.html/, function (req, res) {
+    l.debug("Request for a .html that don't exits");
 	res.status(404).sendFile(path.resolve('web/404.html'));
 });

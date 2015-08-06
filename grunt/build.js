@@ -53,7 +53,7 @@ module.exports = function(grunt) {
 
         var thisName = "sass-"+name;
 
-        config.clean[thisName] = sassBuilds[name].dest,
+        config.clean[thisName] = sassBuilds[name].dest;
 
         config.watch[thisName] = {
             files : sassBuilds[name].src,

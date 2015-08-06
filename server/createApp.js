@@ -70,6 +70,7 @@ function config2sslOptions (config) {
  *
  */
 function formatArgs () {
+    /* jshint validthis: true */
 	var args     = arguments,
 		name     = this.namespace,
 		fg1Open  = '\u001b[30m', //black

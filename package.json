@@ -29,6 +29,7 @@
     "debug": "^2.2.0",
     "express": "^4.13.0",
     "globule": "^0.2.0",
+    "lodash": "^3.10.1",
     "wiredep": "^2.2.2"
   },
   "devDependencies": {

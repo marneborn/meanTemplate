@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @ngdoc function
  * @name meanApp.controller:MainCtrl
@@ -9,6 +7,7 @@
  */
 angular.module('meanApp')
 .controller('mainCtrl', function ($scope) {
+    "use strict";
     $scope.awesomeThings = [
         'HTML5 Boilerplate',
         'AngularJS',

@@ -1,8 +1,7 @@
 "use strict";
 
-var express    = require('express'),
-	path       = require('path'),
-	l          = require('./server/logger')('server'),
+var	path = require('path'),
+	l    = require('./server/logger')('server'),
 
 	// express middleware
 	cookieParser = require('cookie-parser'),
@@ -11,6 +10,7 @@ var express    = require('express'),
 	// Create the express app
 	app = require('./server/createApp');
 
+l.debug("Starting server");
 require('./server/engine')(app);
 
 // first thing is to server static files
@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // The very last thing is to send 404
-app.use(function (req, res, next) {
+app.use(function (req, res) {
 	res.status(404).sendFile(path.resolve('web/404.html'));
 });
 

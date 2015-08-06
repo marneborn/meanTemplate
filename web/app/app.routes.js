@@ -1,5 +1,7 @@
 angular.module('meanApp')
 .config(function ($routeProvider) {
+    'use strict';
+
     $routeProvider
     .when('/', {
         templateUrl: 'modules/main/main.html',

@@ -1,8 +1,8 @@
-'use strict';
 
 angular.module('meanApp')
 .controller('headerCtrl',
     function($scope, $location) {
+        'use strict';
 
         //$scope.user = user;
         $scope.user = {
