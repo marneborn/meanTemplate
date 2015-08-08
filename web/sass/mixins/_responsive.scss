@@ -1,0 +1,20 @@
+$small-width:   384px;
+$large-width:  1024px;
+
+@mixin if-width-md {
+  @media screen and (min-width: #{$small-width + 1px}) and (max-width: #{$large-width}) {
+    @content;
+  }
+}
+
+@mixin if-width-lg {
+  @media screen and (min-width: #{$large-width + 1px}) {
+    @content;
+  }
+}
+
+@mixin if-width-md-lg {
+  @media screen and (min-width: #{$small-width + 1px}) {
+    @content;
+  }
+}

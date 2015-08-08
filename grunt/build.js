@@ -1,67 +1,56 @@
 "use strict";
 
-module.exports = function(grunt) {
+var pkg      = require('../package.json'),
+    path     = require('path'),
+    buildDef = require('../server/config/build-definitions'),
+    builtDir = buildDef.destDir, // FIXME - from config later?
 
-    var sassBuilds = {
-        main : {
-            src : 'web/main/main.scss',
-            dest: 'web/builtCss/main.css'
-        }
-    };
-
-    var config = {
+    gruntConfig = {
 
         clean: {
-            "sass": 'web/builtCss'
+            "build": builtDir
         },
 
         // Compiles Sass to CSS and generates necessary files if requested
         sass: {
             options: {
                 style: 'expanded'
+            },
+            dev : {
+                files : {}
             }
-            // rest Build programatically from file list above
         },
 
         watch: {
-            livereload: {
-                options: {
-                    livereload: true
-                },
-                files: [
-                    'web/**/*.html',
-                    'web/builtCss/*.css',
-                    'web/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-                    'web/**/*.js'
-                ]
-            }
-            // Build sassBuild tasks programatically from file list above
+            'sass-dev': {},
+            'buildDist': {}
         },
 
         focus: {
-            webDev: {
-                include : ['livereload'] // Add sass watchers below
+            'client-dev': {
+                // Add sass watchers below
+                include : ['sass-dev', 'livereload']
             }
         }
     };
 
-    Object.keys(sassBuilds).forEach(function (name) {
 
-        // one sass task per group so that we don't need to rebuild all on watch
-        config.sass[name] = { files : {} };
-        config.sass[name].files[sassBuilds[name].dest] = sassBuilds[name].src;
+gruntConfig.clean['built-css'] = [
+    buildDef.appCss.dest,
+    buildDef.appCss.dest+".map"
+];
 
-        var thisName = "sass-"+name;
+gruntConfig.sass.dev.files[buildDef.appCss.dest] = buildDef.appCss.src;
 
-        config.clean[thisName] = sassBuilds[name].dest;
+gruntConfig.watch['sass-dev'] = {
+    options : {
+        atBegin: true,
+        event: ['changed', 'added']
+    },
+    files : buildDef.appCss.watch,
+    tasks : ['clean:built-css', 'sass:dev']
+};
 
-        config.watch[thisName] = {
-            files : sassBuilds[name].src,
-            tasks : ['clean:'+thisName, 'sass:'+name]
-        };
-
-        config.focus.webDev.include.push(thisName);
-    });
-
-    grunt.config.merge(config);
+module.exports = function(grunt) {
+    grunt.config.merge(gruntConfig);
 };
