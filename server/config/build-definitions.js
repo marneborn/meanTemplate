@@ -6,37 +6,39 @@ var path        = require('path'),
     wiredep     = require('wiredep'),
     globule     = require('globule'),
     rootDir     = path.join(__dirname, "../.."),
-    builtDir    = 'web/built', // FIXME - put in a config somewhere
+    distDir     = 'web/dist', // FIXME - put in a config somewhere
     wiredepRes  = wiredep(),
     shims       = findShimJsFiles();
 
 module.exports = {
 
-    destDir : builtDir,
+    destDir : distDir,
 
     shimJs : {
-        dest : builtDir+'/shims.js',
+        dist : distDir+'/js/shims.min.js',
         src  : shims
     },
 
-    vendorJs : { // FIXME - add watch?
-        dest : builtDir+'/vendor.js',
+    vendorJs : { // FIXME - add watch for nodemon?
+        dist : distDir+'/js/vendor.min.js',
         src  : findVendorJsFiles(wiredepRes.js, shims)
     },
 
-    vendorCss : { // FIXME - add watch?
-        dest : builtDir+'/vendor.css',
+    vendorCss : { // FIXME - add watch for nodemon
+        dist : distDir+'/css/vendor.min.css',
         src  : findVendorCssFiles(wiredepRes.css)
     },
 
     appJs : {
-        dest : builtDir+'/app.js',
+        dev  : distDir+'/js/app.js',
+        dist : distDir+'/js/app.min.js',
         src  : findAppJsFiles(),
         watch: ['web/**/*.js']
     },
 
     appCss : {
-        dest : builtDir+'/app.css',
+        dev  : distDir+'/css/app.css',
+        dist : distDir+'/css/app.min.css',
         src  : 'web/app/app.scss',
         watch: ["web/**/*.scss"]
     }

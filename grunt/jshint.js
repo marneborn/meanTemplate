@@ -28,7 +28,8 @@ module.exports = function(grunt) {
                 devel: isDevel
             },
             web : {
-                src: ['web/**/*.js', '!web/**/*-spec.js'],
+                // FIXME - get web/dist from config
+                src: ['web/**/*.js', '!web/**/*-spec.js', '!web/dist/**/*'],
                 options: {
                     browser: true,
                     jquery: true,

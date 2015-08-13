@@ -3,7 +3,7 @@
 var opn      = require('opn'),
     config   = require('../server/config'),
     buildDef = require('../server/config/build-definitions'),
-    builtDir = 'web/built';
+    distDir  = 'web/dist'; // FIXME - get from config
 
 module.exports = function ( grunt ) {
 
@@ -17,9 +17,9 @@ module.exports = function ( grunt ) {
                     'web/**/*.html',
                     'web/**/*.mustache',
                     'web/**/*.{png,jpg,jpeg,gif,webp,svg}',
-                    buildDef.appCss.dest,
+                    buildDef.appCss.dev,
                     buildDef.appJs.watch,
-                    '!'+builtDir+'/**/*.js'
+                    '!'+distDir+'/**/*.js'
                 ]
             }
         }

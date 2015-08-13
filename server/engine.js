@@ -4,12 +4,13 @@ var path        = require('path'),
     _           = require('lodash'),
     consolidate = require('consolidate'),
     globule     = require('globule'),
+    config      = require('./config'),
     buildDefs   = require('./config/build-definitions'),
+    fileGroups  = ['shimJs', 'vendorJs', 'vendorCss', 'appJs', 'appCss'],
     // FIXME - get these from a config somewhere
     staticDir   = "web/",
     viewsDir    = "web/views";  // relative to the root dir
 
-console.log("---\n"+JSON.stringify(buildDefs, null, 4));
 module.exports = function (app) {
 
     var partials;
@@ -18,29 +19,31 @@ module.exports = function (app) {
     app.set("views", viewsDir);
     app.set("view engine", "mustache");
 
-    app.locals.livereload      = true;
-    app.locals.googleAnalytics = false;
 
-    if (process.env.NODE_ENV === 'production') {
+    if (config.isPrd) {
 
-        app.locals.shimJs    = [ buildDefs.shimJs.dest ].map(relativeToStatic);
-        app.locals.vendorJs  = [ buildDefs.vendorJs.dest ].map(relativeToStatic);
-        app.locals.vendorCss = [ buildDefs.vendorCss.dest ].map(relativeToStatic);
-        app.locals.appJs     = [ buildDefs.appJs.dest ].map(relativeToStatic);
-        app.locals.appCss    = [ buildDefs.appCss.dist ].map(relativeToStatic);
+        app.locals.googleAnalytics = true;
+        app.locals.livereload = false;
+        app.locals.shimJs     = [ buildDefs.shimJs.dist ].map(relativeToStatic);
+        app.locals.vendorJs   = [ buildDefs.vendorJs.dist ].map(relativeToStatic);
+        app.locals.vendorCss  = [ buildDefs.vendorCss.dist ].map(relativeToStatic);
+        app.locals.appJs      = [ buildDefs.appJs.dist ].map(relativeToStatic);
+        app.locals.appCss     = [ buildDefs.appCss.dist ].map(relativeToStatic);
 
     }
 
     else {
 
-        app.locals.shimJs    = buildDefs.shimJs.src.map(relativeToStatic);
-        app.locals.vendorJs  = buildDefs.vendorJs.src.map(relativeToStatic);
-        app.locals.vendorCss = buildDefs.vendorCss.src.map(relativeToStatic);
-        app.locals.appJs     = buildDefs.appJs.src.map(relativeToStatic);
-        app.locals.appCss    = [ buildDefs.appCss.dest ].map(relativeToStatic);
+        app.locals.googleAnalytics = false;
+        app.locals.livereload = true;
+        app.locals.shimJs     = buildDefs.shimJs.src.map(relativeToStatic);
+        app.locals.vendorJs   = buildDefs.vendorJs.src.map(relativeToStatic);
+        app.locals.vendorCss  = buildDefs.vendorCss.src.map(relativeToStatic);
+        app.locals.appJs      = buildDefs.appJs.src.map(relativeToStatic);
+        app.locals.appCss     = [ buildDefs.appCss.dev ].map(relativeToStatic);
 
     }
-    console.log("appCss> "+JSON.stringify(app.locals.appCss, null, 4));
+
     partials = findPartials();
 
     // FIXME - temporary
@@ -87,6 +90,9 @@ function findPartials () {
  * @return {String} The path that .static can find
  */
 function relativeToStatic (file) {
+
+    if (!file || !file.indexOf)
+        return file;
 
     if (file.indexOf('bower_components') === 0)
         return file;
