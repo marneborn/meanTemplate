@@ -24,7 +24,7 @@ var buildDef = require('../server/config/build-definitions'),
         },
 
         copy: {
-            dist : { files: [] }
+            bootstrap : { files: [] }
         },
 
         ngAnnotate: {
@@ -62,7 +62,7 @@ gruntConfig.sass.dist.options = {
 };
 gruntConfig.cssmin.dist.files[buildDef.vendorCss.dist] = buildDef.vendorCss.src;
 // FIXME - can this be autodetected? Or put in build-definitions?
-gruntConfig.copy.dist.files.push({
+gruntConfig.copy.bootstrap.files.push({
     expand: true,
     cwd: 'bower_components/bootstrap/dist',
     src: 'fonts/*',
@@ -112,5 +112,5 @@ module.exports = function(grunt) {
 
     // sass, cssmin, and ngAnnotate+uglify can be concurrent, but probably not worth the overhead
     // run lint checks here?
-    grunt.registerTask('build', ['clean:pre-build', 'sass:dev', 'sass:dist', 'cssmin:dist', 'ngAnnotate:dist', 'uglify:dist', 'copy:dist', 'clean:post-build']);
+    grunt.registerTask('build', ['clean:pre-build', 'sass:dev', 'sass:dist', 'cssmin:dist', 'ngAnnotate:dist', 'uglify:dist', 'copy:bootstrap', 'clean:post-build']);
 };
