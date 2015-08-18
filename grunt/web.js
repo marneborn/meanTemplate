@@ -6,28 +6,48 @@
 
 module.exports = function ( grunt ) {
 
-	var opn = require('opn');
-    var config = require('../server/config');
-
-    grunt.task.registerTask('openBrowser', 'open a browser', function (page) {
-
-        this.async();
-
-        if (!page)
-            page = '';
-        opn("http://127.0.0.1:"+config.port+"/");
-    });
+	var opn = require('opn'),
+        config = require('../server/config'),
+        buildDef = require('../server/config/build-definitions'),
+        distDir  = 'web/dist'; // FIXME - get from config
 
 	grunt.config.merge({
 		watch: {
-            devWeb : {
-                files : [ "web/**/*" ],
+            livereload: {
                 options: {
                     livereload: true
-                }
+                },
+                files: [
+                    'web/**/*.html',
+                    'web/**/*.mustache',
+                    'web/**/*.{png,jpg,jpeg,gif,webp,svg}',
+                    buildDef.appCss.dev,
+                    buildDef.appJs.watch,
+                    '!'+distDir+'/**/*.js'
+                ]
+            }
+        },
+
+        focus: {
+            'dev-browser': {
+                // Add sass watchers below
+                include : ['sass-dev', 'livereload']
             }
         }
+
     });
 
-    grunt.registerTask('devWeb', ['openBrowser', 'watch:devWeb']);
+	grunt.task.registerTask('open-browser', 'open the browser to the front page', function (page) {
+
+		var done = this.async();
+
+		if (!page)
+			page = '';
+
+		opn("http://"+config.host+":"+config.port, done);
+	});
+
+    grunt.registerTask('dev-browser'  , ['open-browser', 'focus:dev-browser']);
+    grunt.registerTask('watch-browser', ['open-browser', 'watch:livereload']);
+
 };

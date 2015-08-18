@@ -1,7 +1,8 @@
 "use strict";
 
 var	path = require('path'),
-	l    = require('./server/logger')('server'),
+    globule = require('globule'),
+	L    = require('./server/logger')('server'),
 
 	// express middleware
 	cookieParser = require('cookie-parser'),
@@ -10,7 +11,8 @@ var	path = require('path'),
 	// Create the express app
 	app = require('./server/createApp');
 
-l.debug("Starting server");
+L.debug("Starting server");
+require('./server/db');
 require('./server/engine')(app);
 
 // first thing is to server static files
@@ -24,6 +26,12 @@ app.use(cookieParser());
 // FIXME - move these to the individual routers that need them
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+require('./server/authentication')(app);
+
+globule.find('routes/*.routes.js').forEach(function (file) {
+    app.use(require(path.resolve(file)));
+});
 
 // The very last thing is to send 404
 app.use(function (req, res) {

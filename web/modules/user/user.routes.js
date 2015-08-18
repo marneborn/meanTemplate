@@ -3,16 +3,16 @@ angular.module('appUser')
     "use strict";
 
     $routeProvider
-    .when('/tmp', {
-        templateUrl: 'modules/user/user.view.html',
+    .when('/user', {
+        templateUrl: 'modules/user/views/user.view.html',
         controller: 'userController'
     })
-    .when('/login', {
-        templateUrl: 'modules/user/login.view.html',
-        controller: 'loginController'
-    })
     .when('/signin', {
-        templateUrl: 'modules/user/signin.view.html',
-        controller: 'signinCtrl'
+        templateUrl: 'modules/user/views/signin.view.html',
+        controller: 'signinController'
+    })
+    .when('/signup', {
+        templateUrl: 'modules/user/views/signup.view.html',
+        controller: 'signupController'
     });
 });

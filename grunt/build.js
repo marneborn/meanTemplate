@@ -39,14 +39,8 @@ var buildDef = require('../server/config/build-definitions'),
         watch: {
             'sass-dev': {},
             'buildDist': {}
-        },
-
-        focus: {
-            'client-dev': {
-                // Add sass watchers below
-                include : ['sass-dev', 'livereload']
-            }
         }
+
     };
 
 //---------------------------------------------------------------------------

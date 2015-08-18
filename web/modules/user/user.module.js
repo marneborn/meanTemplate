@@ -1,3 +1,9 @@
-window.registerModule('appUser', [
-    'ngRoute'
-]);
+(function () {
+    "use strict";
+
+    var moduleName = 'appUser';
+    window.registerModule(moduleName, [
+        'ngRoute'
+    ]);
+
+})();

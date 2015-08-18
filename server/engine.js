@@ -6,7 +6,6 @@ var path        = require('path'),
     globule     = require('globule'),
     config      = require('./config'),
     buildDefs   = require('./config/build-definitions'),
-    fileGroups  = ['shimJs', 'vendorJs', 'vendorCss', 'appJs', 'appCss'],
     // FIXME - get these from a config somewhere
     staticDir   = "web/",
     viewsDir    = "web/views";  // relative to the root dir
