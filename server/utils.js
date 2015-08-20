@@ -31,4 +31,4 @@ module.exports.makeMongoURI = function (db) {
 	str += '/' + db.db;
 
 	return str;
-}
+};

@@ -12,7 +12,6 @@ exports.signout = function(req, res) {
 exports.signup = function (req, res) {
 
 	var user = new User(req.body);
-	var message = null;
 
 	// Add missing user fields
 	user.provider = 'local';

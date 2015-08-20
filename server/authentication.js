@@ -1,17 +1,12 @@
 "use strict";
 
-var globule = require('globule'),
-    path = require('path'),
-    config  = require('./config.js'),
-    serverUtils = require('./utils.js'),
+var config  = require('./config.js'),
     session = require('express-session'),
     mongoStore = require('connect-mongo')({
 		session: session
 	}),
     passport = require('passport'),
-	User = require('mongoose').model('User'),
-    foo;
-
+	User = require('mongoose').model('User');
 
 module.exports = function (app) {
 

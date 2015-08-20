@@ -2,25 +2,9 @@
 
 module.exports = function(grunt) {
 
-    var isDevel = !process.env.NODE_ENV || process.env.NODE_ENV === 'develop';
-
-    grunt.config.merge({
-        jshint: {
+    var isDevel = !process.env.NODE_ENV || process.env.NODE_ENV === 'develop',
+        jshintConfig = {
             options : {
-                laxbreak: true,
-                esnext: true,
-                bitwise: true,
-                camelcase: true,
-                curly: false,
-                eqeqeq: true,
-                eqnull: true,
-                immed: true,
-                indent: 2,
-                newcap: true,
-                noarg: true,
-                regexp: true,
-                undef: true,
-                unused: true,
                 strict: true,
                 trailing: true,
                 smarttabs: true,
@@ -29,7 +13,7 @@ module.exports = function(grunt) {
             },
             web : {
                 // FIXME - get web/dist from config
-                src: ['web/**/*.js', '!web/**/*-spec.js', '!web/dist/**/*'],
+                src: ['web/**/*.js', '!web/dist/**/*'],
                 options: {
                     browser: true,
                     jquery: true,
@@ -39,20 +23,26 @@ module.exports = function(grunt) {
                 }
             },
             server : {
-                src: ['server.js', 'routes/**/*.js', 'server/**/*.js', 'Gruntfile.js', 'grunt/**/*.js', '!server/**/*-spec.js'],
+                src: ['server.js', 'routes/**/*.js', 'server/**/*.js', 'models/**/*.js'],
+                options: {
+                    node: true
+                }
+            },
+            grunt: {
+                src: ['Gruntfile.js', 'grunt/**/*.js'],
                 options: {
                     node: true
                 }
             },
             test : {
-                src: ['**/*-spec.js'],
+                src: ['test/**/*.js'],
                 options: {
-                    jasmine: true
+                    jasmine: true,
+                    node:true
                 }
             }
         },
-
-        watch: {
+        watchConfig = {
             'jshint-web' : {
                 options: {
                     atBegin: true
@@ -73,26 +63,37 @@ module.exports = function(grunt) {
                 },
                 files: '<%= jshint.test.src %>',
                 tasks: ['jshint:test']
+            },
+            'jshint-coverage' : {
+                options: {
+                    atBegin: true
+                },
+                files: ["**/*.js", "!node_modules/**/*.js", "!bower_components/**/*.js"],
+                tasks: ['jshint-coverage']
             }
-        },
+        };
 
+    grunt.config.merge({
+        jshint: jshintConfig,
+        watch: watchConfig,
         focus: {
             jshint: {
-                include: ['jshint-web', 'jshint-server', 'jshint-test']
+                include: Object.keys(watchConfig)
             }
         }
 
     });
 
-    grunt.registerTask("jshintCoverage", "Check that all js files are checked by one of the jshint targets", function () {
-        var allFiles = grunt.file.expand(["**/*.js", "!node_modules/**/*.js", "!bower_components/**/*.js"]),
+    grunt.registerTask("jshint-coverage", "Check that all js files are checked by one of the jshint targets", function () {
+        var watch    = grunt.config.get('watch'),
+            allFiles = grunt.file.expand(watch['jshint-coverage'].files),
             jshint   = grunt.config.get('jshint'),
             covered  = Array.prototype.concat.apply(
                 [],
                 Object.keys(jshint)
                 .map(function (key) {
 
-                    if (!jshint[key].src)
+                    if (key === 'options')
                         return [];
 
                     return grunt.file.expand(jshint[key].src);
@@ -114,7 +115,7 @@ module.exports = function(grunt) {
         }
 
         if (num === 0)
-            grunt.log.ok("All .js files (not in node_modules and bower_components) are covered by jshint");
+            grunt.log.ok("All .js files (excluding vendor) are covered by jshint");
 
     });
 

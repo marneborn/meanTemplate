@@ -37,3 +37,5 @@ module.exports = {
 
 // console.log(JSON.stringify(module.exports, null, 4));
 module.exports.isDev = !module.exports.isPrd;
+
+L.debug("^^^^ Configuration ^^^^\n"+JSON.stringify(module.exports, null, 4)+"\n----------------");
