@@ -1,17 +1,26 @@
-angular.module('appUser')
-.controller('signinController', function ($scope, $http, $location) {
+(function () {
     "use strict";
 
-	$scope.signin = function() {
-		$http.post('/user/signin', $scope.credentials).success(function(response) {
-            console.log("in> "+JSON.stringify(response));
-// 			$scope.authentication.user = response;
+    angular.module('appUser')
+    .controller('signinController', SigninController);
 
+    function SigninController ($http, $location) {
+
+        var vm = this;
+
+	    vm.signin = signin;
+
+        function signin () {
+		    $http.post('/user/signin', vm.credentials)
+            .success(function(response) {
+                console.log(">> "+JSON.stringify(response));
+            // 			$scope.authentication.user = response;
 			// And redirect to the index page
-			$location.path('/');
-		}).error(function(response) {
-			$scope.error = response.message;
-		});
-	};
-
-});
+			    $location.path('/');
+		    })
+            .error(function(response) {
+			    vm.error = response.message;
+		    });
+	    }
+    }
+})();

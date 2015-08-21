@@ -19,27 +19,27 @@
   </div>
   <h3 class="col-md-12 text-center">Or with your email</h3>
   <div class="col-xs-offset-2 col-xs-8 col-md-offset-5 col-md-2">
-	<form name="userForm" data-ng-submit="signup()" class="signin form-horizontal ng-pristine ng-invalid ng-invalid-required" novalidate="" autocomplete="off">
+	<form name="userForm" data-ng-submit="vm.signup()" class="signin form-horizontal ng-pristine ng-invalid ng-invalid-required" novalidate="" autocomplete="off">
 	  <fieldset>
 		<div class="form-group">
 		  <label for="firstName">First Name</label>
-		  <input type="text" required="" id="firstName" name="firstName" class="form-control ng-pristine ng-invalid ng-invalid-required" data-ng-model="credentials.firstName" placeholder="First Name">
+		  <input type="text" required="" id="firstName" name="firstName" class="form-control ng-pristine ng-invalid ng-invalid-required" data-ng-model="vm.credentials.firstName" placeholder="First Name">
 		</div>
 		<div class="form-group">
 		  <label for="lastName">Last Name</label>
-		  <input type="text" id="lastName" name="lastName" class="form-control ng-pristine ng-valid" data-ng-model="credentials.lastName" placeholder="Last Name">
+		  <input type="text" id="lastName" name="lastName" class="form-control ng-pristine ng-valid" data-ng-model="vm.credentials.lastName" placeholder="Last Name">
 		</div>
 		<div class="form-group">
 		  <label for="email">Email</label>
-		  <input type="email" id="email" name="email" class="form-control ng-pristine ng-valid ng-valid-email" data-ng-model="credentials.email" placeholder="Email">
+		  <input type="email" id="email" name="email" class="form-control ng-pristine ng-valid ng-valid-email" data-ng-model="vm.credentials.email" placeholder="Email">
 		</div>
 		<div class="form-group">
 		  <label for="username">Username</label>
-		  <input type="text" id="username" name="username" class="form-control ng-pristine ng-valid" data-ng-model="credentials.username" placeholder="Username">
+		  <input type="text" id="username" name="username" class="form-control ng-pristine ng-valid" data-ng-model="vm.credentials.username" placeholder="Username">
 		</div>
 		<div class="form-group">
 		  <label for="password">Password</label>
-		  <input type="password" id="password" name="password" class="form-control ng-pristine ng-valid" data-ng-model="credentials.password" placeholder="Password">
+		  <input type="password" id="password" name="password" class="form-control ng-pristine ng-valid" data-ng-model="vm.credentials.password" placeholder="Password">
 		</div>
 		<div class="text-center form-group">
 		  <button type="submit" class="btn btn-large btn-primary">Sign up</button>&nbsp; or&nbsp;

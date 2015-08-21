@@ -19,8 +19,18 @@ exports.signup = function (req, res) {
 
 	// Then save the user
 	user.save(function(err) {
+
+        var errDets;
+
 		if (err) {
-			res.status(400).send(err);
+            errDets = parseValidationError(err);
+            console.log(""+JSON.stringify(errDets));
+            if (errDets) {
+                res.status(400).json(errDets);
+            }
+            else {
+			    res.status(400).json({_type: 'UnknownError'});
+            }
             return;
 		}
 
@@ -43,9 +53,7 @@ exports.signup = function (req, res) {
  * Signin after passport authentication
  */
 exports.signin = function(req, res, next) {
-    console.log("0> "+JSON.stringify(req.body));
 	passport.authenticate('local', function(err, user, info) {
-        console.log("1> "+err+','+JSON.stringify(user));
 		if (err || !user) {
 			res.status(400).send(info);
 		} else {
@@ -63,3 +71,24 @@ exports.signin = function(req, res, next) {
 		}
 	})(req, res, next);
 };
+
+/*
+ *
+ */
+function parseValidationError (err) {
+
+    if (!err || err.name !== 'ValidationError')
+        return null;
+
+    var fields = Object.keys(err.errors),
+        obj = {
+            _type : err.name
+        },
+        i;
+
+    for (i=0; i<fields.length; i++) {
+        obj[fields[i]] = err.errors[fields[i]].message;
+    }
+
+    return obj;
+}

@@ -27,7 +27,7 @@ module.exports = function ( grunt ) {
                         // FIXME - Need to be more specific? What doesn't need to be in here?
                         'web/**/*.js',
                         'web/**/*.css',
-                        'web/**/*.parial.mustache',
+                        'web/**/*.view.mustache',
                         '!grunt/**/*'
                     ],
 				    delay: 1000

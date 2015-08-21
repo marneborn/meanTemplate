@@ -1,32 +1,22 @@
+(function () {
+    "use strict";
 
-angular.module('meanApp')
-.controller('headerCtrl',
-    function($scope, $location) {
-        'use strict';
+    angular.module('meanApp')
+    .controller('HeaderController', HeaderController);
 
-        //$scope.user = user;
-        $scope.user = {
-            isLoggedIn : function () { return false; },
-            email : function () { return "email@example.com"; }
-        };
+    function HeaderController ($http, $location, $timeout, user) {
+        var vm = this;
 
-        $scope.doLoginModal = function () {
-            alert("login");
-            $('#loginModal').modal('show');
-        };
+        vm.isLoggedIn = user.isLoggedIn;
+        vm.isActive   = isActive;
+        vm.doLogout   = logout; //user.logout;
 
-        $scope.doSignUpModal = function () {
-            alert("signup");
-            $('#signUpModal').modal('show');
-        };
+        function logout () {
+            user.signout();
+        }
 
-        $scope.doLogout = function () {
-            alert("logout");
-            return;
-        };
-
-        $scope.isActive = function (viewLocation) {
+        function isActive (viewLocation) {
             return viewLocation === $location.path();
-        };
+        }
     }
-);
+})();

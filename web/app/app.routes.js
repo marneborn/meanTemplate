@@ -1,17 +1,22 @@
-angular.module('meanApp')
-.config(function ($routeProvider) {
+(function () {
     'use strict';
 
-    $routeProvider
-    .when('/', {
-        templateUrl: 'modules/main/main.html',
-        controller: 'mainCtrl'
-    })
-    .when('/about', {
-        templateUrl: 'modules/about/about.html',
-        controller: 'aboutCtrl'
-    })
-    .otherwise({
-        redirectTo: '/'
+    angular.module('meanApp')
+    .config(function ($routeProvider) {
+
+        $routeProvider
+        .when('/', {
+            templateUrl: 'modules/main/main.html',
+            controller: 'mainController',
+            controllerAs: 'vm'
+        })
+        .when('/about', {
+            templateUrl: 'modules/about/about.html',
+            controller: 'aboutController',
+            controllerAs: 'vm'
+        })
+        .otherwise({
+            redirectTo: '/'
+        });
     });
-});
+})();
