@@ -1,11 +1,11 @@
 "use strict";
 
-var _ = require('lodash');
+var _ = require('lodash'),
+    fs = require('fs');
 
 module.exports = function(grunt) {
 
-    var isDevel = !process.env.NODE_ENV || process.env.NODE_ENV === 'develop',
-        allMyJS = ["**/*.js", '!web/dist/**/*.js', "!node_modules/**/*.js", "!bower_components/**/*.js"],
+    var allMyJS = getAllMyJS(['node_modules', 'bower_components', '.git', '.sass-cache']),
         jshintConfig = {
            options : {
                 laxbreak: true,
@@ -26,7 +26,7 @@ module.exports = function(grunt) {
                 trailing: true,
                 smarttabs: true,
                 latedef: "nofunc",
-                devel: isDevel
+                devel: !process.env.NODE_ENV || process.env.NODE_ENV === 'develop'
             },
             web : {
                 // FIXME - get web/dist from config
@@ -77,7 +77,6 @@ module.exports = function(grunt) {
             }
         };
 
-
     grunt.config.merge({
         jshint: jshintConfig,
         watch: watchConfig,
@@ -95,6 +94,7 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask("jshint-coverage", "Check that all js files are checked by one of the jshint targets", function () {
+
         var jshint   = grunt.config.get('jshint'),
             covered  = Array.prototype.concat.apply(
                 [],
@@ -126,5 +126,26 @@ module.exports = function(grunt) {
 
         return;
     });
-
 };
+
+/*
+ *
+ */
+function getAllMyJS (excludeDir) {
+    return _.flattenDeep(
+        [
+            "*.js",
+            fs.readdirSync(process.cwd())
+            .filter(function (thing) {
+                if (fs.statSync(thing).isDirectory()) {
+                    return excludeDir.indexOf(thing) < 0;
+                }
+                return false;
+            })
+            .map(function (thing) {
+                return thing+"/**/*.js";
+            }),
+            "!web/dist/**/*.js"
+        ]
+    );
+}

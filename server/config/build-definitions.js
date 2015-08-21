@@ -33,7 +33,7 @@ module.exports = {
         dev  : distDir+'/js/app.js',
         dist : distDir+'/js/app.min.js',
         src  : findAppJsFiles(),
-        watch: ['web/**/*.js']
+        watch: ['web/**/*.js', '!'+distDir+'/**/*']
     },
 
     appCss : {
@@ -104,6 +104,6 @@ function findAppJsFiles () {
         ["web/app/app.js"],
         globule.find("web/app/**/*.js"),
         globule.find("web/modules/**/*.module.js"),
-        globule.find("web/**/*.js")
+        globule.find("web/**/*.js", "!web/dist/**/*")
     );
 }
