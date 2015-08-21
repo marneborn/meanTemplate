@@ -28,8 +28,6 @@ module.exports = function ( grunt ) {
                         'web/**/*.js',
                         'web/**/*.css',
                         'web/**/*.parial.mustache',
-                        // FIXME - figure out how to make **/test/** not look in node_modules and bower_components, probably needs a nodemon fix
-                        '!**/test/**',
                         '!grunt/**/*'
                     ],
 				    delay: 1000

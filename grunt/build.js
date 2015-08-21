@@ -4,16 +4,15 @@
 // FIXME - need to handle relative paths in .scss files? smart copy?
 
 var buildDef = require('../server/config/build-definitions'),
-    distDir = buildDef.destDir, // FIXME - from config later?
+    distDir = buildDef.destDir,
     annotated,
     gruntConfig = {
 
         clean: {
-            "pre-build" : distDir,
+            "pre-build" : [distDir],
             "post-build": []
         },
 
-        // Compiles Sass to CSS and generates necessary files if requested
         sass: {
             dev  : { files : {} },
             dist : { files : {} }
@@ -39,6 +38,10 @@ var buildDef = require('../server/config/build-definitions'),
         watch: {
             'sass-dev': {},
             'buildDist': {}
+        },
+        build : {
+            css:  ['clean:built-css', 'sass:dev'],
+            dist: ['clean:pre-build', 'sass:dev', 'sass:dist', 'cssmin:dist', 'ngAnnotate:dist', 'uglify:dist', 'copy:bootstrap', 'clean:post-build']
         }
 
     };
@@ -75,7 +78,7 @@ gruntConfig.watch['sass-dev'] = {
         event: ['changed', 'added']
     },
     files : buildDef.appCss.watch,
-    tasks : ['clean:built-css', 'sass:dev']
+    tasks : ['build-css']
 };
 
 //---------------------------------------------------------------------------
@@ -98,13 +101,15 @@ gruntConfig.uglify.dist.options = {
 };
 
 //---------------------------------------------------------------------------
-// console.log(JSON.stringify(gruntConfig, null, 4));
-
 module.exports = function(grunt) {
 
     grunt.config.merge(gruntConfig);
 
     // sass, cssmin, and ngAnnotate+uglify can be concurrent, but probably not worth the overhead
     // run lint checks here?
-    grunt.registerTask('build', ['clean:pre-build', 'sass:dev', 'sass:dist', 'cssmin:dist', 'ngAnnotate:dist', 'uglify:dist', 'copy:bootstrap', 'clean:post-build']);
+
+    grunt.registerMultiTask('build', function() {
+        grunt.log.writeln(this.target + ': ' + JSON.stringify(this.data));
+        grunt.task.run(this.data);
+    });
 };

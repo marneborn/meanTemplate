@@ -1,10 +1,27 @@
 "use strict";
 
+var _ = require('lodash');
+
 module.exports = function(grunt) {
 
     var isDevel = !process.env.NODE_ENV || process.env.NODE_ENV === 'develop',
+        allMyJS = ["**/*.js", '!web/dist/**/*.js', "!node_modules/**/*.js", "!bower_components/**/*.js"],
         jshintConfig = {
-            options : {
+           options : {
+                laxbreak: true,
+                esnext: true,
+                bitwise: true,
+                camelcase: true,
+                curly: false,
+                eqeqeq: true,
+                eqnull: true,
+                immed: true,
+                indent: 2,
+                newcap: true,
+                noarg: true,
+                regexp: true,
+                undef: true,
+                unused: true,
                 strict: true,
                 trailing: true,
                 smarttabs: true,
@@ -42,36 +59,24 @@ module.exports = function(grunt) {
                 }
             }
         },
+
         watchConfig = {
-            'jshint-web' : {
+            // When only rerunning the particular jshint subtask that had a change other sub tasks
+            // errors get lost, so rerun all on any change.
+            'jshint': {
                 options: {
+                    // need nospawn for grunt.option('force') to propogate to task run by watch
+                    nospawn: true,
                     atBegin: true
                 },
-                files: '<%= jshint.web.src %>',
-                tasks: ['jshint:web']
-            },
-            'jshint-server' : {
-                options: {
-                    atBegin: true
-                },
-                files: '<%= jshint.server.src %>',
-                tasks: ['jshint:server']
-            },
-            'jshint-test' : {
-                options: {
-                    atBegin: true
-                },
-                files: '<%= jshint.test.src %>',
-                tasks: ['jshint:test']
-            },
-            'jshint-coverage' : {
-                options: {
-                    atBegin: true
-                },
-                files: ["**/*.js", "!node_modules/**/*.js", "!bower_components/**/*.js"],
-                tasks: ['jshint-coverage']
+                files: allMyJS,
+                tasks: Object.keys(jshintConfig)
+                .filter(function (k) { return k !== 'options'; })
+                .map   (function (k) { return 'jshint:'+k; })
+                .concat('jshint-coverage')
             }
         };
+
 
     grunt.config.merge({
         jshint: jshintConfig,
@@ -84,10 +89,13 @@ module.exports = function(grunt) {
 
     });
 
+    grunt.registerTask('jshint-all', function () {
+        grunt.option("force", true);
+        grunt.task.run("watch:jshint");
+    });
+
     grunt.registerTask("jshint-coverage", "Check that all js files are checked by one of the jshint targets", function () {
-        var watch    = grunt.config.get('watch'),
-            allFiles = grunt.file.expand(watch['jshint-coverage'].files),
-            jshint   = grunt.config.get('jshint'),
+        var jshint   = grunt.config.get('jshint'),
             covered  = Array.prototype.concat.apply(
                 [],
                 Object.keys(jshint)
@@ -99,24 +107,24 @@ module.exports = function(grunt) {
                     return grunt.file.expand(jshint[key].src);
                 })
             ),
-            num = 0,
-            i;
+            expected   = grunt.file.expand(allMyJS),
+            notcovered = _.difference(expected, covered),
+            extra      = _.difference(covered, expected);
 
-        for (i = 0; i < allFiles.length; i++) {
-
-            if (covered.indexOf(allFiles[i]) >= 0)
-                continue;
-
-            if (num === 0)
-                grunt.log.error("Files not covered by jshint");
-
-            num++;
-            grunt.log.error(":   "+allFiles[i]);
+        if (notcovered.length === 0) {
+            grunt.log.ok("All .js files (excluding vendor) are covered by jshint");
+        }
+        else {
+            grunt.log.error("Files not covered by jshint");
+            grunt.log.error(":   "+notcovered.join("\n:   ")+"\n");
         }
 
-        if (num === 0)
-            grunt.log.ok("All .js files (excluding vendor) are covered by jshint");
+        if (extra.length !== 0) {
+            grunt.log.error("Number of files jshint-ed, but not written by us: "+extra.length+" (use --verbose for list)");
+            grunt.log.verbose(":   "+extra.join("\n:   ")+"\n");
+        }
 
+        return;
     });
 
 };

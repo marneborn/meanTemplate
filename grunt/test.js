@@ -7,7 +7,7 @@
 module.exports = function ( grunt ) {
 
     grunt.config.merge({
-        jasmine_nodejs: {
+        'jasmine_nodejs': {
 
             options: {
                 specNameSuffix: "spec.js",
@@ -46,9 +46,11 @@ module.exports = function ( grunt ) {
                 customReporters: []
             },
             unit: {
-                // target specific options
+                // FIXME - do I really want to load all helpers in all tests?
+                //         should probably split this up...
+                //         or manually load the helpers that I want loaded. (Doing this now useHelpers:false)
                 options: {
-                    useHelpers: true
+                    useHelpers: false
                 },
                 specs: [
                     "test/**/unit/**"

@@ -30,7 +30,6 @@ module.exports = function ( grunt ) {
 
         focus: {
             'dev-browser': {
-                // Add sass watchers below
                 include : ['sass-dev', 'livereload']
             }
         }

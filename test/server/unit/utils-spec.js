@@ -1,4 +1,5 @@
 describe("Testing utils methods", function () {
+    "use strict";
 
     var mtUtils = require('../../../server/utils');
 
