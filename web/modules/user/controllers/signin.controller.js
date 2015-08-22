@@ -4,23 +4,28 @@
     angular.module('appUser')
     .controller('signinController', SigninController);
 
-    function SigninController ($http, $location) {
+    function SigninController ($http, $location, user) {
 
         var vm = this;
 
 	    vm.signin = signin;
+        vm.error = null;
+        vm.showError = true;
+        vm.usernameError = null;
+        vm.passwordError = null;
 
         function signin () {
-		    $http.post('/user/signin', vm.credentials)
-            .success(function(response) {
-                console.log(">> "+JSON.stringify(response));
-            // 			$scope.authentication.user = response;
-			// And redirect to the index page
-			    $location.path('/');
-		    })
-            .error(function(response) {
-			    vm.error = response.message;
-		    });
+
+            vm.error = null;
+            vm.showError = true;
+
+            user.signin(vm.credentials)
+            .then(function () {
+                $location.path('/');
+            })
+            .catch(function (err) {
+                vm.error = err;
+            });
 	    }
     }
 })();

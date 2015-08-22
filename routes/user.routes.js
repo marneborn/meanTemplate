@@ -10,4 +10,8 @@ router.route('/user/signup')
 router.route('/user/signin')
 .post(user.signin);
 
+router.route('/user/signout')
+.post(user.signout)
+.get(user.signout);
+
 module.exports = router;

@@ -18,7 +18,6 @@ module.exports = function (app) {
     app.set("views", viewsDir);
     app.set("view engine", "mustache");
 
-
     if (config.isPrd) {
 
         app.locals.googleAnalytics = true;
@@ -45,16 +44,10 @@ module.exports = function (app) {
 
     partials = findPartials();
 
-    // FIXME - temporary
-    app.use(function (req, res, next) {
-        req.user = { name : "mikael" };
-        next();
-    });
-
     app.get("/", function (req, res) {
         res.render("index", {
             cache: false,
-            user : req.user || {},
+            user : req.user,
             // FIXME - should fix this in consolidate...
             partials: _.cloneDeep(partials)
         });

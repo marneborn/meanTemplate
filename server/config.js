@@ -4,7 +4,10 @@ var pkg  = require('../package.json'),
     _ = require('lodash'),
     L = require('./logger')('config'),
     name = pkg.name,
-    env  = process.env.NODE_ENV || 'development';
+    env  = process.env.NODE_ENV || 'development',
+    config = {};
+
+module.exports = config;
 
 // remove leading and trailing quotes
 env = env.replace(/(?:^\')|(?:\'$)/g, '');
@@ -15,27 +18,27 @@ var db = {
 	db       : name
 };
 
-module.exports = {
-	name  : name,
-	host  : process.env.HOST || '127.0.0.1',
-	port  : process.env.PORT || 8080,
-    isPrd : env === 'production',
-    db : _.clone(db),
-    sessions : {
-        secret : 'be very very quiet',
-        db : _.extend(
-            db,
-            {
-	            "type"         : "mongo",
-	            "collection"   : "sessions",
-	            "stringify"    : false,
-	            "autoReconnect": true
-            }
-        )
-    }
+config.name  = name;
+config.host  = process.env.HOST || '127.0.0.1';
+config.port  = process.env.PORT || 8080;
+
+config.db = _.clone(db);
+config.sessions = {
+    secret : 'be very very quiet',
+    db : _.extend(
+        db,
+        {
+	        "type"         : "mongo",
+	        "collection"   : "sessions",
+	        "stringify"    : false,
+	        "autoReconnect": true
+        }
+    )
 };
 
-// console.log(JSON.stringify(module.exports, null, 4));
-module.exports.isDev = !module.exports.isPrd;
+_.extend(config, require('./config/authentication'));
+
+config.isPrd = env === 'production';
+config.isDev = !config.isPrd;
 
 L.debug("^^^^ Configuration ^^^^\n"+JSON.stringify(module.exports, null, 4)+"\n----------------");

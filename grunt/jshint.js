@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
     var allMyJS = getAllMyJS(['node_modules', 'bower_components', '.git', '.sass-cache']),
         jshintConfig = {
-           options : {
+            options : {
                 laxbreak: true,
                 esnext: true,
                 bitwise: true,
@@ -70,27 +70,24 @@ module.exports = function(grunt) {
                     atBegin: true
                 },
                 files: allMyJS,
-                tasks: Object.keys(jshintConfig)
-                .filter(function (k) { return k !== 'options'; })
-                .map   (function (k) { return 'jshint:'+k; })
-                .concat('jshint-coverage')
+                tasks: ['jshint-all']
             }
         };
 
+
     grunt.config.merge({
         jshint: jshintConfig,
-        watch: watchConfig,
-        focus: {
-            jshint: {
-                include: Object.keys(watchConfig)
-            }
-        }
-
+        watch: watchConfig
     });
 
-    grunt.registerTask('jshint-all', function () {
+    grunt.registerTask("jshint-all", function () {
         grunt.option("force", true);
-        grunt.task.run("watch:jshint");
+        grunt.task.run(
+            Object.keys(jshintConfig)
+            .filter(function (k) { return k !== 'options'; })
+            .map   (function (k) { return 'jshint:'+k; })
+            .concat('jshint-coverage')
+        );
     });
 
     grunt.registerTask("jshint-coverage", "Check that all js files are checked by one of the jshint targets", function () {

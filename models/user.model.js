@@ -8,7 +8,6 @@ var mongoose = require('mongoose'),
 	bcrypt   = require('bcrypt'),
     HASH_ROUNDS = 10;
 
-
 /**
  * A Validation function for local strategy properties
  */
@@ -20,78 +19,75 @@ var validateLocalStrategyProperty = function(property) {
  * A Validation function for local strategy password
  */
 var validateLocalStrategyPassword = function(password) {
-	return (this.provider !== 'local' || (password && password.length > 6));
+	return (this.provider !== 'local' || (password && password.length >= 6));
 };
 
 /**
  * User Schema
  */
 var UserSchema = new Schema({
-	firstName: {
-		type: String,
-		trim: true,
-		default: '',
-		validate: [validateLocalStrategyProperty, 'Please fill in your first name']
-	},
-	lastName: {
-		type: String,
-		trim: true,
-		default: '',
-		validate: [validateLocalStrategyProperty, 'Please fill in your last name']
-	},
-	displayName: {
-		type: String,
-		trim: true
-	},
 	email: {
 		type: String,
 		trim: true,
 		default: '',
-		validate: [validateLocalStrategyProperty, 'Please fill in your email'],
+        unique: 'That email is already taken',
+		required: 'An email is required',
+		validate: [validateLocalStrategyProperty, 'Please supply your email'],
 		match: [/.+\@.+\..+/, 'Please fill a valid email address']
+	},
+	realname: {
+		type: String,
+		trim: true
 	},
 	username: {
 		type: String,
-		unique: 'testing error message',
-		required: 'Please fill in a username',
 		trim: true
 	},
-	password: {
+
+    password: {
 		type: String,
 		default: '',
-		validate: [validateLocalStrategyPassword, 'Password should be longer']
+        required: 'You need a password',
+		validate: [validateLocalStrategyPassword, 'Password should be at least 6 characters']
 	},
 	salt: {
 		type: String
 	},
-	provider: {
+
+    provider: {
 		type: String,
-        enum: ['local', 'facebook', 'google', 'twitter', 'linkedin', 'github'],
+        'enum': ['local', 'facebook', 'google', 'twitter', 'linkedin', 'github'],
 		required: 'Provider is required'
 	},
 	providerData: {},
 	additionalProvidersData: {},
-	roles: {
+
+    roles: {
 		type: [{
 			type: String,
-			enum: ['user', 'admin']
+			'enum': ['user', 'admin']
 		}],
 		default: ['user']
 	},
-	updated: {
-		type: Date
-	},
+
 	created: {
 		type: Date,
 		default: Date.now
 	},
-	/* For reset password */
-	resetPasswordToken: {
-		type: String
+
+	touched: {
+		type: Date,
+		default: Date.now
 	},
-	resetPasswordExpires: {
-		type: Date
-	}
+
+	resetPassword: {
+        token: {
+		    type: String
+	    },
+        expires: {
+		    type: Date
+	    }
+    }
 });
 
 /**
@@ -100,20 +96,26 @@ var UserSchema = new Schema({
 UserSchema.pre('save', function(next) {
     var self = this;
 
-	if (!self.isModified('password'))
-		return next();
+	if (!self.isModified('password')) {
+		next();
+        return;
+    }
 
 	bcrypt.genSalt(HASH_ROUNDS, function (err, salt) {
 
-        if (err)
+        if (err) {
             next(err);
+            return;
+        }
 
 		bcrypt.hash(self.password, salt, function (err, hash) {
 
-			if (err)
+			if (err) {
                 next(err);
+                return;
+            }
 
-			self.password = hash;
+		self.password = hash;
 			next();
 		});
 	});
@@ -127,4 +129,4 @@ UserSchema.methods.authenticate = function (password, callback) {
 	bcrypt.compare(password, this.password, callback);
 };
 
-mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', UserSchema);

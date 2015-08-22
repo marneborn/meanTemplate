@@ -78,7 +78,7 @@ gruntConfig.watch['sass-dev'] = {
         event: ['changed', 'added']
     },
     files : buildDef.appCss.watch,
-    tasks : ['build-css']
+    tasks : ['sass:dev']
 };
 
 //---------------------------------------------------------------------------

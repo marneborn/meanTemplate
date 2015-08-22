@@ -29,7 +29,7 @@
       <section ng-view=""></section>
     </div>
 
-	<footer ng-include="'modules/footer/footer.partial.html'"></footer>
+	<footer ng-include="'modules/footer/footer.view.html'"></footer>
 
 	{{ #googleAnalytics }}
     <script>
@@ -55,6 +55,7 @@
     <script type="text/javascript" src="{{.}}"></script>
 	{{ /appJs }}
 
+    <!-- User Config should go here -->
 	{{ > userConfig }}
 
 	{{ #livereload }}

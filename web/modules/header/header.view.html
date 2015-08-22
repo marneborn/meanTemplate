@@ -11,11 +11,12 @@
           <span class="icon-bar"></span>
         </button>
 
-        <a class="navbar-brand" href="#">meanApp {{ header.isLoggedIn() ? "yes" : "no" }}</a>
+        <a class="navbar-brand" href="#">meanApp {{ header.isLoggedIn() ? "yes" : "no" }} {{ header.userName }} </a>
       </div>
 
       <div id="navbar" class="navbar-collapse collapse">
 
+        <!-- FIXME: remove isLoggedIn and username -->
         <ul data-ng-if="!header.isLoggedIn()" class="nav navbar-nav navbar-right">
           <li data-ng-class="{ active : header.isActive('/user/signup')}"> <a ng-href="#/user/signup">Sign Up</a></li>
           <li data-ng-class="{ active : header.isActive('/user/signin')}"> <a ng-href="#/user/signin">Login</a></li>

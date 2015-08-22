@@ -1,22 +1,11 @@
 "use strict";
 
-var config  = require('./config.js'),
-    session = require('express-session'),
-    mongoStore = require('connect-mongo')({
-		session: session
-	}),
+var globule = require('globule'),
+    path = require('path'),
     passport = require('passport'),
 	User = require('mongoose').model('User');
 
 module.exports = function (app) {
-
-	// Express MongoDB session storage
-	app.use(session({
-		saveUninitialized: true,
-		resave: true,
-		secret: config.sessions.secret,
-		store: new mongoStore(config.sessions.db)
-	}));
 
 	// use passport session
 	app.use(passport.initialize());
@@ -35,10 +24,9 @@ module.exports = function (app) {
 		});
 	});
 
-    require('./strategies/local.strategy')();
+	globule.find('server/strategies/*.js').forEach(function(strategy) {
+		require(path.resolve(strategy))();
+	});
 
-// 	globule.find('./strategies/*.js').forEach(function(strategy) {
-// 		require(path.resolve(strategy))();
-// 	});
 
 };

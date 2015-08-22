@@ -2,7 +2,8 @@
 
 var	path = require('path'),
     globule = require('globule'),
-	L    = require('./server/logger')('server'),
+    BPromise = require('bluebird'),
+	L = require('./server/logger')('server'),
 
 	// express middleware
 	cookieParser = require('cookie-parser'),
@@ -12,8 +13,7 @@ var	path = require('path'),
 	app = require('./server/createApp');
 
 L.debug("Starting server");
-require('./server/db');
-require('./server/engine')(app);
+var dbOpen = require('./server/db');
 
 // first thing is to server static files
 app.use(require('./server/static'));
@@ -27,7 +27,10 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+require('./server/session')(app);
 require('./server/authentication')(app);
+
+require('./server/engine')(app);
 
 globule.find('routes/*.routes.js').forEach(function (file) {
     app.use(require(path.resolve(file)));
@@ -39,4 +42,11 @@ app.use(function (req, res) {
 });
 
 // listenToMe added to app in createApp above
-app.listenToMe();
+BPromise
+.all([dbOpen])
+.then(function () {
+    return app.listenToMe();
+})
+.catch(function (err) {
+    L.fatal("Couldn't start listener: "+err);
+});
