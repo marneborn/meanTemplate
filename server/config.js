@@ -24,7 +24,6 @@ config.port  = process.env.PORT || 8080;
 
 config.db = _.clone(db);
 config.sessions = {
-    secret : 'be very very quiet',
     db : _.extend(
         db,
         {
@@ -37,6 +36,7 @@ config.sessions = {
 };
 
 _.extend(config, require('./config/authentication'));
+_.merge(config, require('./config/secrets'));
 
 config.isPrd = env === 'production';
 config.isDev = !config.isPrd;

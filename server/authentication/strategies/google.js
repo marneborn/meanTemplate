@@ -5,12 +5,12 @@
  */
 var passport = require('passport'),
 	GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
-	config = require('../config'),
-	users = null; //require('../../app/controllers/users.server.controller');
+	config = require('../../config'),
+	user = require('../../user');
 
 module.exports = function() {
 	// Use google strategy
-	passport.use(new GoogleStrategy({
+	passport.use('google', new GoogleStrategy({
 			clientID: config.google.clientID,
 			clientSecret: config.google.clientSecret,
 			callbackURL: config.google.callbackURL,
@@ -19,6 +19,10 @@ module.exports = function() {
 		function(req, accessToken, refreshToken, profile, done) {
 			// Set the provider data and include tokens
 			var providerData = profile._json;
+//             console.log("pd> "+JSON.stringify(profile._json, null, 4));
+//             console.log("at> "+accessToken);
+//             console.log("rt> "+refreshToken);
+
 			providerData.accessToken = accessToken;
 			providerData.refreshToken = refreshToken;
 
@@ -33,9 +37,10 @@ module.exports = function() {
 				providerIdentifierField: 'id',
 				providerData: providerData
 			};
+            console.log(""+JSON.stringify(providerUserProfile, null, 4));
 
 			// Save the user OAuth profile
-			users.saveOAuthUserProfile(req, providerUserProfile, done);
+			user.saveOAuthUserProfile(req, providerUserProfile, done);
 		}
 	));
 };

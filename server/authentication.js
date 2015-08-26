@@ -24,7 +24,7 @@ module.exports = function (app) {
 		});
 	});
 
-	globule.find('server/strategies/*.js').forEach(function(strategy) {
+	globule.find('server/authentication/strategies/*.js').forEach(function(strategy) {
 		require(path.resolve(strategy))();
 	});
 

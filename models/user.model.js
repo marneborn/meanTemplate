@@ -6,19 +6,21 @@
 var mongoose = require('mongoose'),
 	Schema   = mongoose.Schema,
 	bcrypt   = require('bcrypt'),
+    L        = require('../server/logger')('user-model'),
     HASH_ROUNDS = 10;
 
 /**
- * A Validation function for local strategy properties
+ * Check that the field has a value, but only with the local provider
  */
-var validateLocalStrategyProperty = function(property) {
+var validateLocalStrategyProperty = function (property) {
 	return ((this.provider !== 'local' && !this.updated) || property.length);
 };
 
 /**
+ * Check that password is "secure enough", but only with the local provider
  * A Validation function for local strategy password
  */
-var validateLocalStrategyPassword = function(password) {
+var validateLocalStrategyPassword = function (password) {
 	return (this.provider !== 'local' || (password && password.length >= 6));
 };
 
@@ -37,17 +39,19 @@ var UserSchema = new Schema({
 	},
 	realname: {
 		type: String,
+        default: "",
+        index: false,
 		trim: true
 	},
 	username: {
 		type: String,
+        index: true,
 		trim: true
 	},
 
     password: {
 		type: String,
 		default: '',
-        required: 'You need a password',
 		validate: [validateLocalStrategyPassword, 'Password should be at least 6 characters']
 	},
 	salt: {
@@ -127,6 +131,29 @@ UserSchema.pre('save', function(next) {
 // Password verification
 UserSchema.methods.authenticate = function (password, callback) {
 	bcrypt.compare(password, this.password, callback);
+};
+
+/**
+ * find an unused username that is similar to the one given
+ */
+UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
+	var _this = this;
+	var possibleUsername = username + (suffix || '');
+
+	_this.findOne({
+		username: possibleUsername
+	}, function(err, user) {
+		if (!err) {
+			if (!user) {
+				callback(possibleUsername);
+			} else {
+				_this.findUniqueUsername(username, (suffix || 0) + 1, callback);
+			}
+		} else {
+            L.err(""+err);
+			callback(null);
+		}
+	});
 };
 
 module.exports = mongoose.model('User', UserSchema);

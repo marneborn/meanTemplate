@@ -5,7 +5,7 @@
  */
 var passport = require('passport'),
 	LinkedInStrategy = require('passport-linkedin').Strategy,
-	config = require('../config'),
+	config = require('../../config'),
 	users = null; //require('../../app/controllers/users.server.controller');
 
 module.exports = function() {
