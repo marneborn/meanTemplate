@@ -3,6 +3,8 @@
 var mongoose = require('mongoose'),
 	User = mongoose.model('User'),
     passport = require('passport'),
+    strategies = require('./authentication/strategies/all').strategies,
+    mongoUtils = require('./mongoUtils'),
     L = require('./logger')('user');
 
 exports.signout = function(req, res) {
@@ -12,25 +14,13 @@ exports.signout = function(req, res) {
 
 exports.signup = function (req, res) {
 
-	var user = new User(req.body);
+	var user = new User(strategies.local.makeUser(req.body));
 
-	// Add missing user fields
-	user.provider = 'local';
-	user.displayName = user.firstName + ' ' + user.lastName;
-	// Then save the user
 	user.save(function(err) {
 
-        var errDets;
-
 		if (err) {
-
-            errDets = parseValidationError(err);
-            if (errDets) {
-                res.status(400).json(errDets);
-            }
-            else {
-			    res.status(400).json({_type: 'UnknownError'});
-            }
+            var errDeets = mongoUtils.parseError(err);
+            res.status(400).json(errDeets);
             return;
 		}
 
@@ -70,38 +60,6 @@ exports.signin = function(req, res, next) {
         }
     })(req, res, next);
 };
-
-/*
- *
- */
-function parseValidationError (err) {
-
-    if (!err)
-        return null;
-
-    var fields, obj = null, i;
-
-    if (err.name === 'ValidationError') {
-
-        fields = Object.keys(err.errors);
-        obj = {
-            _type : err.name
-        };
-
-        for (i=0; i<fields.length; i++) {
-            obj[fields[i]] = err.errors[fields[i]].message;
-        }
-    }
-
-    else if (err.name === 'MongoError' && err.errmsg.indexOf("E11000 duplicate key error index: mean-template.users.$username") === 0) {
-        obj = {
-            _type: 'duplicate',
-            field: 'username'
-        };
-    }
-
-    return obj;
-}
 
 /*
  *
@@ -149,10 +107,7 @@ exports.saveOAuthUserProfile = function(req, providerUserProfile, done) {
 		var searchQuery = {
 			$or: [mainProviderSearchQuery, additionalProviderSearchQuery]
 		};
-        console.log("sq> "+JSON.stringify(searchQuery));
 		User.findOne(searchQuery, function(err, user) {
-            console.log("f1a> "+err);
-            console.log("f1b> "+JSON.stringify(user));
 
 			if (err) {
 				done(err);
@@ -161,10 +116,8 @@ exports.saveOAuthUserProfile = function(req, providerUserProfile, done) {
 
 			if (!user) {
 				var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
-                console.log("f1c> "+possibleUsername);
-				User.findUniqueUsername(possibleUsername, null, function(availableUsername) {
-                    console.log("f1d> "+availableUsername);
-					user = new User({
+ 				User.findUniqueUsername(possibleUsername, null, function(availableUsername) {
+     				user = new User({
 						firstName: providerUserProfile.firstName,
 						lastName: providerUserProfile.lastName,
 						username: availableUsername,
@@ -173,11 +126,9 @@ exports.saveOAuthUserProfile = function(req, providerUserProfile, done) {
 						provider: providerUserProfile.provider,
 						providerData: providerUserProfile.providerData
 					});
-                    console.log("new user = "+JSON.stringify(user));
-					// And save the user
+     				// And save the user
 					user.save(function(err) {
-                        console.log("save> "+err);
-						return done(err, user);
+     					return done(err, user);
 					});
 				});
 			} else {
@@ -240,3 +191,4 @@ exports.removeOAuthProvider = function(req, res) {
 		});
 	}
 };
+

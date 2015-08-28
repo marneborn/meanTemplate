@@ -1,15 +1,12 @@
-'use strict';
+"use strict";
 
-/**
- * Module dependencies.
- */
-var passport = require('passport'),
-	GithubStrategy = require('passport-github').Strategy,
+var GithubStrategy = require('passport-github').Strategy,
 	config = require('../../config'),
-	users = null; //require('../../app/controllers/users.server.controller');
+    users; //FIXME placeholder
 
-module.exports = function() {
-	// Use github strategy
+module.exports.load = function (passport, User) {
+    new User();
+
 	passport.use(new GithubStrategy({
 			clientID: config.github.clientID,
 			clientSecret: config.github.clientSecret,
@@ -36,4 +33,5 @@ module.exports = function() {
 			users.saveOAuthUserProfile(req, providerUserProfile, done);
 		}
 	));
+    return module.exports;
 };

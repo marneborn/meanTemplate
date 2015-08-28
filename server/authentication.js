@@ -1,9 +1,7 @@
 "use strict";
 
-var globule = require('globule'),
-    path = require('path'),
-    passport = require('passport'),
-	User = require('mongoose').model('User');
+var passport = require('passport'),
+    User = require('mongoose').model('User');
 
 module.exports = function (app) {
 
@@ -24,9 +22,5 @@ module.exports = function (app) {
 		});
 	});
 
-	globule.find('server/authentication/strategies/*.js').forEach(function(strategy) {
-		require(path.resolve(strategy))();
-	});
-
-
+    require('./authentication/strategies/all').load(passport, User);
 };

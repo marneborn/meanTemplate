@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Module dependencies.
@@ -10,61 +10,67 @@ var mongoose = require('mongoose'),
     HASH_ROUNDS = 10;
 
 /**
- * Check that the field has a value, but only with the local provider
+ * A password is only required for local provider.
+ * For that case make sure that it's secure enough (length >= 6 for now)
  */
-var validateLocalStrategyProperty = function (property) {
-	return ((this.provider !== 'local' && !this.updated) || property.length);
+var checkPassword = function (password) {
+	return !isLocal(this) || (password && password.length >= 6);
 };
 
 /**
- * Check that password is "secure enough", but only with the local provider
- * A Validation function for local strategy password
+ * determine if there is a local provider
  */
-var validateLocalStrategyPassword = function (password) {
-	return (this.provider !== 'local' || (password && password.length >= 6));
-};
+function isLocal (doc) {
+    for (var i=0; i<doc.providers.length; i++) {
+        if (doc.providers[i].source === 'local') {
+            return true;
+        }
+    }
+    return false;
+}
 
 /**
  * User Schema
  */
-var UserSchema = new Schema({
+var userSchema = new Schema({
+
 	email: {
 		type: String,
 		trim: true,
 		default: '',
         unique: 'That email is already taken',
 		required: 'An email is required',
-		validate: [validateLocalStrategyProperty, 'Please supply your email'],
 		match: [/.+\@.+\..+/, 'Please fill a valid email address']
 	},
-	realname: {
+	displayname: {
 		type: String,
         default: "",
-        index: false,
 		trim: true
 	},
-	username: {
-		type: String,
-        index: true,
-		trim: true
-	},
-
     password: {
 		type: String,
 		default: '',
-		validate: [validateLocalStrategyPassword, 'Password should be at least 6 characters']
+		validate: [checkPassword, 'Password should be at least 6 characters']
 	},
 	salt: {
 		type: String
 	},
 
-    provider: {
-		type: String,
-        'enum': ['local', 'facebook', 'google', 'twitter', 'linkedin', 'github'],
-		required: 'Provider is required'
-	},
-	providerData: {},
-	additionalProvidersData: {},
+    providers: [
+        {
+            source: {
+		        'type': String,
+                'enum': ['local', 'facebook', 'google', 'twitter', 'linkedin', 'github'],
+		        'required': 'Provider name is required'
+	        },
+            lookup : {
+                type: String,
+                required: 'Need a way to lookup the user within the provider'
+            },
+            _id: false,
+            extra : {}
+        }
+    ],
 
     roles: {
 		type: [{
@@ -74,14 +80,13 @@ var UserSchema = new Schema({
 		default: ['user']
 	},
 
-	created: {
+    created: {
 		type: Date,
 		default: Date.now
 	},
 
 	touched: {
-		type: Date,
-		default: Date.now
+		type: Date
 	},
 
 	resetPassword: {
@@ -94,11 +99,16 @@ var UserSchema = new Schema({
     }
 });
 
+// Primary lookup will be by source and lookup, so index that
+userSchema.index({ "providers.source": 1, "providers.lookup": 1 }, { unique : true });
+
 /**
  * Encrypt the password on a save, if it's changed.
  */
-UserSchema.pre('save', function(next) {
+userSchema.pre('save', function(next) {
     var self = this;
+
+    self.touched = new Date();
 
 	if (!self.isModified('password')) {
 		next();
@@ -129,14 +139,14 @@ UserSchema.pre('save', function(next) {
  * Create instance method for authenticating user
  */
 // Password verification
-UserSchema.methods.authenticate = function (password, callback) {
+userSchema.methods.authenticate = function (password, callback) {
 	bcrypt.compare(password, this.password, callback);
 };
 
 /**
  * find an unused username that is similar to the one given
  */
-UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
+userSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 	var _this = this;
 	var possibleUsername = username + (suffix || '');
 
@@ -156,4 +166,4 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
 	});
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', userSchema);

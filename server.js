@@ -13,7 +13,7 @@ var	path = require('path'),
 	app = require('./server/createApp');
 
 L.debug("Starting server");
-var dbOpen = require('./server/db');
+var dbOpen = require('./server/db').connect();
 
 // first thing is to server static files
 app.use(require('./server/static'));

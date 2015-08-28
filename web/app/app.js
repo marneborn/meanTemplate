@@ -1,6 +1,6 @@
 
 window.registerModule = (function () {
-    'use strict';
+    "use strict";
 
     var APPNAME = 'meanApp';
 

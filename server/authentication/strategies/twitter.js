@@ -1,15 +1,12 @@
-'use strict';
+"use strict";
 
-/**
- * Module dependencies.
- */
-var passport = require('passport'),
-	TwitterStrategy = require('passport-twitter').Strategy,
+var TwitterStrategy = require('passport-twitter').Strategy,
 	config = require('../../config'),
-	users = null; //require('../../app/controllers/users.server.controller');
+    users; // FIXME - tmp
 
-module.exports = function() {
-	// Use twitter strategy
+module.exports.load = function (passport, User) {
+    new User(); // FIXME
+
 	passport.use(new TwitterStrategy({
 			consumerKey: config.twitter.clientID,
 			consumerSecret: config.twitter.clientSecret,
@@ -35,4 +32,5 @@ module.exports = function() {
 			users.saveOAuthUserProfile(req, providerUserProfile, done);
 		}
 	));
+    return module.exports;
 };

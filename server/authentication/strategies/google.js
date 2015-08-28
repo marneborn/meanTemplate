@@ -1,15 +1,12 @@
-'use strict';
+"use strict";
 
-/**
- * Module dependencies.
- */
-var passport = require('passport'),
-	GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
 	config = require('../../config'),
-	user = require('../../user');
+    user; //FIXME placeholder
 
-module.exports = function() {
-	// Use google strategy
+module.exports.load = function (passport, User) {
+    new User();
+
 	passport.use('google', new GoogleStrategy({
 			clientID: config.google.clientID,
 			clientSecret: config.google.clientSecret,
@@ -43,4 +40,5 @@ module.exports = function() {
 			user.saveOAuthUserProfile(req, providerUserProfile, done);
 		}
 	));
+    return module.exports;
 };

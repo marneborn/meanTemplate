@@ -1,15 +1,11 @@
-'use strict';
+"use strict";
 
-/**
- * Module dependencies.
- */
-var passport = require('passport'),
-	FacebookStrategy = require('passport-facebook').Strategy,
+var FacebookStrategy = require('passport-facebook').Strategy,
 	config = require('../../config'),
-	users = null; // require('../../app/controllers/users.server.controller');
+    users; //FIXME placeholder
 
-module.exports = function() {
-	// Use facebook strategy
+module.exports.load = function (passport, User) {
+    new User(); // FIXME placeholder
 	passport.use(new FacebookStrategy({
 			clientID: config.facebook.clientID,
 			clientSecret: config.facebook.clientSecret,
@@ -38,4 +34,5 @@ module.exports = function() {
 			users.saveOAuthUserProfile(req, providerUserProfile, done);
 		}
 	));
+    return module.exports;
 };

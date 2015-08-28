@@ -1,15 +1,12 @@
-'use strict';
+"use strict";
 
-/**
- * Module dependencies.
- */
-var passport = require('passport'),
-	LinkedInStrategy = require('passport-linkedin').Strategy,
+var LinkedInStrategy = require('passport-linkedin').Strategy,
 	config = require('../../config'),
-	users = null; //require('../../app/controllers/users.server.controller');
+    users; // FIXME - tmp
 
-module.exports = function() {
-	// Use linkedin strategy
+module.exports.load = function (passport, User) {
+    new User(); // FIXME
+
 	passport.use(new LinkedInStrategy({
 			consumerKey: config.linkedin.clientID,
 			consumerSecret: config.linkedin.clientSecret,
@@ -39,4 +36,5 @@ module.exports = function() {
 			users.saveOAuthUserProfile(req, providerUserProfile, done);
 		}
 	));
+    return module.exports;
 };

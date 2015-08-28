@@ -1,14 +1,11 @@
-'use strict';
+"use strict";
 
-/**
- * Module dependencies.
+/*
+ * The local strategy is when the user signs up and logs in via a username and password
  */
-var passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy,
-    User = require('mongoose').model('User');
+var LocalStrategy = require('passport-local').Strategy;
 
-module.exports = function() {
-    // Use local strategy
+module.exports.load = function (passport, User) {
 
     passport.use('local', new LocalStrategy({
             usernameField: 'username',
@@ -49,4 +46,18 @@ module.exports = function() {
                     });
                 });
         }));
+    return module.exports;
+};
+
+module.exports.makeUser = function (form) {
+    return {
+        email       : form.email,
+        displayname : form.username, // FIXME - pick some unique+psuedorandom name that isn't the username as the base for this.
+        password    : form.password, // pre-save hook will hash
+        roles       : ['user'],
+        providers   : [{
+            source : 'local',
+            lookup : form.username
+        }]
+    };
 };
