@@ -8,9 +8,9 @@ module.exports.load = function (passport, User) {
     new User();
 
 	passport.use(new GithubStrategy({
-			clientID: config.github.clientID,
-			clientSecret: config.github.clientSecret,
-			callbackURL: config.github.callbackURL,
+			clientID: config.authenticate.github.clientID,
+			clientSecret: config.authenticate.github.clientSecret,
+			callbackURL: config.authenticate.github.callbackURL,
 			passReqToCallback: true
 		},
 		function(req, accessToken, refreshToken, profile, done) {

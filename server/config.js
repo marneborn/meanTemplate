@@ -35,7 +35,8 @@ config.sessions = {
     )
 };
 
-_.extend(config, require('./config/authentication'));
+config.authenticate = {};
+_.extend(config.authenticate, require('./config/authentication'));
 _.merge(config, require('./config/secrets'));
 
 config.isPrd = env === 'production';

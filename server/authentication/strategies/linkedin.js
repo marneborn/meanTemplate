@@ -8,9 +8,9 @@ module.exports.load = function (passport, User) {
     new User(); // FIXME
 
 	passport.use(new LinkedInStrategy({
-			consumerKey: config.linkedin.clientID,
-			consumerSecret: config.linkedin.clientSecret,
-			callbackURL: config.linkedin.callbackURL,
+			consumerKey: config.authenticate.linkedin.clientID,
+			consumerSecret: config.authenticate.linkedin.clientSecret,
+			callbackURL: config.authenticate.linkedin.callbackURL,
 			passReqToCallback: true,
 			profileFields: ['id', 'first-name', 'last-name', 'email-address']
 		},

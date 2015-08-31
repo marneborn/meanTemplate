@@ -7,9 +7,9 @@ var FacebookStrategy = require('passport-facebook').Strategy,
 module.exports.load = function (passport, User) {
     new User(); // FIXME placeholder
 	passport.use(new FacebookStrategy({
-			clientID: config.facebook.clientID,
-			clientSecret: config.facebook.clientSecret,
-			callbackURL: config.facebook.callbackURL,
+			clientID: config.authenticate.facebook.clientID,
+			clientSecret: config.authenticate.facebook.clientSecret,
+			callbackURL: config.authenticate.facebook.callbackURL,
 			passReqToCallback: true
 		},
 		function(req, accessToken, refreshToken, profile, done) {

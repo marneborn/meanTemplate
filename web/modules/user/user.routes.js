@@ -5,18 +5,18 @@
     .config(function ($routeProvider) {
 
         $routeProvider
-        .when('/user', {
-            templateUrl: 'modules/user/views/user.view.html',
-            controller: 'userController',
+        .when('/user/profile', {
+            templateUrl: 'modules/user/profile/profile.view.html',
+            controller: 'profileController',
             controllerAs: 'vm'
         })
         .when('/user/signin', {
-            templateUrl: 'modules/user/views/signin.view.html',
+            templateUrl: 'modules/user/signin/signin.view.html',
             controller: 'signinController',
             controllerAs: 'vm'
         })
         .when('/user/signup', {
-            templateUrl: 'modules/user/views/signup.view.html',
+            templateUrl: 'modules/user/signup/signup.view.html',
             controller: 'signupController',
             controllerAs: 'vm'
         });

@@ -68,7 +68,7 @@ var userSchema = new Schema({
                 required: 'Need a way to lookup the user within the provider'
             },
             _id: false,
-            extra : {}
+            details : {}
         }
     ],
 
@@ -138,32 +138,24 @@ userSchema.pre('save', function(next) {
 /**
  * Create instance method for authenticating user
  */
-// Password verification
 userSchema.methods.authenticate = function (password, callback) {
 	bcrypt.compare(password, this.password, callback);
 };
 
-/**
- * find an unused username that is similar to the one given
- */
-userSchema.statics.findUniqueUsername = function(username, suffix, callback) {
-	var _this = this;
-	var possibleUsername = username + (suffix || '');
+userSchema.methods.getProvider = function (providerName, uniqueID) {
+    var i;
+    for (i=0; i<this.providers.length; i++) {
 
-	_this.findOne({
-		username: possibleUsername
-	}, function(err, user) {
-		if (!err) {
-			if (!user) {
-				callback(possibleUsername);
-			} else {
-				_this.findUniqueUsername(username, (suffix || 0) + 1, callback);
-			}
-		} else {
-            L.err(""+err);
-			callback(null);
-		}
-	});
+        if ( this.providers[i].source !== providerName )
+            continue;
+
+        if (uniqueID != null && this.providers[i].lookup !== uniqueID)
+            continue;
+
+        return this.providers[i];
+    }
+
+    return null;
 };
 
 module.exports = mongoose.model('User', userSchema);

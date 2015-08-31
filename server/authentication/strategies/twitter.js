@@ -8,9 +8,9 @@ module.exports.load = function (passport, User) {
     new User(); // FIXME
 
 	passport.use(new TwitterStrategy({
-			consumerKey: config.twitter.clientID,
-			consumerSecret: config.twitter.clientSecret,
-			callbackURL: config.twitter.callbackURL,
+			consumerKey: config.authenticate.twitter.clientID,
+			consumerSecret: config.authenticate.twitter.clientSecret,
+			callbackURL: config.authenticate.twitter.callbackURL,
 			passReqToCallback: true
 		},
 		function(req, token, tokenSecret, profile, done) {

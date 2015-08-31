@@ -12,16 +12,22 @@ module.exports.load = function (passport, User) {
             passwordField: 'password'
         },
         function(username, password, done) {
-
             User.findOne(
                 {
-                    username: username
+                    providers : {
+                        $elemMatch: {
+                            source: 'local',
+                            lookup: username
+                        }
+                    }
                 },
                 function(err, user) {
+
                     if (err) {
                         done(err);
                         return;
                     }
+
                     if (!user) {
                         done(null, false, {
                             message: 'Unknown user or invalid password'
@@ -52,7 +58,7 @@ module.exports.load = function (passport, User) {
 module.exports.makeUser = function (form) {
     return {
         email       : form.email,
-        displayname : form.username, // FIXME - pick some unique+psuedorandom name that isn't the username as the base for this.
+        displayname : form.username, // FIXME - pick some unique+psuedorandom name that isn't the username as the base for this (like stackoverflow).
         password    : form.password, // pre-save hook will hash
         roles       : ['user'],
         providers   : [{

@@ -1,27 +1,33 @@
 "use strict";
 
 module.exports = {
-    facebook: {
+    facebook: { // FIXME - not handled yet
 		clientID: process.env.FACEBOOK_ID || 'APP_ID',
 		clientSecret: process.env.FACEBOOK_SECRET || 'APP_SECRET',
 		callbackURL: '/auth/facebook/callback'
 	},
-	twitter: {
+	twitter: { // FIXME - not handled yet
 		clientID: process.env.TWITTER_KEY || 'CONSUMER_KEY',
 		clientSecret: process.env.TWITTER_SECRET || 'CONSUMER_SECRET',
 		callbackURL: '/auth/twitter/callback'
 	},
 	google: {
-		clientID: process.env.GOOGLE_ID || 'APP_ID',
-		clientSecret: process.env.GOOGLE_SECRET || 'APP_SECRET',
+		clientID: null, // set in secrets.js
+		clientSecret: null, // set in secrets.js
+        passportArg : {
+            scope: [
+		        'https://www.googleapis.com/auth/userinfo.profile',
+		        'https://www.googleapis.com/auth/userinfo.email'
+	        ]
+        },
 		callbackURL: '/auth/google/callback'
 	},
-	linkedin: {
+	linkedin: { // FIXME - not handled yet
 		clientID: process.env.LINKEDIN_ID || 'APP_ID',
 		clientSecret: process.env.LINKEDIN_SECRET || 'APP_SECRET',
 		callbackURL: '/auth/linkedin/callback'
 	},
-	github: {
+	github: { // FIXME - not handled yet
 		clientID: process.env.GITHUB_ID || 'APP_ID',
 		clientSecret: process.env.GITHUB_SECRET || 'APP_SECRET',
 		callbackURL: '/auth/github/callback'

@@ -37,6 +37,7 @@
 			        .post('user/signup', info, { cache : false })
 			        .success(function(data) {
                         mergeUser(data);
+                        thisUser.isLoggedIn = true;
 			        })
 			        .error(function(data, status) {
 				        console.error("error - "+status+' - '+angular.toJson(data));
@@ -44,12 +45,11 @@
                 }
 
                 /*
+
                  *
                  */
                 function signin (info) {
 			        initUser();
-
-                    console.log("a> "+JSON.stringify(info));
 
                     return $http
                     .post('user/signin', { username : info.username, password : info.password }, { cache : false })
@@ -93,7 +93,7 @@
 		function initUser () {
 		    thisUser = {
                 _id         : null,
-                realName    : "",
+                displayName : "",
                 email       : "",
                 username    : "",
                 provider    : "",
