@@ -33,7 +33,7 @@ module.exports = {
         dev  : distDir+'/js/app.js',
         dist : distDir+'/js/app.min.js',
         src  : findAppJsFiles(),
-        watch: ['web/**/*.js', '!'+distDir+'/**/*']
+        watch: ['web/**/*.js', '!'+distDir+'/**/*.js']
     },
 
     appCss : {

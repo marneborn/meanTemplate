@@ -7,6 +7,7 @@
 module.exports = function ( grunt ) {
 
 	var opn = require('opn'),
+        _ = require('lodash'),
         config = require('../server/config'),
         buildDef = require('../server/config/build-definitions'),
         distDir  = 'web/dist'; // FIXME - get from config
@@ -17,14 +18,14 @@ module.exports = function ( grunt ) {
                 options: {
                     livereload: true
                 },
-                files: [
+                files: _.flatten([
                     'web/**/*.html',
                     'web/**/*.mustache',
                     'web/**/*.{png,jpg,jpeg,gif,webp,svg}',
                     buildDef.appCss.dev,
                     buildDef.appJs.watch,
                     '!'+distDir+'/**/*.js'
-                ]
+                ])
             }
         },
 
