@@ -1,5 +1,29 @@
 "use strict";
 
+/*
+ * Authenticate through google's oath2 service.
+ * To register the app with google:
+ *   goto https://console.developers.google.com/
+ *   drop down -> "Create a project..."
+ *   enter name click 'Create', wait till created
+ *
+ *   "APIs & Auth" -> Credentials -> (Tab) "OAuth consent screen"
+ *      Fill in form
+ *      "Save"
+ *   "APIs & Auth" -> Credentials -> (Tab) "Credientials"
+ *      (Button) "Add credentials"
+ *        Select Web application
+ *          Name : "Local Development
+ *          "Authorized JavaScript origins": http://127.0.0.1:8080
+ *          "Authorized redirect URIs": http://127.0.0.1:8080/auth/google/callback
+ *      If real host known - (Button) "Add credentials"
+ *        Select Web application
+ *          Name : "Deploy"
+ *          "Authorized JavaScript origins": http://the.url
+ *          "Authorized redirect URIs": http://the.url/auth/google/callback
+ *   Get "Client ID" and "Client secret" assigned by google, enter into server/config/secrets.js
+ */
+
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
 	config = require('../../config');
 

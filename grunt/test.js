@@ -1,5 +1,9 @@
 "use strict";
 
+var fs = require('fs'),
+    _ = require('lodash'),
+    minimatch = require("minimatch");
+
 /*
  * Tasks to help with web browser
  */
@@ -45,7 +49,7 @@ module.exports = function ( grunt ) {
                 // add custom Jasmine reporter(s)
                 customReporters: []
             },
-            unit: {
+            'server-unit': {
                 // FIXME - do I really want to load all helpers in all tests?
                 //         should probably split this up...
                 //         or manually load the helpers that I want loaded. (Doing this now useHelpers:false)
@@ -53,29 +57,61 @@ module.exports = function ( grunt ) {
                     useHelpers: false
                 },
                 specs: [
-                    "test/**/unit/**"
+                    "test/server/**/unit/**"
                 ],
                 helpers: [
-                    "test/**/unit/**",
+                    "test/server/**/unit/**",
                     "test/common/**"
                 ]
             }
         },
         watch: {
-            'unit-tests' : {
+            'server-unit' : {
                 options : {
                     atBegin: true
                 },
-                files : [
-                    '**/*.js',
-                    '**/*.json',
-                    '!node_modules/**/*',
-                    '!bower_components/**/*',
-                    // FIXME - to broad?
-                    // FIXME - need to ignore non-unit test helpers and specs
-                ],
-                tasks: ['jasmine_nodejs:unit']
+                files : _.flattenDeep([
+                    // In lieu of ['**/*.js', '!node_modules/**/*'] which is slow (until my glob fixes bubble up to grunt watch)
+                    buildFilesList(process.cwd(), ['#*#', '*~', '.git', '.sass-cache', 'node_modules', 'bower_components', 'notes', 'web', 'scripts'])
+                    .map(function (use) {
+                        if (fs.statSync(use).isDirectory()) {
+                            return [use+"/**/*.js", use+"/**/*.json"];
+                        }
+                        else if (use.match(/\.js(on)?$/)) {
+                            return use;
+                        }
+                        else {
+                            return [];
+                        }
+                    })
+                ]),
+                tasks: ['jasmine_nodejs:server-unit']
+            }
+        },
+        focus: {
+            test : {
+                // FIXME - this should probably have a reporter that only summarizes (unless fails)
+                //         so that all tests can be seen.
+                include : ['server-unit']
             }
         }
+
     });
+
+    grunt.registerTask('dev-test', 'focus:test');
+
+    /*
+     *
+     */
+    function buildFilesList (dir, exclude) {
+        var kids = fs.readdirSync(dir);
+        return kids.filter(function (kid) {
+            for (var i=0; i<exclude.length; i++) {
+                if (minimatch(kid, exclude[i])) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
 };

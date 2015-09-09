@@ -1,6 +1,6 @@
 start /b C:\Users\Mikael\Programming\Tools\ConsoleZ\Console.exe ^
  -t "Git bash" -d C:\Users\Mikael\Programming\meanTemplate ^
- -t PyCmd -d C:\Users\Mikael\Programming\meanTemplate
+ -t PyCmd -d C:\Users\Mikael\Programming\meanTemplate -r C:\Users\Mikael\bin\emacs.bat
 
 start /b C:\Users\Mikael\Programming\Tools\ConsoleZ\Console.exe ^
  -t DB -d C:\Users\Mikael\Programming\mongoDBs\common ^

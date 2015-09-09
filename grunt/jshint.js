@@ -63,7 +63,7 @@ module.exports = function(grunt) {
         watchConfig = {
             // When only rerunning the particular jshint subtask that had a change other sub tasks
             // errors get lost, so rerun all on any change.
-            'jshint': {
+            'dev-jshint': {
                 options: {
                     // need nospawn for grunt.option('force') to propogate to task run by watch
                     nospawn: true,
@@ -79,6 +79,8 @@ module.exports = function(grunt) {
         jshint: jshintConfig,
         watch: watchConfig
     });
+
+    grunt.registerTask("dev-jshint", "watch:dev-jshint");
 
     grunt.registerTask("jshint-all", function () {
         grunt.option("force", true);
