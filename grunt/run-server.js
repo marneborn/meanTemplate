@@ -11,7 +11,7 @@ module.exports = function ( grunt ) {
 				    restartable: "rs",
 				    args: [],
 				    env: {
-					    DEBUG: '*,-send,-connect:dispatcher',
+					    DEBUG: process.env.DEBUG || '*,-send,-connect:dispatcher',
 					    DEBUG_COLOR: 1
 				    },
 				    cwd: path.resolve(__dirname, '..'),
