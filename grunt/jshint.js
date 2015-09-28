@@ -70,7 +70,7 @@ module.exports = function(grunt) {
                     atBegin: true
                 },
                 files: allMyJS,
-                tasks: ['jshint-all']
+                tasks: ['print-break', 'jshint-all']
             }
         };
 
