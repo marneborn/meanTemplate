@@ -2,8 +2,8 @@
 
 var express  = require('express'),
     passport = require('passport'),
-    user     = require('../server/user'),
-    config   = require('../server/config'),
+    user     = require('../user'),
+    config   = require('../config'),
     router   = express.Router();
 
 module.exports = router;
