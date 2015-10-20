@@ -1,0 +1,66 @@
+<section data-ng-if="vm.checkForm()" class="row ng-scope">
+  <h3 class="col-xs-12 text-center">Sign up using your social accounts</h3>
+  <div class="col-xs-12 text-center">
+	<a href="/auth/facebook" class="undecorated-link">
+	  <img src="/images/user/buttons/facebook.png">
+	</a>
+	<a href="/auth/twitter" class="undecorated-link">
+	  <img src="/images/user/buttons/twitter.png">
+	</a>
+	<a href="/auth/google" class="undecorated-link">
+	  <img src="/images/user/buttons/google.png">
+	</a>
+	<a href="/auth/linkedin" class="undecorated-link">
+	  <img src="/images/user/buttons/linkedin.png">
+	</a>
+	<a href="/auth/github" class="undecorated-link">
+	  <img src="/images/user/buttons/github.png">
+	</a>
+  </div>
+  <h3 class="col-xs-12 text-center">Or create an account with us {{vm.emailOK}}</h3>
+  <div class="col-xs-12">
+	<form name="signupForm" data-ng-submit="vm.signup()" class="signup form-horizontal ng-pristine ng-valid" novalidate="" autocomplete="off">
+	  <fieldset>
+		<div class="form-group">
+		  <label for="email" class="hidden-xs col-sm-offset-2 col-sm-2 control-label">Email</label>
+          <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-4">
+            <input validate="false" type="email" name="email" class="form-control ng-pristine ng-valid" data-ng-model="vm.credentials.email" placeholder="Email">
+          </div>
+          <div class="cols-xs-1">
+            <span data-ng-show="vm.emailOK" class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+            <span data-ng-hide="vm.emailOK" class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+          </div>
+		</div>
+		<div class="form-group">
+		  <label for="username" class="hidden-xs col-sm-offset-2 col-sm-2 control-label">Username</label>
+          <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-4">
+		    <input type="username" name="username" class="form-control ng-pristine ng-valid" data-ng-model="vm.credentials.username" placeholder="Username">
+          </div>
+          <div class="cols-xs-1">
+            <span data-ng-show="vm.usernameOK" class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+            <span data-ng-hide="vm.usernameOK" class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+          </div>
+		</div>
+		<div class="form-group">
+		  <label for="password" class="hidden-xs col-sm-offset-2 col-sm-2 control-label">Password</label>
+          <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-4">
+		    <input type="password" name="password" class="form-control ng-pristine ng-valid" data-ng-model="vm.credentials.password" placeholder="Password">
+          </div>
+          <div class="cols-xs-1">
+            <span data-ng-show="vm.passwordOK" class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+            <span data-ng-hide="vm.passwordOK" class="glyphicon glyphicon-remove text-danger" aria-hidden="true"></span>
+          </div>
+		</div>
+		<div class="text-center form-group">
+		  <button data-ng-disabled="!vm.formOK" type="submit" class="btn btn-large btn-primary">Sign up</button>
+          &nbsp; or&nbsp;
+		  <a href="/#/login" class="show-signup">Login</a>
+		</div>
+		<div data-ng-show="error" class="text-center text-danger ng-hide">
+		  <strong data-ng-bind="error" class="ng-binding"></strong>
+		</div>
+	  </fieldset>
+
+	</form>
+  </div>
+</section>

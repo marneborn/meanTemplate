@@ -1,3 +1,5 @@
+"use strict";
+
 var express = require('express'),
 	http    = require('http'),
 	https   = require('https'),
@@ -19,7 +21,7 @@ if (first.enabled) {
 	app.use( function (req, res, next) {
 		// Use my special formatting here and only here.
 		debug.formatArgs = formatArgs;
-		first("URL = "+req.url);
+		first("URL = "+req.method+' '+req.url);
 		debug.formatArgs = origFormat;
 		next();
 	});
@@ -68,6 +70,7 @@ function config2sslOptions (config) {
  *
  */
 function formatArgs () {
+    /* jshint validthis: true */
 	var args     = arguments,
 		name     = this.namespace,
 		fg1Open  = '\u001b[30m', //black
@@ -91,4 +94,4 @@ function formatArgs () {
 		+ fg2Close;
 
 	return args;
-};
+}
