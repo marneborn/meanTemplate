@@ -12,6 +12,12 @@
 
 }
 
+.jumbotron {
+  .mngCoverupBackground {
+    background-color : pink;
+  }
+}
+
 @include if-width-md-lg {
   .marketing {
     padding-left: 0;

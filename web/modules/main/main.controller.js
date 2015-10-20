@@ -12,8 +12,15 @@
     angular.module('meanApp')
     .controller('mainController', MainController);
 
-    function MainController () {
+    MainController.$inject = ['$timeout'];
+    function MainController ($timeout) {
         var vm = this;
+        vm.coverup = true;
+
+        $timeout(function () {
+            vm.coverup = false;
+        },2000);
+
         vm.awesomeThings = [
             'HTML5 Boilerplate',
             'AngularJS',
