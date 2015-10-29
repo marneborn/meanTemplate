@@ -1,0 +1,13 @@
+<script>
+
+(function () {
+  "use strict";
+  angular.module('commonUser')
+  .config(function (userProvider) {
+    userProvider.init(
+      {{{ user }}}
+    );
+  });
+})();
+
+</script>

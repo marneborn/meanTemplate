@@ -1,0 +1,3 @@
+; to find and kill the process listening to a port
+netstat -a -n -o | grep -e PID -e "8080"
+taskkill /F /pid 119732
