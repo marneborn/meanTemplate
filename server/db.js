@@ -2,18 +2,20 @@
 
 /**
  * Module dependencies.
+ * FIXME - don't use the default connection
  */
 var path = require('path'),
     globule = require('globule'),
     BPromise = require('bluebird'),
     mongoose = require('mongoose'),
     config = require('./config'),
-    mtUtils = require('./utils'),
-    uri = mtUtils.makeMongoURI(config.db),
-    L = require('./logger')('db');
+    myUtils = require('./utils'),
+    uri = myUtils.makeMongoURI(config.db),
+    L = require('./logger')('db'),
+    promise = null;
 
-var promise = null;
 module.exports.connect = function () {
+
     if (promise)
         return promise;
 
@@ -36,6 +38,7 @@ module.exports.connect = function () {
         }
 
         function resolveIt () {
+            L.debug('Connection made to: '+uri);
             resolve(mongoose.connection);
             mongoose.connection.removeListener('error', rejectIt);
             mongoose.connection
@@ -51,6 +54,7 @@ module.exports.connect = function () {
         }
 
         function rejectIt (err) {
+            L.err('Connection faile to: '+uri);
             reject(err);
             mongoose.connection.removeListener('open', resolveIt);
             process.removeListener('SIGINT', disconnectIt);
@@ -65,11 +69,14 @@ module.exports.connect = function () {
         process.exit();
     });
 
+    L.debug('Opening connection to: '+uri);
     mongoose.connect(uri);
 
-    globule.find(['models/**/*.js']).forEach(function (file) {
+    globule.find(
+        'server/**/*.model.js'
+    )
+    .forEach(function (file) {
         L.debug("Adding model: "+file);
-        // FIXME - pass in the connection from here
         require(path.resolve(file));
     });
 

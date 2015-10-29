@@ -3,6 +3,5 @@ how to handle provider login when email already exists.
 make provider icons take up less room.
 
 facebook provider
-twitter provider
 github provider
 linkedin provider
