@@ -3,6 +3,7 @@
 var express = require('express'),
     http = require('http'),
     https = require('https'),
+    url = require('url'),
     fs = require('fs'),
     path = require('path'),
     globule = require('globule'),
@@ -27,38 +28,50 @@ var express = require('express'),
     dbPromise = db.connect(),
 
     // declare local variables.
-    opts, i;
+    defaultApp = require('./server/'+config.subApps.default),
+    subApp, opts, i;
 
 require('./server/logIncoming')(app);
 
 app.use(require('./server/static'));
 
 // Parse the request to put the cookie on req.cookie
-// FIXME - move these to the individual routers that need them
 app.use(cookieParser());
 
 // Wait for the body of the request and put it on req.body
-// FIXME - move these to the individual routers that need them
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-require('./server/components/user/authenticate')(app, config.sessions);
+// add passport middleware
+app.use(require('./server/components/user/authenticate')(config.sessions));
 
-// handle component routes here.
-// They should be absolute so won't get into the app specific middleware
-globule.find('server/components/**/*.routes.js')
-.forEach(function (file) {
-    L.debug('Adding routes from: '+file);
-    app.use(require(path.resolve(file)));
-});
-
+// add middleware defining each sub app
 for (i=0; i<config.subApps.list.length; i++) {
-    L.debug('Adding sub-app : '+config.subApps.list[i]);
-    app.use('/'+config.subApps.list[i], require('./server/'+config.subApps.list[i]));
+    subApp = config.subApps.list[i];
+
+    L.debug('Adding sub-app : '+subApp);
+    app.use('/'+subApp, require('./server/'+subApp));
+}
+
+// Common component routes are common for all sup-apps.
+// This is correct for things like '/auth/google/callback', but is it always true?
+for (i=0; i<config.components.length; i++) {
+    globule.find('server/components/'+config.components[i]+'/**/*.routes.js')
+    .forEach(function (file) {
+        L.debug('Adding routes from: '+file);
+        app.use(require(path.resolve(file)));
+    });
 }
 
 L.debug('Setting default app to be '+config.subApps.default);
-app.get('/', require('./server/'+config.subApps.default));
+app.use(function (req, res, next) {
+    if (fromDefaultPage(req)) {
+        defaultApp(req, res, next);
+    }
+    else {
+        next();
+    }
+});
 
 // The very last thing is to send 404
 app.use(function (req, res) {
@@ -124,4 +137,17 @@ function config2sslOptions (config) {
 	}
 
 	return sslOptions;
+}
+
+/*
+ * Check that the referrer is the default page, ie "/"
+ */
+function fromDefaultPage (req) {
+
+    if (!req.headers || !req.headers.referer) {
+        return true;
+    }
+
+    var parsed = url.parse(req.headers.referer);
+    return parsed.path === '/';
 }

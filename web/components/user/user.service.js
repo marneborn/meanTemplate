@@ -16,7 +16,6 @@
 
                 if (user) {
                     mergeUser(user);
-                    console.log(">> "+JSON.stringify(thisUser,null,4));
                     thisUser.isLoggedIn = true;
                 }
             },

@@ -94,8 +94,14 @@ function makeStaticURL (file) {
         return file;
 
     // all apps share one bower_components
-    if (file.indexOf('bower_components') === 0)
+    if (file.indexOf('bower_components/') === 0) {
         return '/'+file;
+    }
+
+    // common components will be have url that starts with /components
+    if (file.indexOf('web/components/') === 0) {
+        return '/'+file.substr(4);
+    }
 
     return path.posix.relative(thisDir, file);
 }

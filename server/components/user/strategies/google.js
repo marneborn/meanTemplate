@@ -24,11 +24,13 @@
  *   Get "Client ID" and "Client secret" assigned by google, enter into server/config/secrets.js
  */
 
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
+var l = require('../../../logger')('user:authenticate:google'),
+    GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
 	config = require('../../../config');
 
 module.exports.load = function (passport, User) {
 
+    l.debug("Adding Google OAuth2");
 	passport.use('google', new GoogleStrategy({
 			clientID: config.authenticate.google.clientID,
 			clientSecret: config.authenticate.google.clientSecret,
@@ -66,6 +68,7 @@ module.exports.load = function (passport, User) {
                 function (err, user) {
 
                     if (err) {
+                        l.err("Problem getting google user: "+err+(err.stack ? "\n"+err.stack : ""));
                         done(err);
                         return;
                     }
@@ -75,16 +78,19 @@ module.exports.load = function (passport, User) {
 
                     // README.txt Handling provider signup case #1
                     if (!user) {
+                        l.debug("Creating new user: "+providerData.displayName);
                         changed = true;
                         user = createNewUser(providerData, User);
                     }
 
                     else {
+                        l.debug("Found user: "+user.displayname);
 
                         existingProvider = user.getProvider('google');
 
                         // README.txt Handling provider signup case #2
                         if (!existingProvider) {
+                            l.debug("Adding goolge auth to existing user");
                             changed = true;
                             user.providers.push({
                                 source : 'google',

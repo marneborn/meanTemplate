@@ -1,16 +1,29 @@
 "use strict";
 
-var session = require('express-session'),
+var express = require('express'),
+	l       = require('../../logger')('user:authenticate'),
+
+    passport = require('passport'),
+    session = require('express-session'),
     mongoStore = require('connect-mongo')({
 		session: session
 	}),
-    passport = require('passport'),
-    User = require('mongoose').model('User');
+    User = require('mongoose').model('User'),
 
-module.exports = function (app, sessInfo) {
+	// create and export the static router
+	router = null;
+
+
+module.exports = function (sessInfo) {
+
+    if (router)
+        return router;
+
+    l.debug("Creating passport middleware");
+    router = express.Router();
 
 	// Express MongoDB session storage
-	app.use(session({
+	router.use(session({
 		saveUninitialized: true,
 		resave: true,
 		secret: sessInfo.secret,
@@ -18,8 +31,8 @@ module.exports = function (app, sessInfo) {
 	}));
 
 	// use passport session
-	app.use(passport.initialize());
-	app.use(passport.session());
+	router.use(passport.initialize());
+	router.use(passport.session());
 
     passport.serializeUser(function(user, done) {
 		done(null, user.id);
@@ -42,4 +55,5 @@ module.exports = function (app, sessInfo) {
     require('./strategies/all')
     .load(passport, User);
 
+    return router;
 };

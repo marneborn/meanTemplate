@@ -54,7 +54,6 @@ module.exports = function ( grunt ) {
     }
 
     gruntConfig.watch.livereload.files.push('web/**/*.html');
-    console.log(JSON.stringify(gruntConfig,null,4));
 	grunt.config.merge(gruntConfig);
 
 	grunt.task.registerTask('open-browser', 'open the browser to the front page', function (page) {

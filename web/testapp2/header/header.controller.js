@@ -10,7 +10,7 @@
 
         // FIXME: remove isLoggedIn and username from here and view
         vm.isLoggedIn = user.isLoggedIn;
-        vm.userName   = user.info().username;
+        vm.userName   = user.get('username');
         vm.isActive   = isActive;
         vm.doLogout   = logout;
 

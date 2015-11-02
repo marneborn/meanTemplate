@@ -7,7 +7,7 @@ var _ = require('lodash'),
     mongoose = require('mongoose'),
     Schema   = mongoose.Schema,
 	bcrypt   = require('bcrypt'),
-    L        = require('../logger')('models:User'),
+    L        = require('../../logger')('user:model'),
     HASH_ROUNDS = 10;
 
 /**

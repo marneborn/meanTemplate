@@ -61,15 +61,11 @@
             vm.error = '';
 
             user.update(info)
-            .then(function () {
-                console.log("done");
-            })
             .catch(function (errs) {
                 vm.error = errs.join(",");
                 // FIXME - this should look better
             })
             .finally(function () {
-                console.log("done2");
                 vm.dataLoading = false;
                 vm.success = 'Changes saved';
             });
