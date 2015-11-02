@@ -26,12 +26,8 @@ var express = require('express'),
     db = require('./server/db'),
     dbPromise = db.connect(),
 
-    // load apps hosted on this site
-    testapp1 = require('./server/testapp1'),
-    testapp2 = require('./server/testapp2'),
-
     // declare local variables.
-    opts;
+    opts, i;
 
 require('./server/logIncoming')(app);
 
@@ -56,15 +52,13 @@ globule.find('server/components/**/*.routes.js')
     app.use(require(path.resolve(file)));
 });
 
-// FIXME - find programatically
-L.debug('Adding sub-app : testapp1');
-app.use('/testapp1', testapp1);
-L.debug('Adding sub-app : testapp2');
-app.use('/testapp2', testapp2);
+for (i=0; i<config.subApps.list.length; i++) {
+    L.debug('Adding sub-app : '+config.subApps.list[i]);
+    app.use('/'+config.subApps.list[i], require('./server/'+config.subApps.list[i]));
+}
 
-// testapp1 is the default app
-L.debug('Setting default app to be testapp1');
-app.get('/', testapp1);
+L.debug('Setting default app to be '+config.subApps.default);
+app.get('/', require('./server/'+config.subApps.default));
 
 // The very last thing is to send 404
 app.use(function (req, res) {

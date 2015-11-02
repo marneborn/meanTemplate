@@ -2,12 +2,15 @@
 
 (function () {
   "use strict";
-  angular.module('commonUser')
-  .config(function (userProvider) {
-    userProvider.init(
-      {{{ user }}}
-    );
-  });
+
+  var moduleName = 'commonUser';
+
+  window.registerModule(moduleName)
+    .config(function (userProvider) {
+      userProvider.init(
+ {{{ user }}}
+      );
+    });
 })();
 
 </script>

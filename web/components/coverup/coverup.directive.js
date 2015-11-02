@@ -6,20 +6,20 @@
     "use strict";
 
     // First need to register this module with the main app.
-    var moduleName = 'mngCoverup';
-    window.registerModule(moduleName, []);
+    var moduleName = 'mngCoverup',
 
-	// Need to create some default styles, want them in a style sheet so that they can be
-	// over written in the apps css file.
-	var cssTitle = "mngCoverupStyleSheet";
+	    // Need to create some default styles, want them in a style sheet so that they can be
+	    // over written in the apps css file.
+	    cssTitle = "mngCoverupStyleSheet",
 
-	// The zIndex to apply to the divs created.
-	// This needs to be higher than the zIndex of other siblings...
-	// FIXME: look at all siblings and set the zindex accordingly???
-	// FIXME: along with that, add an attribute to skip zindex checking mng-coverup-clickable???
-	var zIndex   = 1000;
+	    // The zIndex to apply to the divs created.
+	    // This needs to be higher than the zIndex of other siblings...
+	    // FIXME: look at all siblings and set the zindex accordingly???
+	    // FIXME: along with that, add an attribute to skip zindex checking mng-coverup-clickable???
+	    zIndex   = 1000;
 
-	angular.module(moduleName).directive('mngCoverup', MngCoverup);
+    window.registerModule(moduleName)
+    .directive('mngCoverup', MngCoverup);
 
     MngCoverup.$inject = ['$q', '$window'];
     function MngCoverup ($q, $window) {
@@ -42,7 +42,7 @@
 			'<div ng-transclude class="mngCoverupContent"></div>'+
 			'</div>',
 
-			link : mngCoverupLink
+			link : link
 		};
 
         /*
@@ -107,7 +107,7 @@
         /*
          * The angular directive link function. This handles the needed DOM manipulation.
          */
-	    function mngCoverupLink ( scope, element, attrs ) {
+	    function link ( scope, element, attrs ) {
 
             setDefaults(scope);
 

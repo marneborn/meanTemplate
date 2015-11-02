@@ -3,21 +3,30 @@
 var express = require('express'),
 	path    = require('path'),
 	l       = require('./logger')('static'),
+    config  = require('./config'),
 
 	// create and export the static router
 	router = module.exports = express.Router();
 
 // First simply look for the files using the basic static middleware
+// sub-app specific stuff should be found here.
+// They are relative to the sub-app directory
 router.use(express.static(path.resolve('web')));
-// common components are looked for with an absolute path and is relative to web/components
+
+// Want to be able to find stuff in the default app without the appname in the url
+router.use(express.static(path.resolve('web/'+config.subApps.default)));
+
+// common components are located under web/components, not the subapp
+router.use(
+    '/components',
+    express.static(path.resolve('web/components'))
+);
 router.use(express.static(path.resolve('web/components')));
-// testapp1 is the default, so need to find /testapp1/some/static and /some/static
-router.use(express.static(path.resolve('web/testapp1')));
 
 // vendor stuff is handled by bower
 router.use(
     '/bower_components',
-    express.static('./bower_components')
+    express.static(path.resolve('bower_components'))
 );
 
 // for all .js and .css files that aren't found by the static route, return 404 with an empty body

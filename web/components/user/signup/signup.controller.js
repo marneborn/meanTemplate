@@ -2,9 +2,8 @@
     "use strict";
 
     var moduleName = 'commonUser';
-    window.registerModule(moduleName);
 
-    angular.module(moduleName)
+    window.registerModule(moduleName)
     .controller('signupController', SignupController);
 
     function SignupController ($http, $location, user) {

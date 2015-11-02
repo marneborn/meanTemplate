@@ -11,7 +11,8 @@ var pkg  = require('../../package.json'),
         port         : process.env.PORT || 8080,
         db           : require('./db'),
         sessions     : require('./sessions'),
-        authenticate : require('./authenticate')
+        authenticate : require('./authenticate'),
+        subApps      : require('./subApps')
     };
 
 module.exports = config;

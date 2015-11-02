@@ -2,9 +2,8 @@
     "use strict";
 
     var moduleName = 'commonUser';
-    window.registerModule(moduleName);
 
-    angular.module(window.APPNAME)
+    window.registerModule(moduleName)
     .controller('profileController', ProfileController);
 
     function ProfileController ($location, $scope, $timeout, user) {

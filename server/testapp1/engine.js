@@ -98,8 +98,9 @@ function makeStaticURL (file) {
         return '/'+file;
     }
 
+    // common components will be have url that starts with /components
     if (file.indexOf('web/components/') === 0) {
-        return file.substr(4);
+        return '/'+file.substr(4);
     }
 
     return path.posix.relative(thisDir, file);
