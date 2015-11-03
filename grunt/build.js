@@ -8,7 +8,8 @@ var globule = require('globule');
 //---------------------------------------------------------------------------
 module.exports = function(grunt) {
 
-    var buildDefs = globule.find('server/**/build-definitions.js'),
+    var serverConfig = require('../server/config'),
+
         gruntConfig = {
 
             clean: {
@@ -45,59 +46,57 @@ module.exports = function(grunt) {
             }
 
         },
-        annotated, i, buildDef, distDir;
+        annotated, i, subAppConfig;
 
-    for (i=0; i<buildDefs.length; i++) {
+    for (i=0; i<serverConfig.subApps.list.length; i++) {
 
-        buildDef = require('../'+buildDefs[i]);
-        distDir = buildDef.distDir;
+        subAppConfig = require('../server/'+serverConfig.subApps.list[i]+'/config');
 
         //---------------------------------------------------------------------------
-        gruntConfig.clean['pre-build'].push(distDir);
+        gruntConfig.clean['pre-build'].push(subAppConfig.distDir);
 
         //---------------------------------------------------------------------------
         // Setup for sass build
-        gruntConfig.sass.dev.files[buildDef.appCss.dev]  = buildDef.appCss.src;
+        gruntConfig.sass.dev.files[subAppConfig.appCss.dev]  = subAppConfig.appCss.src;
         gruntConfig.sass.dev.options = {
             style: 'expanded'
         };
-        gruntConfig.sass.dist.files[buildDef.appCss.dist] = buildDef.appCss.src;
+        gruntConfig.sass.dist.files[subAppConfig.appCss.dist] = subAppConfig.appCss.src;
         gruntConfig.sass.dist.options = {
             style: 'compressed',
             sourcemap: 'none'
         };
 
-        gruntConfig.cssmin.dist.files[buildDef.vendorCss.dist] = buildDef.vendorCss.src;
-        // FIXME - can this be autodetected? Or put in build-definitions?
+        gruntConfig.cssmin.dist.files[subAppConfig.vendorCss.dist] = subAppConfig.vendorCss.src;
+
+        // FIXME - can this be autodetected? Or put in config
         gruntConfig.copy.bootstrap.files.push({
             expand: true,
             cwd: 'bower_components/bootstrap/dist',
             src: 'fonts/*',
-            dest: distDir
+            dest: subAppConfig.distDir
         });
 
         // For auto sassing.
         gruntConfig.clean['built-css'] = [
-            buildDef.appCss.dev,
-            buildDef.appCss.dev+".map"
+            subAppConfig.appCss.dev,
+            subAppConfig.appCss.dev+".map"
         ];
 
         //---------------------------------------------------------------------------
         // setup for js build
-        annotated = buildDef.appJs.dist.replace(/(\.min)?\.js$/, '.ngAnn.js');
+        annotated = subAppConfig.appJs.dist.replace(/(\.min)?\.js$/, '.ngAnn.js');
         gruntConfig.clean['post-build'].push(annotated);
 
-        gruntConfig.ngAnnotate.dist.files[annotated] = buildDef.appJs.src;
+        gruntConfig.ngAnnotate.dist.files[annotated] = subAppConfig.appJs.src;
         gruntConfig.ngAnnotate.dist.options = {
-            // FIXME - sourceMap not supported in many-to-one, is it needed in dist?
-            //         to enable annotate each file separately then join in uglify.
             sourceMap : false
         };
 
         //---------------------------------------------------------------------------
-        gruntConfig.uglify.dist.files[buildDef.appJs.dist]    = annotated;
-        gruntConfig.uglify.dist.files[buildDef.shimJs.dist]   = buildDef.shimJs.src;
-        gruntConfig.uglify.dist.files[buildDef.vendorJs.dist] = buildDef.vendorJs.src;
+        gruntConfig.uglify.dist.files[subAppConfig.appJs.dist]    = annotated;
+        gruntConfig.uglify.dist.files[subAppConfig.shimJs.dist]   = subAppConfig.shimJs.src;
+        gruntConfig.uglify.dist.files[subAppConfig.vendorJs.dist] = subAppConfig.vendorJs.src;
         gruntConfig.uglify.dist.options = {
 	        mangle: false
         };

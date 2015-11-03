@@ -9,8 +9,8 @@ module.exports = function ( grunt ) {
 	var opn = require('opn'),
         globule = require('globule'),
         _ = require('lodash'),
-        config = require('../server/config'),
-        buildDefs = globule.find('server/**/build-definitions.js'),
+        serverConfig = require('../server/config'),
+
         gruntConfig = {
             watch : {
                 'sass-dev': {
@@ -31,25 +31,24 @@ module.exports = function ( grunt ) {
                 }
             }
         },
-        i, buildDef, distDir;
+        i, subAppConfig;
 
-    for (i=0; i<buildDefs.length; i++) {
+    for (i=0; i<serverConfig.subApps.list.length; i++) {
 
-        buildDef = require('../'+buildDefs[i]);
-        distDir = buildDef.distDir;
+        subAppConfig = require('../server/'+serverConfig.subApps.list[i]+'/config');
 
         Array.prototype.push.apply(
             gruntConfig.watch['sass-dev'].files,
-            buildDef.appCss.watch
+            subAppConfig.appCss.watch
         );
 
         Array.prototype.push.apply(
             gruntConfig.watch.livereload.files,
-            buildDef.appJs.src
+            subAppConfig.appJs.src
         );
         gruntConfig.watch.livereload.files.push(
-            buildDef.appCss.dev,
-            buildDef.appCss.dist
+            subAppConfig.appCss.dev,
+            subAppConfig.appCss.dist
         );
     }
 
@@ -63,7 +62,7 @@ module.exports = function ( grunt ) {
 		if (!page)
 			page = '';
 
-		opn("http://"+config.host+":"+config.port, done);
+		opn("http://"+serverConfig.host+":"+serverConfig.port, done);
 	});
 
     grunt.registerTask('dev-browser'  , ['open-browser', 'focus:dev-browser']);

@@ -23,7 +23,7 @@ globule.find(
     app.use(require(path.resolve(file)));
 });
 
-require('./engine')(app);
+require('../subAppUtils/engine')(app, subConfig);
 
 // The very last thing is to send 404
 app.use(function (req, res) {

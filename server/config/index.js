@@ -15,7 +15,8 @@ module.exports = config = {
     sessions     : require('./sessions'),
     authenticate : require('./authenticate'),
     subApps      : require('./subApps'),
-    components   : require('./components')
+    components   : require('./components'),
+    build        : require('./build')
 };
 
 // remove leading and trailing quotes
