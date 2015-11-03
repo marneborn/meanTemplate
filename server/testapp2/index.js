@@ -26,17 +26,4 @@ globule.find(
 require('../subAppUtils/engine')(app, subConfig);
 
 // The very last thing is to send 404
-app.use(function (req, res) {
-    L.debug('Unhandled request: '+req.url+' - '+JSON.stringify(req.headers));
-
-	res.status(404);
-    if (req.accepts('html')) {
-        res.sendFile(path.resolve('web/404.html'));
-    }
-    else if (req.accepts('json')) {
-        res.json({ error : 'not a valid endpoint: '+req.url });
-    }
-    else {
-        res.end();
-    }
-});
+app.use(require('../404'));
