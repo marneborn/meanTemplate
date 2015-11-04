@@ -5,8 +5,7 @@ var _ = require('lodash'),
     name         = 'testapp2',
     components   = [
         'user',
-        'coverup',
-        'checkPassword'
+        'mngCoverup'
     ],
 
     L = require('../logger')(name+':config'),

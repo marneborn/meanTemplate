@@ -20,7 +20,7 @@ module.exports = {
 function signout (req, res) {
 	req.logout();
     res.status(200).end();
-};
+}
 
 function signup (req, res) {
 
@@ -46,7 +46,7 @@ function signup (req, res) {
 			res.json(user);
 		});
 	});
-};
+}
 
 /**
  * Signin after passport authentication
@@ -69,12 +69,12 @@ function signin (req, res, next) {
             });
         }
     })(req, res, next);
-};
+}
 
 /*
  *
  */
-function update (req, res, next) {
+function update (req, res) {
 
     var props = Object.keys(req.body);
     for (var i=0; i<props.length; i++) {
@@ -121,7 +121,7 @@ function providerLogin (strategy) {
 			});
 		})(req, res, next);
     };
-};
+}
 
 /**
  * Remove OAuth provider
@@ -157,4 +157,4 @@ function removeOAuthProvider (req, res) {
 			}
 		});
 	}
-};
+}

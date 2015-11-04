@@ -71,8 +71,19 @@ module.exports = function ( grunt ) {
                     atBegin: true
                 },
                 files : _.flattenDeep([
-                    // In lieu of ['**/*.js', '!node_modules/**/*'] which is slow (until my glob fixes bubble up to grunt watch)
-                    buildFilesList(process.cwd(), ['#*#', '*~', '.git', '.sass-cache', 'node_modules', 'bower_components', 'notes', 'web', 'scripts'])
+                    // In lieu of ['**/*.js', '!node_modules/**/*']
+                    // which is slow (until my glob fixes bubble up to grunt watch)
+                    buildFilesList(process.cwd(), [
+                        '#*#',
+                        '*~',
+                        '.git',
+                        '.sass-cache',
+                        'node_modules',
+                        'bower_components',
+                        'notes',
+                        'web',
+                        'scripts'
+                    ])
                     .map(function (use) {
                         if (fs.statSync(use).isDirectory()) {
                             return [use+"/**/*.js", use+"/**/*.json"];

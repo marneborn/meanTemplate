@@ -7,7 +7,6 @@ var express = require('express'),
     fs = require('fs'),
     path = require('path'),
     globule = require('globule'),
-    _ = require('lodash'),
     BPromise = require('bluebird'),
 
     // uses debug module to print messages to screen if DEBUG contains 'server'
@@ -57,10 +56,12 @@ for (i=0; i<config.subApps.list.length; i++) {
 // This is correct for things like '/auth/google/callback', but is it always true?
 for (i=0; i<config.components.length; i++) {
     globule.find('server/components/'+config.components[i]+'/**/*.routes.js')
+    /* jshint -W083 */
     .forEach(function (file) {
         L.debug('Adding routes from: '+file);
         app.use(require(path.resolve(file)));
     });
+    /* jshint +W083 */
 }
 
 L.debug('Setting default app to be '+config.subApps.default);

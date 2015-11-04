@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg     : pkg,
 		// maybe search %PATH% instead?
-		nodemon : (process.platform === 'win32')
+		nodemon : process.platform === 'win32'
 			? process.env.USERPROFILE+"\\AppData\\Roaming\\npm\\nodemon.cmd"
 			: 'nodemon'
 

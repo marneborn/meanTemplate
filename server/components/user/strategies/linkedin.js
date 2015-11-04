@@ -5,36 +5,41 @@ var LinkedInStrategy = require('passport-linkedin').Strategy,
     users; // FIXME - tmp
 
 module.exports.load = function (passport, User) {
-    new User(); // FIXME
 
-	passport.use(new LinkedInStrategy({
-			consumerKey: config.authenticate.linkedin.clientID,
-			consumerSecret: config.authenticate.linkedin.clientSecret,
-			callbackURL: config.authenticate.linkedin.callbackURL,
-			passReqToCallback: true,
-			profileFields: ['id', 'first-name', 'last-name', 'email-address']
-		},
-		function(req, accessToken, refreshToken, profile, done) {
-			// Set the provider data and include tokens
-			var providerData = profile._json;
-			providerData.accessToken = accessToken;
-			providerData.refreshToken = refreshToken;
+    new User() /* jshint ignore:line */
 
-			// Create the user OAuth profile
-			var providerUserProfile = {
-				firstName: profile.name.givenName,
-				lastName: profile.name.familyName,
-				displayName: profile.displayName,
-				email: profile.emails[0].value,
-				username: profile.username,
-				provider: 'linkedin',
-				providerIdentifierField: 'id',
-				providerData: providerData
-			};
+	passport.use(
+        new LinkedInStrategy(
+            {
+		        consumerKey: config.authenticate.linkedin.clientID,
+		        consumerSecret: config.authenticate.linkedin.clientSecret,
+		        callbackURL: config.authenticate.linkedin.callbackURL,
+		        passReqToCallback: true,
+		        profileFields: ['id', 'first-name', 'last-name', 'email-address']
+	        },
 
-			// Save the user OAuth profile
-			users.saveOAuthUserProfile(req, providerUserProfile, done);
-		}
-	));
+		    function(req, accessToken, refreshToken, profile, done) { /* jshint ignore:line */
+
+			    // Set the provider data and include tokens
+			    var providerData = profile._json;
+			    providerData.accessToken = accessToken;
+			    providerData.refreshToken = refreshToken;
+
+			    // Create the user OAuth profile
+			    var providerUserProfile = {
+				    firstName: profile.name.givenName,
+				    lastName: profile.name.familyName,
+				    displayName: profile.displayName,
+				    email: profile.emails[0].value,
+				    username: profile.username,
+				    provider: 'linkedin',
+				    providerIdentifierField: 'id',
+				    providerData: providerData
+			    };
+
+			    // Save the user OAuth profile
+			    users.saveOAuthUserProfile(req, providerUserProfile, done);
+		    }
+	    ));
     return module.exports;
 };

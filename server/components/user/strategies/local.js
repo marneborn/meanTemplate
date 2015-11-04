@@ -58,7 +58,8 @@ module.exports.load = function (passport, User) {
 module.exports.makeUser = function (form) {
     return {
         email       : form.email,
-        displayname : form.username, // FIXME - pick some unique+psuedorandom name that isn't the username as the base for this (like stackoverflow).
+        // FIXME - pick some unique+psuedorandom name that isn't the username as the base for this.
+        displayname : form.username,
         password    : form.password, // pre-save hook will hash
         roles       : ['user'],
         providers   : [{

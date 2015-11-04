@@ -7,8 +7,6 @@
 module.exports = function ( grunt ) {
 
 	var opn = require('opn'),
-        globule = require('globule'),
-        _ = require('lodash'),
         serverConfig = require('../server/config'),
 
         gruntConfig = {

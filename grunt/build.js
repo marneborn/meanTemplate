@@ -3,8 +3,6 @@
 // FIXME - imagemin, svgmin???
 // FIXME - need to handle relative paths in .scss files? smart copy?
 
-var globule = require('globule');
-
 //---------------------------------------------------------------------------
 module.exports = function(grunt) {
 
@@ -42,7 +40,10 @@ module.exports = function(grunt) {
 
             build : {
                 css:  ['clean:built-css', 'sass:dev'],
-                dist: ['clean:pre-build', 'sass:dev', 'sass:dist', 'cssmin:dist', 'ngAnnotate:dist', 'uglify:dist', 'copy:bootstrap', 'clean:post-build']
+                dist: [
+                    'clean:pre-build', 'sass:dev', 'sass:dist', 'cssmin:dist',
+                    'ngAnnotate:dist', 'uglify:dist', 'copy:bootstrap', 'clean:post-build'
+                ]
             }
 
         },

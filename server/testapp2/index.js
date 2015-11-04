@@ -1,12 +1,9 @@
 "use strict";
 
 var path = require('path'),
-    _ = require('lodash'),
     globule = require('globule'),
-    BPromise = require('bluebird'),
     express = require('express'),
     subConfig = require('./config'),
-    components = ['user'],
     thisDir = 'server/'+subConfig.name,
 	L = require('../logger')(subConfig.name),
     app = express();

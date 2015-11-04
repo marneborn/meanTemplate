@@ -42,7 +42,7 @@
 
         function update () {
 
-            var info = new Object();
+            var info = {};
 
             if (vm.displayname !== user.get('displayname')) {
                 info.displayname = vm.displayname;
