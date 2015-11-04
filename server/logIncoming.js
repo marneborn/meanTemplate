@@ -28,9 +28,10 @@ module.exports = function (app) {
  * method override for formatting incoming requests.
  */
 function formatArgs () {
-    /* jshint validthis: true */
-	var args     = arguments,
-		name     = this.namespace,
+
+	var self     = this, /* jshint ignore:line */
+        args     = arguments,
+		name     = self.namespace,
 		bgOpen   = '\u001b[41m', // red background
 		bgClose  = '\u001b[49m',
 		fg1Open  = '\u001b[30m', // black foreground
@@ -48,7 +49,7 @@ function formatArgs () {
 		+ args[0]
 		+ fg2Open
 		+ ' +'
-		+ debug.humanize(this.diff)
+		+ debug.humanize(self.diff)
 		+ fg2Close;
 
 	return args;

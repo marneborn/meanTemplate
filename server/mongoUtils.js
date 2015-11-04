@@ -2,6 +2,11 @@
 
 module.exports.parseError = parseError;
 
+var parseFunctions = {
+    ValidationError : handleValidationError,
+    MongoError : handleMongoError
+};
+
 /*
  *
  */
@@ -11,56 +16,72 @@ function parseError (err) {
     if (!err)
         return null;
 
-    var obj,
-        fields, op,
-        i, match, coll, iname, val;
+    if (!parseFunctions[err.name]) {
+        return { _type : "Unknown Error" };
+    }
 
-    if (err.name === 'ValidationError') {
+    return parseFunctions[err.name](err);
+}
 
-        fields = Object.keys(err.errors);
+/*
+ *
+ */
+function handleValidationError (err) {
+
+    var fields = Object.keys(err.errors),
         obj = {
             _type : err.name,
             errors : {}
+        },
+        i;
+
+    for (i=0; i<fields.length; i++) {
+        obj.errors[fields[i]] = err.errors[fields[i]].message;
+    }
+
+    return obj;
+}
+
+/*
+ *
+ */
+function handleMongoError (err) {
+    var match = err.errmsg.match(/^E11000 duplicate key error index: \S+\.(\S+)\.\$(\S+) dup key:\s*(\.*)/),
+        coll, iname, val, op;
+
+    if (!match) {
+        return null;
+    }
+
+
+    coll  = match[1];
+    iname = match[2];
+    val   = match[3];
+    op    = err.getOperation();
+
+    if (coll === 'users' && iname === 'email_1') {
+        return {
+            _type: 'Duplicate',
+            values : {
+                email : op.email
+            }
         };
-
-        for (i=0; i<fields.length; i++) {
-            obj.errors[fields[i]] = err.errors[fields[i]].message;
-        }
     }
 
-    else if (err.name === 'MongoError' ) {
-        match = err.errmsg.match(/^E11000 duplicate key error index: \S+\.(\S+)\.\$(\S+) dup key:\s*(\.*)/);
-        if (match) {
-            coll  = match[1];
-            iname = match[2];
-            val   = match[3];
-            op    = err.getOperation();
-            if (coll === 'users' && iname === 'email_1') {
-                obj = {
-                    _type: 'Duplicate',
-                    values : {
-                        email : op.email
-                    }
-                };
+    else if (coll === 'users' && iname === 'providers.source_1_providers.lookup_1') {
+        return {
+            _type: 'Duplicate',
+            values : {
+                source : op.providers[err.index].source,
+                lookup : op.providers[err.index].lookup
             }
-
-            else if (coll === 'users' && iname === 'providers.source_1_providers.lookup_1') {
-                obj = {
-                    _type: 'Duplicate',
-                    values : {
-                        source : op.providers[err.index].source,
-                        lookup : op.providers[err.index].lookup
-                    }
-                };
-            }
-
-            else {
-                obj = {
-                    _type: 'Unkown Duplicate'
-                };
-            }
-        }
+        };
     }
 
-    return obj || { _type : "Unknown Error" };
+    else {
+        return {
+            _type: 'Unkown Duplicate'
+        };
+    }
+
 }

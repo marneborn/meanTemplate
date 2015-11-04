@@ -8,29 +8,75 @@ module.exports = function(grunt) {
     var allMyJS = getAllMyJS(['node_modules', 'bower_components', '.git', '.sass-cache']),
         jshintConfig = {
             options : {
-                laxbreak: true,
-                esnext: true,
-                bitwise: true,
-                camelcase: true,
-                curly: false,
-                eqeqeq: true,
-                eqnull: true,
-                immed: true,
-                indent: 2,
-                newcap: true,
-                noarg: true,
-                regexp: true,
-                undef: true,
-                unused: true,
-                strict: true,
-                trailing: true,
-                smarttabs: true,
-                latedef: "nofunc",
+
+				maxerr : 9999,
+
+				// Enforcing options
+				// When set to true, these options will make JSHint produce more warnings about your code.
+				bitwise : true,
+				camelcase : false,
+				curly : false,
+				eqeqeq : true,
+// 				es5 : true,
+				forin : true,
+				freeze : true,
+				futurehostile : true,
+				immed : true,
+				indent : true,
+				iterator : true,
+				latedef : "nofunc", // OK to define functions late, but not variables
+				maxcomplexity : 8,
+				maxdepth : 4,
+				maxlen : 110,
+				maxparams : 4,
+				maxstatements : 25,
+				newcap : true,
+				noarg : true,
+				nocomma : true,
+				noempty : false, // OK to have explicit empty blocks like : {}
+				nonbsp : true,
+				nonew : true,
+				quotmark : false,
+				shadow : true,
+				singleGroups : true,
+				strict  : true,
+				undef : true,
+				unused : true,
+
+				// Relaxing options
+				// When set to true, these options will make JSHint produce fewer warnings about your code.
+				asi : false,
+				boss : false,
+				debug : false,
+				elision : false,
+				eqnull : true,
+				esnext : false,
+				evil : false,
+				expr : false,
+				globalstrict : false,
+				lastsemic : false,
+				laxbreak : true, // Allow things like '.', '+', '||' at start of continued line
+				laxcomma : true, // Allow comma at start of next line instead of end of previous.
+				loopfunc : false,
+				moz : false,
+				multistr : false,
+				noyield : false,
+				plusplus : false,
+				proto : false,
+				scripturl : false,
+				sub : false,
+				supernew : false,
+				validthis : false,
+				withstmt : false,
+
+				// Environment
+                // These options let JSHint know about some pre-defined global variables.
                 devel: !process.env.NODE_ENV || process.env.NODE_ENV === 'develop'
+
             },
             web : {
                 // FIXME - get web/dist from config
-                src: ['web/**/*.js', '!web/dist/**/*'],
+                src: ['web/**/*.js', '!web/**/dist/**/*'],
                 options: {
                     browser: true,
                     jquery: true,
@@ -40,7 +86,7 @@ module.exports = function(grunt) {
                 }
             },
             server : {
-                src: ['server.js', 'routes/**/*.js', 'server/**/*.js', 'models/**/*.js'],
+                src: ['server.js', 'server/**/*.js'],
                 options: {
                     node: true
                 }
@@ -92,39 +138,47 @@ module.exports = function(grunt) {
         );
     });
 
-    grunt.registerTask("jshint-coverage", "Check that all js files are checked by one of the jshint targets", function () {
+    grunt.registerTask(
+        "jshint-coverage",
+        "Check that all js files are checked by one of the jshint targets",
+        function () {
 
-        var jshint   = grunt.config.get('jshint'),
-            covered  = Array.prototype.concat.apply(
-                [],
-                Object.keys(jshint)
-                .map(function (key) {
+            var jshint   = grunt.config.get('jshint'),
+                covered  = Array.prototype.concat.apply(
+                    [],
+                    Object.keys(jshint)
+                    .map(function (key) {
 
-                    if (key === 'options')
-                        return [];
+                        if (key === 'options')
+                            return [];
 
-                    return grunt.file.expand(jshint[key].src);
-                })
-            ),
-            expected   = grunt.file.expand(allMyJS),
-            notcovered = _.difference(expected, covered),
-            extra      = _.difference(covered, expected);
+                        return grunt.file.expand(jshint[key].src);
+                    })
+                ),
+                expected   = grunt.file.expand(allMyJS),
+                notcovered = _.difference(expected, covered),
+                extra      = _.difference(covered, expected);
 
-        if (notcovered.length === 0) {
-            grunt.log.ok("All .js files (excluding vendor) are covered by jshint");
+            if (notcovered.length === 0) {
+                grunt.log.ok("All .js files (excluding vendor) are covered by jshint");
+            }
+            else {
+                grunt.log.error("Files not covered by jshint");
+                grunt.log.error(":   "+notcovered.join("\n:   ")+"\n");
+            }
+
+            if (extra.length !== 0) {
+                grunt.log.error(
+                    "Number of files jshint-ed, but not written by us: "
+                        +extra.length
+                        +" (use --verbose for list)"
+                );
+                grunt.log.verbose(":   "+extra.join("\n:   ")+"\n");
+            }
+
+            return;
         }
-        else {
-            grunt.log.error("Files not covered by jshint");
-            grunt.log.error(":   "+notcovered.join("\n:   ")+"\n");
-        }
-
-        if (extra.length !== 0) {
-            grunt.log.error("Number of files jshint-ed, but not written by us: "+extra.length+" (use --verbose for list)");
-            grunt.log.verbose(":   "+extra.join("\n:   ")+"\n");
-        }
-
-        return;
-    });
+    );
 };
 
 /*
@@ -144,7 +198,7 @@ function getAllMyJS (excludeDir) {
             .map(function (thing) {
                 return thing+"/**/*.js";
             }),
-            "!web/dist/**/*.js"
+            "!web/**/dist/**/*.js"
         ]
     );
 }

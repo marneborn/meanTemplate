@@ -5,14 +5,19 @@ var FacebookStrategy = require('passport-facebook').Strategy,
     users; //FIXME placeholder
 
 module.exports.load = function (passport, User) {
-    new User(); // FIXME placeholder
-	passport.use(new FacebookStrategy({
+
+    new User() /* jshint ignore:line */
+
+	passport.use(new FacebookStrategy(
+        {
 			clientID: config.authenticate.facebook.clientID,
 			clientSecret: config.authenticate.facebook.clientSecret,
 			callbackURL: config.authenticate.facebook.callbackURL,
 			passReqToCallback: true
 		},
-		function(req, accessToken, refreshToken, profile, done) {
+
+		function(req, accessToken, refreshToken, profile, done) { /* jshint ignore:line */
+
 			// Set the provider data and include tokens
 			var providerData = profile._json;
 			providerData.accessToken = accessToken;

@@ -31,13 +31,15 @@ var l = require('../../../logger')('user:authenticate:google'),
 module.exports.load = function (passport, User) {
 
     l.debug("Adding Google OAuth2");
-	passport.use('google', new GoogleStrategy({
+	passport.use('google', new GoogleStrategy(
+        {
 			clientID: config.authenticate.google.clientID,
 			clientSecret: config.authenticate.google.clientSecret,
 			callbackURL: config.authenticate.google.callbackURL,
 			passReqToCallback: true
 		},
-		function(req, accessToken, refreshToken, profile, done) {
+
+		function(req, accessToken, refreshToken, profile, done) { /* jshint ignore:line */
 
             // FIXME - handle !!req.user (ie valid session)
             //         yo-mean merges the logged in user with the provider accunt.
@@ -101,7 +103,9 @@ module.exports.load = function (passport, User) {
 
                         // README.txt Handling provider signup case #3
                         else if (existingProvider.lookup !== providerData.id) {
+                            /* jshint -W101 */
                             done(new Error("There is already an different google account associated with this user: "+user.email));
+                            /* jshint +W101 */
                             return;
                         }
 

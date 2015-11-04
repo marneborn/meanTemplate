@@ -107,7 +107,7 @@
         /*
          * The angular directive link function. This handles the needed DOM manipulation.
          */
-	    function link ( scope, element, attrs ) {
+	    function link ( scope, element ) {
 
             setDefaults(scope);
 
@@ -149,7 +149,7 @@
                     function () {
                         return getElementRect(parent);
                     },
-                    function (newSize, oldSize) {
+                    function (newSize) {
                         placeContainer(container, newSize);
                     },
                     true /* deep compare */

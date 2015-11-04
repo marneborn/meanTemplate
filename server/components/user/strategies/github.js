@@ -5,15 +5,18 @@ var GithubStrategy = require('passport-github').Strategy,
     users; //FIXME placeholder
 
 module.exports.load = function (passport, User) {
-    new User();
+    var user = new User(); /* jshint ignore:line */
 
-	passport.use(new GithubStrategy({
+	passport.use(new GithubStrategy(
+        {
 			clientID: config.authenticate.github.clientID,
 			clientSecret: config.authenticate.github.clientSecret,
 			callbackURL: config.authenticate.github.callbackURL,
 			passReqToCallback: true
 		},
-		function(req, accessToken, refreshToken, profile, done) {
+
+		function(req, accessToken, refreshToken, profile, done) { /* jshint ignore:line */
+
 			// Set the provider data and include tokens
 			var providerData = profile._json;
 			providerData.accessToken = accessToken;

@@ -15,7 +15,7 @@ var _ = require('lodash'),
  * For that case make sure that it's secure enough (length >= 6 for now)
  */
 var checkPassword = function (password) {
-	return !isLocal(this) || (password && password.length >= 6);
+	return !isLocal(this) || password && password.length >= 6;
 };
 
 /**

@@ -5,6 +5,7 @@ var _ = require('lodash');
 //FIXME - should I create actual errors? that would require create new errors with the same type...
 
 module.exports.parseError = [
+    /* jshint ignore:start */
     /* FIXME - want to, eventually, support generic errors like this, but not yet
     {
          name: "generic duplicate",
@@ -23,6 +24,7 @@ module.exports.parseError = [
         }
     },
      */
+    /* jshint ignore:end */
 
     {
         name: "users.email duplicate",
@@ -45,7 +47,7 @@ module.exports.parseError = [
         name: "users.provider duplicate",
         error : {
             name: "MongoError",
-            errmsg: "E11000 duplicate key error index: appname.users.$providers.source_1_providers.lookup_1 dup key: { : \"providername\", : \"uniquename\" }",
+            errmsg: "E11000 duplicate key error index: appname.users.$providers.source_1_providers.lookup_1 dup key: { : \"providername\", : \"uniquename\" }",  // jshint ignore:line
             index: 0,
             op: {
                 "providers": [

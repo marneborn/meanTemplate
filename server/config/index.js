@@ -1,11 +1,10 @@
 "use strict";
 
 var pkg  = require('../../package.json'),
-    _ = require('lodash'),
     L = require('../logger')('config'),
     name = pkg.name,
     env  = process.env.NODE_ENV || 'development',
-    config, i, subApp, components;
+    config;
 
 module.exports = config = {
     name         : name,

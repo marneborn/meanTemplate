@@ -28,7 +28,8 @@ module.exports = function ( grunt ) {
                         'server.js',
                         'server/**/*.js',
                         // Need to watch stuff in web to update list of js and css files included by render
-                        // FIXME - really only care about 'added' and 'removed' for client scripts, not sure if that is possible
+                        // FIXME - really only care about 'added' and 'removed' for client scripts,
+                        //         not sure if that is possible
                         // FIXME - Need to be more specific? What doesn't need to be in here?
                         'web/**/*.js',
                         'web/**/*.css',
