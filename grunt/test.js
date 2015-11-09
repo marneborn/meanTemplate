@@ -49,6 +49,7 @@ module.exports = function ( grunt ) {
                 // add custom Jasmine reporter(s)
                 customReporters: []
             },
+
             'server-unit': {
                 // FIXME - do I really want to load all helpers in all tests?
                 //         should probably split this up...
@@ -57,14 +58,37 @@ module.exports = function ( grunt ) {
                     useHelpers: false
                 },
                 specs: [
-                    "test/server/**/unit/**"
+                    "test/server-unit/**/unit/**"
                 ],
                 helpers: [
-                    "test/server/**/unit/**",
+                    "test/server-unit/**/unit/**",
                     "test/common/**"
                 ]
             }
         },
+
+        karma: {
+			'tmp': {
+				configFile: 'test/web-unit/tmp.conf.js'
+			},
+			'web-watch': {
+				configFile: 'test/web-unit/karma.conf.js'
+			},
+			'web-once': {
+				configFile: 'test/web-unit/karma.conf.js',
+				options : {
+					singleRun: true
+				}
+			},
+			'web-full': {
+				configFile: 'test/web-unit/karma.conf.js',
+				options: {
+					browsers: ['Chrome', 'Firefox', 'IE'],
+					singleRun: true
+				}
+			}
+		},
+
         watch: {
             'server-unit' : {
                 options : {

@@ -125,7 +125,10 @@ function buildDefinitions (subConfig) {
                     return componentDir+'/'+component;
                 })
             ]),
-            pats = [thisDir+'/'+subConfig.name+'.js'];
+            pats = [
+                componentDir+'/setupApp.js',
+                thisDir+'/'+subConfig.name+'.js'
+            ];
 
         for (j=0; j<types.length; j++) {
             for (i=0; i<dirs.length; i++) {

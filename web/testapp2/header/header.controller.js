@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    angular.module(window.APPNAME)
+    angular.module('testapp2')
     .controller('headerController', HeaderController);
 
     HeaderController.$inject = ['$location', 'user'];

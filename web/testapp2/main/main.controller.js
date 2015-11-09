@@ -9,7 +9,7 @@
      * Controller of the meanApp
      */
 
-    angular.module(window.APPNAME)
+    angular.module('testapp2')
     .controller('mainController', MainController);
 
     MainController.$inject = ['$timeout'];

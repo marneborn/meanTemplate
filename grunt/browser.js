@@ -63,7 +63,7 @@ module.exports = function ( grunt ) {
 		opn("http://"+serverConfig.host+":"+serverConfig.port, done);
 	});
 
-    grunt.registerTask('dev-browser'  , ['open-browser', 'focus:dev-browser']);
+    grunt.registerTask('dev-browser'  , ['open-browser', 'build:css', 'focus:dev-browser']);
     grunt.registerTask('watch-browser', ['open-browser', 'watch:livereload']);
 
 };
