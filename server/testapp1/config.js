@@ -5,6 +5,7 @@ var _ = require('lodash'),
     name         = 'testapp1',
     components   = [
         'user',
+        'makeStyleSheet',
         'mngCoverup'
     ],
 

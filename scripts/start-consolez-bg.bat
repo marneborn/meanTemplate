@@ -1,6 +1,6 @@
 @echo off
 
-echo "Starting jobs that should run forever"
+echo "Starting jobs that should run forever or remove %MONGODB%\mongod.lock"
 
 IF EXIST "%MONGODB%\mongod.lock" (
    echo Using mongoDB that is already running

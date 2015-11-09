@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    angular.module(window.APPNAME)
+    angular.module('testapp1')
     .config(function ($routeProvider) {
 
         $routeProvider

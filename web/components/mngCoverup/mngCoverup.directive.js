@@ -8,24 +8,19 @@
     // First need to register this module with the main app.
     var moduleName = 'mngCoverup',
 
-	    // Need to create some default styles, want them in a style sheet so that they can be
-	    // over written in the apps css file.
-	    cssTitle = "mngCoverupStyleSheet",
-
 	    // The zIndex to apply to the divs created.
 	    // This needs to be higher than the zIndex of other siblings...
 	    // FIXME: look at all siblings and set the zindex accordingly???
 	    // FIXME: along with that, add an attribute to skip zindex checking mng-coverup-clickable???
 	    zIndex   = 1000;
 
-    window.registerModule(moduleName)
-    .directive('mngCoverup', MngCoverup);
+    window.registerModule(moduleName, ['makeStyleSheetModule'])
+    .directive(moduleName, MngCoverup);
 
-    MngCoverup.$inject = ['$q', '$window'];
-    function MngCoverup ($q, $window) {
+    MngCoverup.$inject = ['$q', '$window', 'makeStyleSheet'];
+    function MngCoverup ($q, $window, makeStyleSheet) {
 
-		if ( !hasCSS() )
-            addCSS();
+        makeStyleSheet(moduleName, getCss());
 
 		return {
 			restrict     : 'EA',
@@ -37,72 +32,13 @@
 			},
 
 			transclude   : true,
-			template    : '<div class="mngCoverupContainer">'+
-			'<div class="mngCoverupBackground"></div>'+
-			'<div ng-transclude class="mngCoverupContent"></div>'+
+			template    : '<div class="mng-coverup-container">'+
+			'<div class="mng-coverup-background"></div>'+
+			'<div ng-transclude class="mng-coverup-content"></div>'+
 			'</div>',
 
 			link : link
 		};
-
-        /*
-         * Check to see if there is already a css styleSheet associated with this directive.
-         */
-	    function hasCSS () {
-		    for (var i=0; i<document.styleSheets.length; i++) {
-			    if ( document.styleSheets[i].title === cssTitle) {
-				    return true;
-			    }
-		    }
-		    return false;
-	    }
-
-        /*
-         * Create a syleSheet for this directive populating with defaults.
-         * Put it at the front so that the user can override in there own sheets.
-         */
-	    function addCSS () {
-		    var style = document.createElement("style");
-		    style.type = 'text/css';
-		    style.title = cssTitle;
-
-		// put at the top of the list so that things specified by the user are used.
-		    if (document.head.childNodes.length === 0) {
-			    document.head.appendChild(style);
-		    }
-		    else {
-			    document.head.insertBefore(style, document.head.childNodes[0]);
-		    }
-
-		    style.sheet.addRule(
-				'.mngCoverupContainer',
-				'position : absolute; '+
-				    'top      : 0px; '+
-				    'left     : 0px; '+
-				    'height   : 100%; '+
-				    'width    : 100%; '+
-				    'z-index  : '+zIndex+'; '+
-				    'display  : block; '
-		    );
-
-		    style.sheet.addRule(
-				'.mngCoverupBackground',
-				'position          : absolute; '
-				    +'top              : 0px; '
-				    +'left             : 0px; '
-				    +'z-index          : '+zIndex+'; '
-				    +'height           : 100%; '
-				    +'width            : 100%; '
-				    +'background-color : #808080; '
-				    +'opacity          : 0.7; '
-		    );
-
-		    style.sheet.addRule(
-				'.mngCoverupContent',
-				'position : absolute; '+
-				    'z-index  : '+zIndex+'; '
-		    );
-	    }
 
         /*
          * The angular directive link function. This handles the needed DOM manipulation.
@@ -119,13 +55,13 @@
 		    var divs = element.find("div");
 		    for (var i=0; i<divs.length; i++) {
 			    var el = divs[i];
-			    if ( !content && el.getAttribute('class') === 'mngCoverupContent') {
+			    if ( !content && el.getAttribute('class') === 'mng-coverup-content') {
 				    content = angular.element(el);
 			    }
-			    if ( !container && el.getAttribute('class') === 'mngCoverupContainer') {
+			    if ( !container && el.getAttribute('class') === 'mng-coverup-container') {
 				    container = angular.element(el);
 			    }
-			    if ( !background && el.getAttribute('class') === 'mngCoverupBackground') {
+			    if ( !background && el.getAttribute('class') === 'mng-coverup-background') {
 				    background = angular.element(el);
 			    }
 		    }
@@ -140,7 +76,7 @@
                 placeContainer(container, getElementRect(parent));
 
                 // Replace when all images are loaded - FIXME - on each...
-                waitForChildImages(parent)
+                waitForChildImages(scope, parent)
                 .then(function () {
                     placeContainer(container, getElementRect(parent));
                 });
@@ -263,7 +199,7 @@
         /*
          *
          */
-        function waitForChildImages (element) {
+        function waitForChildImages (scope, element) {
 
             return $q.all(
                 element.find('img')
@@ -278,6 +214,12 @@
                     .bind('error', resolveIt)
                     .bind('abort', resolveIt);
 
+                    scope.$on('$destroy',function(){
+                        element.unbind('load');
+                        element.unbind('error');
+                        element.unbind('abort');
+                    });
+
                     return defer.promise;
                 })
             );
@@ -287,6 +229,16 @@
          *
          */
         function getElementRect (el) {
+
+            if (!el || el.length === 0) {
+                return {
+                    top: 0,
+                    left: 0,
+                    height: 0,
+                    width: 0
+                };
+            }
+
 		    var rect = el[0].getBoundingClientRect();
             return {
                 top    : rect.top + $window.scrollY,
@@ -310,5 +262,35 @@
             }
         }
 
+        function getCss () {
+            return [
+                {
+                    _selector : '.mng-coverup-container',
+		            position  : 'absolute',
+		            top       : '0px',
+		            left      : '0px',
+		            height    : '100%',
+		            width     : '100%',
+		            'z-index' : zIndex,
+		            display   : 'block; '
+                },
+                {
+	                _selector :'.mng-coverup-background',
+		            position         : 'absolute',
+		            top              : '0px',
+                    left             : '0px',
+                    'z-index'        : zIndex,
+                    height           : '100%',
+                    width            : '100%',
+                    'background-color' : '#808080',
+                    opacity          : '0.7'
+	            },
+                {
+		            _selector : '.mng-coverup-content',
+		            position  : 'absolute',
+		            'z-index' : zIndex
+                }
+            ];
+        }
     }
 })();
