@@ -1,9 +1,12 @@
+"use strict";
+
 // Karma configuration
 // Generated on Tue Apr 21 2015 10:55:45 GMT-0700 (Pacific Daylight Time)
 
 var path = require('path');
 
 module.exports = function(config) {
+
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -14,21 +17,24 @@ module.exports = function(config) {
         frameworks: ['jasmine'],
 
         // list of files / patterns to load in the browser
+        //FIXME - generate automatically from build-definitions
         files: [
-            'bower_components/es5-shim/es5-shim.js',
-            'bower_components/json3/lib/json3.js',
+            'bower_components/es5-shim/es5-shim.min.js',
+            'bower_components/json3/lib/json3.min.js',
 
-            'bower_components/angular/angular.js',
+            'bower_components/angular/angular.min.js',
+            'bower_components/angular-resource/angular-resource.min.js',
+            'bower_components/angular-cookies/angular-cookies.min.js',
+            'bower_components/angular-sanitize/angular-sanitize.min.js',
+            'bower_components/angular-animate/angular-animate.min.js',
+            'bower_components/angular-touch/angular-touch.min.js',
+            'bower_components/angular-route/angular-route.min.js',
+            'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
+
             'bower_components/angular-mocks/angular-mocks.js',
-            'bower_components/angular-resource/angular-resource.js',
-            'bower_components/angular-cookies/angular-cookies.js',
-            'bower_components/angular-sanitize/angular-sanitize.js',
-            'bower_components/angular-animate/angular-animate.js',
-            'bower_components/angular-touch/angular-touch.js',
-            'bower_components/angular-mocks/angular-route.js',
+
             'web/components/setupApp.js',
-            'test/web-unit/dummyApp.js',
-            'web/components/makeStyleSheet/makeStyleSheet.util.js',
+            'web/components/**/*.js',
             'test/web-unit/**/*-spec.js'
         ].map(function (rel) {
 		    return path.resolve(rel);
@@ -55,7 +61,8 @@ module.exports = function(config) {
         colors: true,
 
         // level of logging
-        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN
+        //               || config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
 
         // enable / disable watching file and executing tests whenever any file changes

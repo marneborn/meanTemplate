@@ -1,6 +1,9 @@
 node_modules
+.sass-cache
 bower_components
 .tmp
-.sass-cache
-web/**/dist
+logs
+secrets.js
 
+// This is removed in master branch
+web/**/dist

@@ -1,5 +1,7 @@
 "use strict";
 
+// FIXME - want to pass connection into model...
+
 /**
  * Module dependencies.
  */

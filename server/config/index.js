@@ -3,12 +3,14 @@
 var pkg  = require('../../package.json'),
     L = require('../logger')('config'),
     name = pkg.name,
-    env  = process.env.NODE_ENV || 'development',
+    isDev = require('./isDev'),
     config;
 
 module.exports = config = {
     name         : name,
-    host         : process.env.HOST || '127.0.0.1',
+    isPrd        : !isDev,
+    isDev        : isDev,
+    host         : process.env.HOST || (isDev ? '127.0.0.1' : '10.1.3.16'),
     port         : process.env.PORT || 8080,
     db           : require('./db'),
     sessions     : require('./sessions'),
@@ -18,9 +20,8 @@ module.exports = config = {
     build        : require('./build')
 };
 
-// remove leading and trailing quotes
-env = env.replace(/(?:^\')|(?:\'$)/g, '');
-config.isPrd = env === 'production';
-config.isDev = !config.isPrd;
-
-L.debug("^^^^ Configuration ^^^^\n"+JSON.stringify(module.exports, null, 4)+"\n----------------");
+L.log(
+    "^^^^ Configuration ^^^^\n"
+        +JSON.stringify(module.exports, null, 4)
+        +"\n----------------"
+);

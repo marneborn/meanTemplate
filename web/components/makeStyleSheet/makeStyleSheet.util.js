@@ -58,8 +58,7 @@
      */
 	function addCSS (styleObj, rules) {
 
-        var ruleNames = Object.keys(rules),
-            i;
+        var i;
 
         for (i=0; i<rules.length; i++) {
             styleObj.sheet.addRule(

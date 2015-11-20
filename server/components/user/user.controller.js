@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 	User = mongoose.model('User'),
     passport = require('passport'),
     strategies = require('./strategies/all').strategies,
-    mongoUtils = require('../../mongoUtils'),
+    mongooseUtils = require('../../mongooseDB/utils'),
     L = require('../../logger')('user');
 
 module.exports = {
@@ -16,20 +16,19 @@ module.exports = {
     removeOAuthProvider : removeOAuthProvider
 };
 
-
 function signout (req, res) {
 	req.logout();
     res.status(200).end();
 }
 
 function signup (req, res) {
-
+    L.debug("Signing up a new user: "+JSON.stringify(req.body));
 	var user = new User(strategies.local.makeUser(req.body));
-
+    console.log(">> "+JSON.stringify(user));
 	user.save(function(err) {
 
 		if (err) {
-            var errDeets = mongoUtils.parseError(err);
+            var errDeets = mongooseUtils.parseError(err);
             res.status(400).json(errDeets);
             return;
 		}

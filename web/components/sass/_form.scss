@@ -3,3 +3,44 @@ button.form-alert.close {
   left: -4px;
   right: 0px;
 }
+
+.oneline-form {
+  
+  span:not(.glyphicon) {
+    display: block;
+    overflow: hidden;
+  }
+  
+  > :first-child {
+    padding-right:0px;
+    float:left;
+    display:inline-block;
+    
+    button.btn, input.form-control, textarea.form-control {
+      border-right:none;
+      border-top-right-radius:0px;
+      border-bottom-right-radius:0px;
+      float: right;
+    }
+  }
+
+  > :not(:first-child):not(:last-child) {
+    padding-left: 0px;
+    padding-right:0px;
+
+    button.btn, input.form-control, textarea.form-control {
+      border-right:none;
+      border-radius:0px;
+    }
+  }
+
+  > :last-child {
+    padding-left:0px;
+
+    button.btn, input.form-control, textarea.form-control {
+      float: left;
+      border-top-left-radius:0px;
+      border-bottom-left-radius:0px;
+    }
+  }
+}

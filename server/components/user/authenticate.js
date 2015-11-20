@@ -8,11 +8,10 @@ var express = require('express'),
     mongoStore = require('connect-mongo')({
 		session: session
 	}),
-    User = require('mongoose').model('User'),
+    User = require('./user.model'),
 
 	// create and export the static router
 	router = null;
-
 
 module.exports = function (sessInfo) {
 

@@ -1,5 +1,7 @@
 $small-width:   384px;
 $large-width:  1024px;
+$small-height:  300px;
+$large-height:  512px;
 
 @mixin if-width-md {
   @media screen and (min-width: #{$small-width + 1px}) and (max-width: #{$large-width}) {
@@ -15,6 +17,24 @@ $large-width:  1024px;
 
 @mixin if-width-md-lg {
   @media screen and (min-width: #{$small-width + 1px}) {
+    @content;
+  }
+}
+
+@mixin if-height-md {
+  @media screen and (min-height: #{$small-height + 1px}) and (max-height: #{$large-height}) {
+    @content;
+  }
+}
+
+@mixin if-height-lg {
+  @media screen and (min-height: #{$large-height + 1px}) {
+    @content;
+  }
+}
+
+@mixin if-height-md-lg {
+  @media screen and (min-height: #{$small-height + 1px}) {
     @content;
   }
 }

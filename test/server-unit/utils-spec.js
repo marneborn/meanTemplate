@@ -1,7 +1,8 @@
-describe("Testing utils methods", function () {
-    "use strict";
+"use strict";
 
-    var mtUtils = require('../../../server/utils');
+describe("Testing utils methods", function () {
+
+    var mtUtils = require('../../server/utils');
 
     describe("Testing makeMongoURI", function () {
 
