@@ -5,7 +5,7 @@ var _ = require('lodash'),
 
 module.exports = function(grunt) {
 
-    var allMyJS = getAllMyJS(['node_modules', 'bower_components', '.git', '.sass-cache']),
+    var allMyJS = getAllMyJS(),
         jshintConfig = {
             options : {
 
@@ -71,7 +71,7 @@ module.exports = function(grunt) {
 
 				// Environment
                 // These options let JSHint know about some pre-defined global variables.
-                devel: !process.env.NODE_ENV || process.env.NODE_ENV === 'develop'
+                devel: !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
             },
             web : {
@@ -81,7 +81,8 @@ module.exports = function(grunt) {
                     browser: true,
                     jquery: true,
                     globals: {
-                        angular: true
+                        angular: true,
+                        web: true
                     }
                 }
             },
@@ -97,11 +98,30 @@ module.exports = function(grunt) {
                     node: true
                 }
             },
-            test : {
-                src: ['test/**/*.js'],
+            'server-unit' : {
+                src: ['test/server-unit/**/*.js'],
                 options: {
                     jasmine: true,
                     node:true
+                }
+            },
+            'karma-conf': {
+                src: ['test/web-unit/**/karma.conf.js'],
+                options: {
+                    jasmine:true,
+                    node:true
+                }
+            },
+            'web-unit' : {
+                src: ['test/web-unit/**/*.js', '!test/**/karma.conf.js'],
+                options: {
+                    jasmine: true,
+                    globals: {
+                        inject: true,
+                        angular: true,
+                        document: true,
+                        module: true
+                    }
                 }
             }
         },
@@ -120,6 +140,17 @@ module.exports = function(grunt) {
             }
         };
 
+    grunt.registerTask("count-jshint-files", function () {
+        Object.keys(jshintConfig).forEach(function (target) {
+            if (target === 'options') {
+                return;
+            }
+            var start = new Date();
+            var files = grunt.file.expand(jshintConfig[target].src);
+            var end = new Date();
+            grunt.log.ok(target+" - "+files.length+" files - "+(end-start)+" seconds to find");
+        });
+    });
 
     grunt.config.merge({
         jshint: jshintConfig,
@@ -184,7 +215,12 @@ module.exports = function(grunt) {
 /*
  *
  */
-function getAllMyJS (excludeDir) {
+function getAllMyJS () {
+
+    var excludeDir = [
+        'node_modules', 'bower_components', '.git', '.sass-cache', 'scripts'
+    ];
+
     return _.flattenDeep(
         [
             "*.js",
@@ -198,7 +234,8 @@ function getAllMyJS (excludeDir) {
             .map(function (thing) {
                 return thing+"/**/*.js";
             }),
-            "!web/**/dist/**/*.js"
+            "!web/**/dist/**/*.js",
+            "!secrets.js"
         ]
     );
 }

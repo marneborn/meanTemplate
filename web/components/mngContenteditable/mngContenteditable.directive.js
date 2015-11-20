@@ -17,7 +17,9 @@
 
                 element.bind('blur', function() {
                     scope.$apply(function() {
-                        ctrl.$setViewValue(element.html());
+                        var html = element.html();
+                        element.html(html);
+                        ctrl.$setViewValue(html);
                     });
                 });
 

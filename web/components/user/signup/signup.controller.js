@@ -24,7 +24,11 @@
             vm.dataLoading = true;
             vm.error = "";
 
-            user.signup(vm.credentials)
+            user.signup({
+                username: vm.username,
+                email: vm.email,
+                password: vm.password
+            })
             .then(function () {
 			    $location.path('/');
             })

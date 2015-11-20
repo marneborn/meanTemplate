@@ -1,6 +1,14 @@
 "use strict";
 
-var path = require('path');
+//
+var path = require('path'),
+    defaultEnvVars = {
+        NODE_ENV: 'development',
+        DEBUG: '*,-send,-connect:dispatcher,-express:router*',
+        DEBUG_COLOR: 1,
+        PASSDOWN_EMAIL: null,
+        PASSDOWN_SMTP: null
+    };
 
 module.exports = function ( grunt ) {
 	grunt.config.merge({
@@ -10,10 +18,7 @@ module.exports = function ( grunt ) {
 				options: {
 				    restartable: "rs",
 				    args: [],
-				    env: {
-					    DEBUG: process.env.DEBUG || '*,-send,-connect:dispatcher,-express:router*',
-					    DEBUG_COLOR: 1
-				    },
+				    env: buildEnvVars(),
 				    cwd: path.resolve(__dirname, '..'),
 				    ext: 'js',
                     verbose: true,
@@ -42,4 +47,25 @@ module.exports = function ( grunt ) {
 	});
 
     grunt.registerTask('dev-server', ['nodemon:dev']);
+
+    function buildEnvVars () {
+        var keys = Object.keys(defaultEnvVars),
+            env = {},
+            i;
+
+        for (i=0; i<keys.length; i++) {
+
+            // simply copy if it's set
+            if (process.env[keys[i]] != null) {
+                env[keys[i]] = process.env[keys[i]];
+            }
+
+            // set if default is not null
+            else if (defaultEnvVars[keys[i]] !== null) {
+                env[keys[i]] = defaultEnvVars[keys[i]];
+            }
+        }
+
+        return env;
+    }
 };

@@ -73,7 +73,7 @@ module.exports = function(grunt) {
         // FIXME - can this be autodetected? Or put in config
         gruntConfig.copy.bootstrap.files.push({
             expand: true,
-            cwd: 'bower_components/bootstrap/dist',
+            cwd: 'bower_components/bootstrap-css',
             src: 'fonts/*',
             dest: subAppConfig.distDir
         });

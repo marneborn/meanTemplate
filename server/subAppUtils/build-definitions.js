@@ -5,7 +5,6 @@ var path         = require('path'),
     _            = require('lodash'),
     wiredep      = require('wiredep'),
     globule      = require('globule'),
-    config       = require('../config'),
     rootDir      = path.join(__dirname, '../..'),
     componentDir = 'web/components';
 
@@ -52,6 +51,7 @@ function buildDefinitions (subConfig) {
             src  : thisDir+'/'+subConfig.name+'.scss',
             watch: _.flatten([ // FIXME - can top.scss be parsed to get includes?
                 thisDir+'/**/*.scss',
+                componentDir+'/sass/**/*.scss', // FIXME - should this always be included?
                 subConfig.components.map(function (component) {
                     return componentDir+'/'+component+'/**/*.scss';
                 })
@@ -73,13 +73,14 @@ function buildDefinitions (subConfig) {
     /*
      * Create a list of all vendor js files, excluding shims.
      * FIXME - base on ones actually needed. How? maybe a bower.json for each page?
+     * FIXME - ignore shim if not loading .min.js's
      */
     function findVendorJsFiles () {
 
         return wiredepRes.js
         .map(function (file) {
 
-            if (config.vendorMin) {
+            if (subConfig.vendorMin) {
                 var min = file.replace(/\.js$/, '.min.js');
                 if (fs.existsSync(min))
                     file = min;
@@ -88,7 +89,14 @@ function buildDefinitions (subConfig) {
             return path.relative(rootDir, file).replace(/\\/g, '/');
         })
         .filter(function (file) {
-            return shims.indexOf(file) < 0;
+            // Force exclusion of bootstrap.js file because we don't have jquery...
+            if  (file.match(/\/bootstrap(?:\.min)?\.js/)) {
+                return false;
+            }
+            if (shims.indexOf(file) >= 0) {
+                return false;
+            }
+            return true;
         });
     }
 
@@ -97,7 +105,7 @@ function buildDefinitions (subConfig) {
      */
     function findVendorCssFiles () {
 
-        return wiredepRes.css
+        return !wiredepRes || !wiredepRes.css ? [] : wiredepRes.css
         .map(function (file) {
             var min = file.replace(/\.css$/, '.min.css');
             if (fs.existsSync(min))

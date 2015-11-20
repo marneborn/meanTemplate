@@ -34,7 +34,7 @@
 			transclude   : true,
 			template    : '<div class="mng-coverup-container">'+
 			'<div class="mng-coverup-background"></div>'+
-			'<div ng-transclude class="mng-coverup-content"></div>'+
+			'<div data-ng-transclude class="mng-coverup-content"></div>'+
 			'</div>',
 
 			link : link
@@ -229,16 +229,6 @@
          *
          */
         function getElementRect (el) {
-
-            if (!el || el.length === 0) {
-                return {
-                    top: 0,
-                    left: 0,
-                    height: 0,
-                    width: 0
-                };
-            }
-
 		    var rect = el[0].getBoundingClientRect();
             return {
                 top    : rect.top + $window.scrollY,

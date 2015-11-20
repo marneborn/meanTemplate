@@ -8,7 +8,9 @@ var path = require('path'),
 	L = require('../logger')(subConfig.name),
     app = express();
 
-module.exports = app;
+module.exports = {
+    app : app
+};
 
 L.debug("Starting app");
 

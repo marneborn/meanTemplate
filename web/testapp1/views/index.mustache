@@ -16,26 +16,26 @@
 	{{ /appCss }}
 
   </head>
-  <body ng-app="testapp1">
+  <body data-ng-app="testapp1">
 
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div ng-if="false" id="loading-fs-overlay">
+    <div data-ng-if="false" id="loading-fs-overlay">
       <div id="loading-fs-content">
         Powering up...
       </div>
     </div>
 
-    <header ng-include="'header/header.view.html'"></header>
+    <header data-ng-include="'header/header.view.html'"></header>
 
     <!-- Add your site or application content here -->
     <div class="container">
-      <section ng-view=""></section>
+      <section data-ng-view=""></section>
     </div>
 
-	<footer ng-include="'footer/footer.view.html'"></footer>
+	<footer data-ng-include="'footer/footer.view.html'"></footer>
 
 	{{ #googleAnalytics }}
     <script>

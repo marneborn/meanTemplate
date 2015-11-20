@@ -2,19 +2,23 @@
 
 /**
  * Module dependencies.
- * FIXME - don't use the default connection
+ * FIXME - Should probably be a constructor to allow multiple mongooseDBs in the same app.
  */
 var path = require('path'),
     globule = require('globule'),
     BPromise = require('bluebird'),
     mongoose = require('mongoose'),
-    config = require('./config'),
-    myUtils = require('./utils'),
-    uri = myUtils.makeMongoURI(config.db),
-    L = require('./logger')('db'),
+    config = require('../config'),
+    mongoUtils = require('../mongoDB/utils'),
+    uri = mongoUtils.makeMongoURI(config.db),
+    L = require('../logger')('mongooseDB'),
     promise = null;
 
-module.exports.connect = function () {
+module.exports = {
+    connect: connect
+};
+
+function connect () {
 
     if (promise)
         return promise;
@@ -71,14 +75,6 @@ module.exports.connect = function () {
 
     L.debug('Opening connection to: '+uri);
     mongoose.connect(uri);
-
-    globule.find(
-        'server/**/*.model.js'
-    )
-    .forEach(function (file) {
-        L.debug("Adding model: "+file);
-        require(path.resolve(file));
-    });
 
     return promise;
 };

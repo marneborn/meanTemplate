@@ -1,9 +1,5 @@
 "use strict";
 
-var fs = require('fs'),
-    _ = require('lodash'),
-    minimatch = require("minimatch");
-
 /*
  * Tasks to help with web browser
  */
@@ -58,19 +54,16 @@ module.exports = function ( grunt ) {
                     useHelpers: false
                 },
                 specs: [
-                    "test/server-unit/**/unit/**"
+                    "test/server-unit/**"
                 ],
                 helpers: [
-                    "test/server-unit/**/unit/**",
+                    "test/server-unit/**",
                     "test/common/**"
                 ]
             }
         },
 
         karma: {
-			'tmp': {
-				configFile: 'test/web-unit/tmp.conf.js'
-			},
 			'web-watch': {
 				configFile: 'test/web-unit/karma.conf.js'
 			},
@@ -94,59 +87,20 @@ module.exports = function ( grunt ) {
                 options : {
                     atBegin: true
                 },
-                files : _.flattenDeep([
-                    // In lieu of ['**/*.js', '!node_modules/**/*']
-                    // which is slow (until my glob fixes bubble up to grunt watch)
-                    buildFilesList(process.cwd(), [
-                        '#*#',
-                        '*~',
-                        '.git',
-                        '.sass-cache',
-                        'node_modules',
-                        'bower_components',
-                        'notes',
-                        'web',
-                        'scripts'
-                    ])
-                    .map(function (use) {
-                        if (fs.statSync(use).isDirectory()) {
-                            return [use+"/**/*.js", use+"/**/*.json"];
-                        }
-                        else if (use.match(/\.js(on)?$/)) {
-                            return use;
-                        }
-                        else {
-                            return [];
-                        }
-                    })
-                ]),
+                files : ['server.js', 'server/**/*.js', 'test/server-unit/**/*', '!**/#*.js'],
                 tasks: ['jasmine_nodejs:server-unit']
             }
         },
         focus: {
-            test : {
+            'server-tests' : {
                 // FIXME - this should probably have a reporter that only summarizes (unless fails)
                 //         so that all tests can be seen.
-                include : ['server-unit']
+                include : ['server-unit', ]
             }
         }
-
     });
 
-    grunt.registerTask('dev-test', 'focus:test');
+    grunt.registerTask('dev-server-tests', 'focus:server-tests');
+    grunt.registerTask('dev-web-tests', 'karma:web-watch');
 
-    /*
-     *
-     */
-    function buildFilesList (dir, exclude) {
-        var kids = fs.readdirSync(dir);
-        return kids.filter(function (kid) {
-            for (var i=0; i<exclude.length; i++) {
-                if (minimatch(kid, exclude[i])) {
-                    return false;
-                }
-            }
-            return true;
-        });
-    }
 };

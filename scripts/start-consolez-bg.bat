@@ -1,6 +1,7 @@
 @echo off
 
-echo "Starting jobs that should run forever or remove %MONGODB%\mongod.lock"
+echo "Starting jobs that should run forever"
+echo "MongoDB is %MONGODB%"
 
 IF EXIST "%MONGODB%\mongod.lock" (
    echo Using mongoDB that is already running
@@ -20,7 +21,8 @@ echo MongoDB is: %MONGODB%
    -t server  -d %WORK% ^
    -t browser -d %WORK% ^
    -t jshint  -d %WORK% ^
-   -t test    -d %WORK%
+   -t serverTests -d %WORK% ^
+   -t webTests    -d %WORK%
 
 :END
 

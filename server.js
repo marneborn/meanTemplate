@@ -23,12 +23,28 @@ var express = require('express'),
 	app = express(),
 
     // Setup to connect to the DB
-    db = require('./server/db'),
-    dbPromise = db.connect(),
+    mongooseDB = require('./server/mongooseDB'),
+    dbConnection,
+
+    // server components to put at the top
+    userComponent = require('./server/components/user'),
+
+    // Keep track of initialization promises to hold off promises
+    initPromises = [],
 
     // declare local variables.
-    defaultApp = require('./server/'+config.subApps.default),
-    subApp, opts, i;
+    defaultApp, subAppName, subApp, opts, i;
+
+// Connect to the common mongooseDB
+dbConnection = mongooseDB.connect();
+initPromises.push(dbConnection);
+
+// Setup the user component
+initPromises.push(
+    userComponent.init({
+        mongooseDB : dbConnection
+    })
+);
 
 require('./server/logIncoming')(app);
 
@@ -42,14 +58,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // add passport middleware
-app.use(require('./server/components/user/authenticate')(config.sessions));
+app.use(userComponent.authenticate(config.sessions));
 
 // add middleware defining each sub app
 for (i=0; i<config.subApps.list.length; i++) {
-    subApp = config.subApps.list[i];
+    subAppName = config.subApps.list[i];
+    subApp = require('./server/'+subAppName);
 
-    L.debug('Adding sub-app : '+subApp);
-    app.use('/'+subApp, require('./server/'+subApp));
+    L.debug('Adding sub-app : '+subAppName);
+    app.use('/'+subAppName, subApp.app);
+
+    if (subApp.init) {
+        initPromises.push(subApp.init());
+    }
 }
 
 // Common component routes are common for all sup-apps.
@@ -65,9 +86,10 @@ for (i=0; i<config.components.length; i++) {
 }
 
 L.debug('Setting default app to be '+config.subApps.default);
+defaultApp = require('./server/'+config.subApps.default);
 app.use(function (req, res, next) {
     if (fromDefaultPage(req)) {
-        defaultApp(req, res, next);
+        defaultApp.app(req, res, next);
     }
     else {
         next();
@@ -79,9 +101,7 @@ app.use(require('./server/404'));
 
 // don't start listening until all the subApps inits are done.
 BPromise
-.all([
-    dbPromise,
-])
+.all(initPromises)
 .then(startListening)
 .catch(function (err) {
     L.fatal("Couldn't start listener: "+err);
