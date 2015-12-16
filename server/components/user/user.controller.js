@@ -3,7 +3,7 @@
 var mongoose = require('mongoose'),
 	User = mongoose.model('User'),
     passport = require('passport'),
-    strategies = require('./strategies/all').strategies,
+    strategies = require('./strategies'),
     mongooseUtils = require('../../mongooseDB/utils'),
     L = require('../../logger')('user');
 
@@ -23,15 +23,39 @@ function signout (req, res) {
 
 function signup (req, res) {
     L.debug("Signing up a new user: "+JSON.stringify(req.body));
-	var user = new User(strategies.local.makeUser(req.body));
-    console.log(">> "+JSON.stringify(user));
-	user.save(function(err) {
 
-		if (err) {
-            var errDeets = mongooseUtils.parseError(err);
-            res.status(400).json(errDeets);
+    if (!req.body.email) {
+        res.status(400).send("Missing Required: email");
+        return;
+    }
+
+    // First check if this email is already associated with a partner login
+    User.findOneAsync({ email: req.body.email })
+    .then(function (user) {
+
+        if (!user) {
+            user = new User(strategies.local.createNewUser(req.body));
+        }
+
+        else {
+            var existingProvider = user.getProvider('local');
+
+            if (user.getProvider('local')) {
+                res.status(400).send("Existing user");
+                return null;
+            }
+
+	        user.providers.push(strategies.local.createProvider(req.body));
+            user.password = req.body.password;
+        }
+
+        return user.save();
+    })
+    .then(function (user) {
+
+        if (!user) {
             return;
-		}
+        }
 
 		// Remove sensitive data before login
 		user.password = undefined;
@@ -42,8 +66,13 @@ function signup (req, res) {
 				res.status(400).send(err);
                 return;
 			}
-			res.json(user);
+			res.status(200).json(user);
 		});
+    })
+    .catch(function (err) {
+        var errDeets = mongooseUtils.parseError(err);
+        res.status(400).json(errDeets);
+        return;
 	});
 }
 
@@ -63,7 +92,7 @@ function signin (req, res, next) {
                 if (err) {
                     res.status(400).send(err);
                 } else {
-                    res.json(user);
+                    res.status(200).json(user);
                 }
             });
         }

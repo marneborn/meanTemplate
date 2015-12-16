@@ -1,22 +1,27 @@
 "use strict";
 
 var _ = require('lodash'),
+    path = require('path'),
     auth = {
         facebook: {
-		    clientID: process.env.FACEBOOK_ID || 'APP_ID',
-		    clientSecret: process.env.FACEBOOK_SECRET || 'APP_SECRET',
-		    callbackURL: '/auth/facebook/callback'
+		    clientID: null, // set in secrets.js
+		    clientSecret: null, // set in secrets.js
+		    callbackURL: '/auth/facebook/callback',
+            passportArg : {
+                scope: ['email', 'user_location']
+            },
+            profileFields: ['id', 'displayName', 'last_name', 'first_name', 'email', 'location']
 	    },
 	    google: {
 		    clientID: null, // set in secrets.js
 		    clientSecret: null, // set in secrets.js
+		    callbackURL: '/auth/google/callback',
             passportArg : {
                 scope: [
 		            'https://www.googleapis.com/auth/userinfo.profile',
 		            'https://www.googleapis.com/auth/userinfo.email'
 	            ]
-            },
-		    callbackURL: '/auth/google/callback'
+            }
 	    },
 	    linkedin: { // FIXME - not handled yet
 		    clientID: process.env.LINKEDIN_ID || 'APP_ID',
@@ -30,6 +35,5 @@ var _ = require('lodash'),
 	    }
     };
 
-_.merge(auth, require('./secrets').authenticate);
-
+_.merge(auth, require(path.resolve('secrets.js')).authenticate);
 module.exports = auth;

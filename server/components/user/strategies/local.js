@@ -5,7 +5,14 @@
  */
 var LocalStrategy = require('passport-local').Strategy;
 
-module.exports.load = function (passport, User) {
+module.exports = {
+    name: 'local',
+    load: load,
+    createNewUser: createNewUser,
+    createProvider: createProvider
+};
+
+function load (passport, User) {
 
     passport.use('local', new LocalStrategy({
             usernameField: 'username',
@@ -55,16 +62,26 @@ module.exports.load = function (passport, User) {
     return module.exports;
 };
 
-module.exports.makeUser = function (form) {
+/*
+ *
+ */
+function createNewUser (form) {
     return {
         email       : form.email,
         // FIXME - pick some unique+psuedorandom name that isn't the username as the base for this.
         displayname : form.username,
         password    : form.password, // pre-save hook will hash
         roles       : ['user'],
-        providers   : [{
-            source : 'local',
-            lookup : form.username
-        }]
+        providers   : [createProvider(form)]
     };
 };
+
+/*
+ *
+ */
+function createProvider (form) {
+    return {
+        source : 'local',
+        lookup : form.username
+    };
+}

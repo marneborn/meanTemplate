@@ -10,7 +10,7 @@ module.exports = config = {
     name         : name,
     isPrd        : !isDev,
     isDev        : isDev,
-    host         : process.env.HOST || (isDev ? '127.0.0.1' : '10.1.3.16'),
+    host         : process.env.HOST || (isDev ? 'local.meantemplate.com' : 'meantemplate.com'),
     port         : process.env.PORT || 8080,
     db           : require('./db'),
     sessions     : require('./sessions'),
@@ -19,6 +19,8 @@ module.exports = config = {
     components   : require('./components'),
     build        : require('./build')
 };
+
+config.fullHost = "http://" + config.host + (config.port === 80 ? "" : ":"+config.port);
 
 L.log(
     "^^^^ Configuration ^^^^\n"

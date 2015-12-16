@@ -17,7 +17,7 @@ function parseError (err) {
         return null;
 
     if (!parseFunctions[err.name]) {
-        return { _type : "Unknown Error" };
+        return { _type : "Unknown Error", error: err };
     }
 
     return parseFunctions[err.name](err);

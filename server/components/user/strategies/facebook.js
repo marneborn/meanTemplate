@@ -1,43 +1,80 @@
 "use strict";
 
-var FacebookStrategy = require('passport-facebook').Strategy,
+/*
+ * Authenticate through facebook's oath2 service.
+ * To register the app with facebook:
+ *   goto https://developers.facebook.com/apps/
+ *   drop down -> "Create a project..."
+ *   (Button) "Add a New App"
+ *   Select "Website"
+ *   Enter name
+ *   (Button) "Create New Facebook App ID"
+ *   (Drop down) "Category" : pick the appropriate one
+ *   (Button) "Create App ID"
+ *   Wait...
+ *   "Site URL" : http://local.meantemplate.com:8080
+ *   (Button) Next
+ *   (Link) "Skip to Developer Dashboard"
+ *   (Sidebar) Test Apps
+ *     (Button) Create a Test App
+ *     (Button) Create Test App
+ *   (Button) Settings:
+ *      Get App ID and put in secrets.js
+ *      Get App Secret and put in secrets.js
+ *     (Tab) Advanced
+ *       Deauthorize Callback URL: http://local.meantemplate.com:8080/auth/facebook/deauth
+ *       Valid OAuth redirect URIs : http://local.meantemplate.com:8080/auth/facebook/callback
+ *     (Button) Save Changes
+ */
+
+var L = require('../../../logger')('user:authenticate:facebook'),
+    FacebookStrategy = require('passport-facebook').Strategy,
 	config = require('../../../config'),
-    users; //FIXME placeholder
+    common = require('./common');
 
-module.exports.load = function (passport, User) {
+module.exports = {
+    name: 'facebook',
+    load: load,
+    createNewUser: createNewUser,
+    getEmail: getEmail
+};
 
-    new User() /* jshint ignore:line */
 
+function load (passport, User) {
+
+    L.debug("Adding Facebook authentication");
 	passport.use(new FacebookStrategy(
         {
-			clientID: config.authenticate.facebook.clientID,
-			clientSecret: config.authenticate.facebook.clientSecret,
-			callbackURL: config.authenticate.facebook.callbackURL,
-			passReqToCallback: true
-		},
+		    clientID: config.authenticate.facebook.clientID,
+		    clientSecret: config.authenticate.facebook.clientSecret,
+		    callbackURL: config.fullHost+config.authenticate.facebook.callbackURL,
+		    passReqToCallback: true,
+            profileFields: config.authenticate.facebook.profileFields
+	    },
+        common.createPassportFunction(User, module.exports)
+    ));
+}
 
-		function(req, accessToken, refreshToken, profile, done) { /* jshint ignore:line */
+/*
+ *
+ */
+function createNewUser (providerData, User) {
+    return new User({
+        email       : providerData.email,
+        displayname : providerData.name,
+        providers   : [
+            {
+                source : 'facebook',
+                lookup : providerData.id,
+                details: providerData
+            }
+        ]
+    });
+}
 
-			// Set the provider data and include tokens
-			var providerData = profile._json;
-			providerData.accessToken = accessToken;
-			providerData.refreshToken = refreshToken;
-
-			// Create the user OAuth profile
-			var providerUserProfile = {
-				firstName: profile.name.givenName,
-				lastName: profile.name.familyName,
-				displayName: profile.displayName,
-				email: profile.emails[0].value,
-				username: profile.username,
-				provider: 'facebook',
-				providerIdentifierField: 'id',
-				providerData: providerData
-			};
-
-			// Save the user OAuth profile
-			users.saveOAuthUserProfile(req, providerUserProfile, done);
-		}
-	));
-    return module.exports;
-};
+/*
+ *
+ */
+function getEmail (providerData) {
+    return providerData.email;
+}

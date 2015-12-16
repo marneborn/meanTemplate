@@ -1,6 +1,7 @@
 "use strict";
 
 var _ = require('lodash'),
+    path = require('path'),
     db = _.cloneDeep(require('./db')),
     config = {
         db : _.extend(
@@ -14,5 +15,5 @@ var _ = require('lodash'),
         )
     };
 
-_.extend(config, require('./secrets').sessions);
+_.merge(config, require(path.resolve('secrets.js')).sessions);
 module.exports = config;

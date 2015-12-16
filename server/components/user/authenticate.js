@@ -1,7 +1,7 @@
 "use strict";
 
 var express = require('express'),
-	l       = require('../../logger')('user:authenticate'),
+	L       = require('../../logger')('user:authenticate'),
 
     passport = require('passport'),
     session = require('express-session'),
@@ -9,6 +9,7 @@ var express = require('express'),
 		session: session
 	}),
     User = require('./user.model'),
+    strategies = require('./strategies'),
 
 	// create and export the static router
 	router = null;
@@ -18,7 +19,7 @@ module.exports = function (sessInfo) {
     if (router)
         return router;
 
-    l.debug("Creating passport middleware");
+    L.debug("Creating passport middleware");
     router = express.Router();
 
 	// Express MongoDB session storage
@@ -51,8 +52,7 @@ module.exports = function (sessInfo) {
         );
 	});
 
-    require('./strategies/all')
-    .load(passport, User);
+    strategies.load(passport, User);
 
     return router;
 };

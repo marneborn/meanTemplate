@@ -6,11 +6,13 @@
  * Module dependencies.
  */
 var _ = require('lodash'),
+    BPromise = require('bluebird'),
     mongoose = require('mongoose'),
     Schema   = mongoose.Schema,
 	bcrypt   = require('bcrypt'),
     L        = require('../../logger')('user:model'),
-    HASH_ROUNDS = 10;
+    HASH_ROUNDS = 10,
+    User;
 
 /**
  * A password is only required for local provider.
@@ -187,5 +189,10 @@ userSchema.methods.forClient = function () {
     return copy;
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = User = mongoose.model('User', userSchema);
 L.debug("Defined User model");
+
+// bluebirdify some collection functions.
+User.findOneAsync = function () {
+    return BPromise.resolve(this.findOne.apply(this, arguments));
+};
