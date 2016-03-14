@@ -1,14 +1,15 @@
 "use strict";
 
-var path         = require('path'),
-    fs           = require('fs'),
-    _            = require('lodash'),
-    wiredep      = require('wiredep'),
-    globule      = require('globule'),
-    rootDir      = path.join(__dirname, '../..'),
-    componentDir = 'web/components',
-    commonDir    = 'common',
-    filerevMapping;
+const path         = require('path'),
+      fs           = require('fs'),
+      _            = require('lodash'),
+      wiredep      = require('wiredep'),
+      globule      = require('globule'),
+      rootDir      = path.join(__dirname, '../..'),
+      componentDir = 'web/components',
+      commonDir    = 'common';
+
+let filerevMapping;
 
 try {
     filerevMapping = require('../../filerev-mapping');
@@ -29,7 +30,7 @@ module.exports = buildDefinitions;
  */
 function buildDefinitions (subConfig) {
 
-    var thisDir      = subConfig.thisDir,
+    let thisDir      = subConfig.thisDir,
         distDir      = 'web/'+subConfig.name+'/dist',
         wiredepRes   = wiredep(),
         shims        = findShimJsFiles();
@@ -99,7 +100,7 @@ function buildDefinitions (subConfig) {
             .map(function (file) {
 
                 if (subConfig.vendorMin) {
-                    var min = file.replace(/\.js$/, '.min.js');
+                    let min = file.replace(/\.js$/, '.min.js');
                     if (fs.existsSync(min))
                         file = min;
                 }
@@ -125,7 +126,7 @@ function buildDefinitions (subConfig) {
 
         return !wiredepRes || !wiredepRes.css ? [] : wiredepRes.css
             .map(function (file) {
-                var min = file.replace(/\.css$/, '.min.css');
+                let min = file.replace(/\.css$/, '.min.css');
                 if (fs.existsSync(min))
                     file = min;
                 return path.relative(rootDir, file).replace(/\\/g, '/');
@@ -136,8 +137,7 @@ function buildDefinitions (subConfig) {
      *
      */
     function findAppJsFiles () {
-        var i, j,
-            all,
+        let all,
             types = [ // FIXME - is order actually important, angular is Lazy isn't it?
                 '/**/*.service.js',
                 '/**/*.directive.js',
@@ -156,8 +156,8 @@ function buildDefinitions (subConfig) {
                 thisDir+'/'+subConfig.name+'.js'
             ];
 
-        for (j=0; j<types.length; j++) {
-            for (i=0; i<dirs.length; i++) {
+        for (let j=0; j<types.length; j++) {
+            for (let i=0; i<dirs.length; i++) {
                 pats.push(dirs[i]+types[j]);
             }
         }

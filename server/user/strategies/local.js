@@ -3,7 +3,7 @@
 /*
  * The local strategy is when the user signs up and logs in via a username and password
  */
-var LocalStrategy = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 
 module.exports = {
     name: 'local',

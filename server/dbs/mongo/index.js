@@ -1,20 +1,20 @@
 "use strict";
 
-var BPromise = require('bluebird'),
-    _ = require('lodash'),
-    mongodb = BPromise.promisifyAll(require('mongodb'), { suffix: 'Promise' }),
-    ObjectID = require('mongodb').ObjectID,
-    L = require('../../logger')('dbs:mongo'),
-    mongoUtils = require('./utils'),
+const BPromise = require('bluebird'),
+      _ = require('lodash'),
+      mongodb = BPromise.promisifyAll(require('mongodb'), { suffix: 'Promise' }),
+      ObjectID = require('mongodb').ObjectID,
+      L = require('../../logger')('dbs:mongo'),
+      mongoUtils = require('./utils'),
 
-    DB = module.exports = {
-        connect : connect,
-        disconnect : disconnect,
-        connection : BPromise.reject(new Error("Connection hasn't been started")),
-        add : add,
-        get : get,
-        update : update
-    };
+      DB = module.exports = {
+          connect : connect,
+          disconnect : disconnect,
+          connection : BPromise.reject(new Error("Connection hasn't been started")),
+          add : add,
+          get : get,
+          update : update
+      };
 
 // Need to "handle" the default rejection;
 DB.connection.catch(function () {});
@@ -28,16 +28,16 @@ function connect (config) {
     // FIXME - should probably check the rejection reason and start or not based on that...
     // FIXME - Need to detect disconnections and change the connection promise to pending.
 
-    var uri  = mongoUtils.makeMongoURI (config);
+    let uri  = mongoUtils.makeMongoURI (config);
     DB.connection = mongodb.connectPromise(uri);
 
     DB.connection
-    .then(function(db) {
-        return db;
-    })
-    .catch(function (err) {
-        L.err(""+err+(err.stack ? "\n"+err.stack : ""));
-    });
+        .then(function(db) {
+            return db;
+        })
+        .catch(function (err) {
+            L.err(""+err+(err.stack ? "\n"+err.stack : ""));
+        });
 
     return DB.connection;
 }
@@ -47,18 +47,18 @@ function disconnect () {
 }
 
 function add () {
-    var items = _.toArray(arguments),
+    let items = _.toArray(arguments),
         collName = items.shift();
 
     return DB.connection
-    .call('collectionPromise', collName)
-    .call('insert', items.map(function (sel) {
-        mungeSelector(sel);
-        return sel;
-    }))
-    .then(function (res) {
-        return res.result.n;
-    });
+        .call('collectionPromise', collName)
+        .call('insert', items.map(function (sel) {
+            mungeSelector(sel);
+            return sel;
+        }))
+        .then(function (res) {
+            return res.result.n;
+        });
 }
 
 function get (collName, selector, opts) {
@@ -68,17 +68,17 @@ function get (collName, selector, opts) {
     }
 
     mungeSelector(selector);
-    var cursor = DB.connection
-    .call('collectionPromise', collName)
-    .call('findPromise', selector, opts.projection);
+    let cursor = DB.connection
+            .call('collectionPromise', collName)
+            .call('findPromise', selector, opts.projection);
 
     if (opts.limit != null) {
         cursor
-        .then(function (cur) {
-            cur
-            .sort({_id:-1})
-            .limit(opts.limit);
-        });
+            .then(function (cur) {
+                cur
+                    .sort({_id:-1})
+                    .limit(opts.limit);
+            });
     }
 
     return cursor.call('toArrayPromise');
@@ -87,11 +87,11 @@ function get (collName, selector, opts) {
 function update (collName, selector, changed) {
     mungeSelector(selector);
     return DB.connection
-    .call('collectionPromise', collName)
-    .call('updatePromise', selector, { $set : changed })
-    .then(function (obj) {
-        return obj.nModified;
-    });
+        .call('collectionPromise', collName)
+        .call('updatePromise', selector, { $set : changed })
+        .then(function (obj) {
+            return obj.nModified;
+        });
 }
 
 function mungeSelector (selector) {

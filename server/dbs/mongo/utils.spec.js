@@ -2,12 +2,12 @@
 
 describe("Testing utils methods", function () {
 
-    var mtUtils = require('./utils');
+    let mtUtils = require('./utils');
 
     describe("Testing makeMongoURI", function () {
 
         it("should create a basic url", function () {
-            var db = {
+            let db = {
                 host : 'server.com',
                 port : 12345,
                 db   : 'somedbname'
@@ -17,7 +17,7 @@ describe("Testing utils methods", function () {
 
 
         it("should create a url with a username and password", function () {
-            var db = {
+            let db = {
                 host : 'server.com',
                 port : 12345,
                 db   : 'somedbname',

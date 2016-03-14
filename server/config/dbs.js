@@ -1,7 +1,7 @@
 "use strict";
 
-var pkg  = require('../../package.json'),
-    name = pkg.name;
+const pkg  = require('../../package.json'),
+      name = pkg.name;
 
 module.exports = {
     user : {

@@ -1,14 +1,14 @@
 "use strict";
 
-var debug = require('debug'),
-    pkg = require('../package');
+const debug = require('debug'),
+      pkg = require('../package');
 
 /*
  * Show each incoming request on the screen if DEBUG contains first
  */
 module.exports = function (app) {
 
-    var first = debug([pkg.name, 'first'].join(':')),
+    let first = debug([pkg.name, 'first'].join(':')),
         origFormat;
 
     if (!first.enabled) {
@@ -38,7 +38,7 @@ module.exports = function (app) {
  */
 function formatArgs () {
 
-    var self     = this, /* jshint ignore:line */
+    let self     = this, /* jshint ignore:line */
         args     = arguments,
         name     = self.namespace,
         bgOpen   = '\u001b[41m', // red background

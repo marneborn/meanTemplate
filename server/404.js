@@ -1,7 +1,7 @@
 "use strict";
 
-var path = require('path'),
-    L = require('./logger')('404');
+const path = require('path'),
+      L = require('./logger')('404');
 
 module.exports = function (req, res) {
     L.debug('Unhandled request: '+req.url+' - '+JSON.stringify(req.headers));

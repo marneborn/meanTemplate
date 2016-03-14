@@ -1,11 +1,11 @@
 "use strict";
 
-var mongoose = require('mongoose'),
-    User = mongoose.model('User'),
-    passport = require('passport'),
-    strategies = require('./strategies'),
-    mongooseUtils = require('../dbs/mongoose/utils'),
-    L = require('../logger')('user');
+const mongoose = require('mongoose'),
+      User = mongoose.model('User'),
+      passport = require('passport'),
+      strategies = require('./strategies'),
+      mongooseUtils = require('../dbs/mongoose/utils'),
+      L = require('../logger')('user');
 
 module.exports = {
     signout : signout,
@@ -68,7 +68,7 @@ function signup (req, res) {
         });
     })
     .catch(function (err) {
-        var errDeets = mongooseUtils.parseError(err);
+        let errDeets = mongooseUtils.parseError(err);
         res.status(400).json(errDeets);
         return;
     });
@@ -102,8 +102,8 @@ function signin (req, res, next) {
  */
 function update (req, res) {
 
-    var props = Object.keys(req.body);
-    for (var i=0; i<props.length; i++) {
+    let props = Object.keys(req.body);
+    for (let i=0; i<props.length; i++) {
         req.user[props[i]] = req.body[props[i]];
     }
 
@@ -154,8 +154,8 @@ function providerLogin (strategy) {
  * FIXME - need to port over to my way
  */
 function removeOAuthProvider (req, res) {
-    var user = req.user;
-    var provider = req.param('provider');
+    let user = req.user,
+        provider = req.param('provider');
 
     if (user && provider) {
         // Delete the additional provider

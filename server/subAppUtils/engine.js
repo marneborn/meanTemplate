@@ -2,18 +2,18 @@
 
 // FIXME - There can probably be one common constructor for this for all pages
 
-var path          = require('path'),
-    _             = require('lodash'),
-    consolidate   = require('consolidate'),
-    globule       = require('globule'),
-    mainConfig    = require('../config'),
-    componentDir  = 'web/components';
+const path          = require('path'),
+      _             = require('lodash'),
+      consolidate   = require('consolidate'),
+      globule       = require('globule'),
+      mainConfig    = require('../config'),
+      componentDir  = 'web/components';
 
 module.exports = function (app, subConfig) {
 
-    var thisDir  = 'web/'+subConfig.name,
-        viewsDir = thisDir + '/views',  // relative to the root dir
-        partials = findPartials(thisDir, componentDir, viewsDir);
+    let thisDir  = 'web/'+subConfig.name,
+          viewsDir = thisDir + '/views',  // relative to the root dir
+          partials = findPartials(thisDir, componentDir, viewsDir);
 
     app.engine('mustache', consolidate.mustache);
     app.set('views', viewsDir);
@@ -84,7 +84,7 @@ module.exports = function (app, subConfig) {
  */
 function findPartials (thisDir, componentDir, viewsDir) {
 
-    var partials = {};
+    let partials = {};
 
     globule
     .find(
@@ -92,7 +92,7 @@ function findPartials (thisDir, componentDir, viewsDir) {
         componentDir+'/**/*.partial.mustache'
     )
     .map(function (file) {
-        var name = path.basename(file, '.partial.mustache'),
+        let name = path.basename(file, '.partial.mustache'),
             ptr = path.relative(viewsDir, file)
             .replace(/\\/g, '/')
             .replace(/\.mustache/, '');

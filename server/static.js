@@ -1,12 +1,12 @@
 "use strict";
 
-var express = require('express'),
-    path    = require('path'),
-    L       = require('./logger')('static'),
-    config  = require('./config'),
+const express = require('express'),
+      path    = require('path'),
+      L       = require('./logger')('static'),
+      config  = require('./config'),
 
-    // create and export the static router
-    router = module.exports = express.Router();
+      // create and export the static router
+      router = module.exports = express.Router();
 
 // First simply look for the files using the basic static middleware
 // sub-app specific stuff should be found here.

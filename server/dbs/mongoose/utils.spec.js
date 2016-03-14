@@ -2,12 +2,12 @@
 
 describe("Testing mongoose/utils.js", function () {
 
-    var mongooseUtils = require("./utils");
+    let mongooseUtils = require("./utils");
 
     describe("Testing parseError", function () {
-        var testNum = 0;
+        let testNum = 0;
         require('./utils.spec-helper').parseError.forEach(function (test) {
-            var thisTestNum = testNum++;
+            let thisTestNum = testNum++;
             it("should pass test: "+test.name, function () {
                 expect(mongooseUtils.parseError(test.error)).toEqual(test.expected, "test: "+thisTestNum);
             });
