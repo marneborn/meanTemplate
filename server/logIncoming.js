@@ -1,26 +1,35 @@
 "use strict";
 
-var debug      = require('debug');
+var debug = require('debug'),
+    pkg = require('../package');
 
 /*
  * Show each incoming request on the screen if DEBUG contains first
  */
 module.exports = function (app) {
 
-    var first = debug('first'),
+    var first = debug([pkg.name, 'first'].join(':')),
         origFormat;
 
     if (!first.enabled) {
         return;
     }
 
-    origFormat = debug.formatArgs;
-    app.use( function (req, res, next) {
-        debug.formatArgs = formatArgs;
-        first("URL = "+req.method+' '+req.url);
-        debug.formatArgs = origFormat;
-        next();
-    });
+    if (debug.useColors()) {
+       origFormat = debug.formatArgs;
+       app.use( function (req, res, next) {
+            debug.formatArgs = formatArgs;
+                  first("URL = "+req.method+' '+req.url);
+            debug.formatArgs = origFormat;
+            next();
+       });
+    }
+    else {
+        app.use( function (req, res, next) {
+                  first("URL = "+req.method+' '+req.url);
+            next();
+        });
+    }
 };
 
 
