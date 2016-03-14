@@ -7,6 +7,7 @@ git co develop
 git merge --squash <mybranch>
 git add .
 git ci 
+git branch -D <mybranch>
 
 git co -b release-<version>
 grunt build:css
@@ -18,7 +19,7 @@ grunt build:dist
 grunt prd-web-tests
 
 npm version patch --no-git-tag-version
-git add .
+git add package.json
 git ci -m "Updated version"
 
 git co master
@@ -33,7 +34,6 @@ git merge --no-ff release-<version>
 git push --follow-tags gh develop master
 
 git branch -D release-<version>
-git branch -D <mybranch>
 
 ## On production server
 git fetch gh
