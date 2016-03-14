@@ -6,6 +6,7 @@ logs
 /secrets.js
 secrets
 npm-debug.log
+*.orig
 
 // This is removed in master branch
 web/**/dist
