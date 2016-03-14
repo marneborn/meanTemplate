@@ -3,15 +3,19 @@
 // FIXME - imagemin, svgmin???
 // FIXME - need to handle relative paths in .scss files? smart copy?
 
+var fs = require('fs');
+
 //---------------------------------------------------------------------------
-module.exports = function(grunt) {
+module.exports = function gruntBuildCfg (grunt) {
 
     var serverConfig = require('../server/config'),
 
         gruntConfig = {
 
             clean: {
-                "pre-build" : [],
+                "pre-build" : ['filerev-mapping.json', 'web/*/dist/**/*'],
+                "save-build" : ['web/*/dist.save/**/*'],
+                "ngAnn": [],
                 "post-build": []
             },
 
@@ -25,7 +29,10 @@ module.exports = function(grunt) {
             },
 
             copy: {
-                bootstrap : { files: [] }
+                bootstrap : { files: [] },
+                "merge-build": {
+                    files: []
+                }
             },
 
             ngAnnotate: {
@@ -38,11 +45,31 @@ module.exports = function(grunt) {
                 }
             },
 
+            filerev: {
+                dist: {
+                    src: [
+                        'web/*/dist/**/*.js',
+                        'web/*/dist/**/*.css'
+                    ]
+                }
+            },
+
+            rename: {
+                'save-build': {
+                    files: []
+                }
+            },
+
             build : {
-                css:  ['clean:built-css', 'sass:dev'],
+                css:  ['clean:pre-build', 'sass:dev'],
                 dist: [
-                    'clean:pre-build', 'sass:dev', 'sass:dist', 'cssmin:dist',
-                    'ngAnnotate:dist', 'uglify:dist', 'copy:bootstrap', 'clean:post-build'
+                    'clean:save-build', 'rename:save-build',
+
+                    'sass:dev', 'sass:dist', 'cssmin:dist',
+                    'ngAnnotate:dist', 'uglify:dist', 'copy:bootstrap',
+
+                    'clean:ngAnn', 'filerev:dist', 'dump-filerev-dist',
+                    'copy:merge-build', 'clean:save-build'
                 ]
             }
 
@@ -55,6 +82,21 @@ module.exports = function(grunt) {
 
         //---------------------------------------------------------------------------
         gruntConfig.clean['pre-build'].push(subAppConfig.distDir);
+
+        //---------------------------------------------------------------------------
+        // Save previous builds off (will merge later)
+        gruntConfig.clean['save-build'].push(subAppConfig.distDir+'.save');
+        gruntConfig.rename['save-build'].files.push({
+            src:  subAppConfig.distDir,
+            dest: subAppConfig.distDir+'.save'
+        });
+        gruntConfig.copy['merge-build'].files.push({
+            expand: true,
+            cwd: subAppConfig.distDir+'.save',
+            src:  ['**'],
+            dest: subAppConfig.distDir+'/'
+        });
+
 
         //---------------------------------------------------------------------------
         // Setup for sass build
@@ -78,16 +120,10 @@ module.exports = function(grunt) {
             dest: subAppConfig.distDir
         });
 
-        // For auto sassing.
-        gruntConfig.clean['built-css'] = [
-            subAppConfig.appCss.dev,
-            subAppConfig.appCss.dev+".map"
-        ];
-
         //---------------------------------------------------------------------------
         // setup for js build
         annotated = subAppConfig.appJs.dist.replace(/(\.min)?\.js$/, '.ngAnn.js');
-        gruntConfig.clean['post-build'].push(annotated);
+        gruntConfig.clean.ngAnn.push(annotated);
 
         gruntConfig.ngAnnotate.dist.files[annotated] = subAppConfig.appJs.src;
         gruntConfig.ngAnnotate.dist.options = {
@@ -106,8 +142,19 @@ module.exports = function(grunt) {
 
     grunt.config.merge(gruntConfig);
 
-    // sass, cssmin, and ngAnnotate+uglify can be concurrent, but probably not worth the overhead
-    // run lint checks here?
+    grunt.registerTask('dump-filerev-dist', function () {
+        var file = './filerev-mapping.json',
+            newmapping = {},
+            keys = Object.keys(grunt.filerev.summary),
+            i, newsrc, newdest;
+
+        for (i=0; i<keys.length; i++) {
+            newsrc  = keys[i].replace(/\\/g, '/');
+            newdest = grunt.filerev.summary[keys[i]].replace(/\\/g, '/');
+            newmapping[newsrc] = newdest;
+        }
+        fs.writeFileSync(file, JSON.stringify(newmapping, null, 2));
+    });
 
     grunt.registerMultiTask('build', function() {
         grunt.log.writeln(this.target + ': ' + JSON.stringify(this.data));

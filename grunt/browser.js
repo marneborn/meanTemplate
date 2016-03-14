@@ -4,7 +4,7 @@
  * Tasks to help with web browser
  */
 
-module.exports = function ( grunt ) {
+module.exports = function gruntBrowserCfg ( grunt ) {
 
 	var opn = require('opn'),
         serverConfig = require('../server/config'),

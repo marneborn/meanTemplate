@@ -43,3 +43,9 @@ body {
 .strikethrough {
   text-decoration:line-through;
 }
+
+header .nav-dropdown-button {
+  opacity:1 !important;
+  min-width: 110px;
+  text-align: left;
+}

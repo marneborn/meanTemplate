@@ -14,8 +14,8 @@
 	    // FIXME: along with that, add an attribute to skip zindex checking mng-coverup-clickable???
 	    zIndex   = 1000;
 
-    window.registerModule(moduleName, ['makeStyleSheetModule'])
-    .directive(moduleName, MngCoverup);
+    window.registerModule(moduleName)
+        .directive(moduleName, MngCoverup);
 
     MngCoverup.$inject = ['$q', '$window', 'makeStyleSheet'];
     function MngCoverup ($q, $window, makeStyleSheet) {
@@ -33,9 +33,9 @@
 
 			transclude   : true,
 			template    : '<div class="mng-coverup-container">'+
-			'<div class="mng-coverup-background"></div>'+
-			'<div data-ng-transclude class="mng-coverup-content"></div>'+
-			'</div>',
+			    '<div class="mng-coverup-background"></div>'+
+			    '<div data-ng-transclude class="mng-coverup-content"></div>'+
+			    '</div>',
 
 			link : link
 		};
@@ -77,9 +77,9 @@
 
                 // Replace when all images are loaded - FIXME - on each...
                 waitForChildImages(scope, parent)
-                .then(function () {
-                    placeContainer(container, getElementRect(parent));
-                });
+                    .then(function () {
+                        placeContainer(container, getElementRect(parent));
+                    });
 
                 scope.$watch(
                     function () {
@@ -203,25 +203,25 @@
 
             return $q.all(
                 element.find('img')
-                .map(function (idx, img) {
-                    var defer = $q.defer(),
-                        resolveIt = function () {
-                            defer.resolve();
-                        };
+                    .map(function (idx, img) {
+                        var defer = $q.defer(),
+                            resolveIt = function () {
+                                defer.resolve();
+                            };
 
-                    angular.element(img)
-                    .bind('load' , resolveIt)
-                    .bind('error', resolveIt)
-                    .bind('abort', resolveIt);
+                        angular.element(img)
+                            .bind('load' , resolveIt)
+                            .bind('error', resolveIt)
+                            .bind('abort', resolveIt);
 
-                    scope.$on('$destroy',function(){
-                        element.unbind('load');
-                        element.unbind('error');
-                        element.unbind('abort');
-                    });
+                        scope.$on('$destroy',function(){
+                            element.unbind('load');
+                            element.unbind('error');
+                            element.unbind('abort');
+                        });
 
-                    return defer.promise;
-                })
+                        return defer.promise;
+                    })
             );
         }
 

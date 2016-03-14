@@ -4,25 +4,27 @@
  * Tasks to help with web browser
  */
 
-module.exports = function ( grunt ) {
+module.exports = function gruntTestCfg ( grunt ) {
+    var MyReporter = require('./test/MyReporter'),
+        myReporter = new MyReporter();
 
     grunt.config.merge({
         'jasmine_nodejs': {
 
             options: {
-                specNameSuffix: "spec.js",
-                helperNameSuffix: "helper.js",
+                specNameSuffix: ".spec.js",
+                helperNameSuffix: ".helper.js",
                 useHelpers: false,
                 stopOnFailure: false,
                 // configure one or more built-in reporters
                 reporters: {
-                    console: {
-                        colors: true,
-                        cleanStack: 1,       // (0|false)|(1|true)|2|3
-                        verbosity: 4,        // (0|false)|1|2|3|(4|true)
-                        listStyle: "indent", // "flat"|"indent"
-                        activity: false
-                    },
+//                     console: {
+//                         colors: true,
+//                         cleanStack: 1,       // (0|false)|(1|true)|2|3
+//                         verbosity: 4,        // (0|false)|1|2|3|(4|true)
+//                         listStyle: "indent", // "flat"|"indent"
+//                         activity: false
+//                     },
                     // junit: {
                     //     savePath: "./reports",
                     //     filePrefix: "junit-report",
@@ -43,7 +45,9 @@ module.exports = function ( grunt ) {
                     // tap: true
                 },
                 // add custom Jasmine reporter(s)
-                customReporters: []
+                customReporters: [
+                    myReporter
+                ]
             },
 
             'server-unit': {
@@ -54,32 +58,33 @@ module.exports = function ( grunt ) {
                     useHelpers: false
                 },
                 specs: [
-                    "test/server-unit/**"
+                    "server/**"
                 ],
                 helpers: [
-                    "test/server-unit/**",
-                    "test/common/**"
+                    "server/**"
                 ]
             }
         },
 
         karma: {
 			'web-watch': {
-				configFile: 'test/web-unit/karma.conf.js'
+				configFile: 'web/karma.web-unit.conf.js',
+                options: {}
 			},
 			'web-once': {
-				configFile: 'test/web-unit/karma.conf.js',
+				configFile: 'web/karma.web-unit.conf.js',
 				options : {
 					singleRun: true
 				}
 			},
 			'web-full': {
-				configFile: 'test/web-unit/karma.conf.js',
+				configFile: 'web/karma.web-unit.conf.js',
 				options: {
 					browsers: ['Chrome', 'Firefox', 'IE'],
 					singleRun: true
 				}
 			}
+
 		},
 
         watch: {
@@ -100,7 +105,13 @@ module.exports = function ( grunt ) {
         }
     });
 
+    grunt.registerTask('prd-web-tests', function () {
+        process.env.NODE_ENV = 'production';
+        grunt.task.run('karma:web-full');
+    });
     grunt.registerTask('dev-server-tests', 'focus:server-tests');
-    grunt.registerTask('dev-web-tests', 'karma:web-watch');
-
+    grunt.registerTask('dev-web-tests', function () {
+        process.env.NODE_ENV = undefined;
+        grunt.task.run('karma:web-full');
+    });
 };

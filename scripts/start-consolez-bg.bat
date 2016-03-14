@@ -17,7 +17,7 @@ IF EXIST "%MONGODB%\mongod.lock" (
 echo MongoDB is: %MONGODB%
 
 %CONSOLEZ% ^
-   -t DB      -d %MONGODB% ^
+   -t Mongo   -d %MONGODB% ^
    -t server  -d %WORK% ^
    -t browser -d %WORK% ^
    -t jshint  -d %WORK% ^

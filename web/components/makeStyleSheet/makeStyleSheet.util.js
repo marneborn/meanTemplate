@@ -60,11 +60,24 @@
 
         var i;
 
-        for (i=0; i<rules.length; i++) {
-            styleObj.sheet.addRule(
-                rules[i]._selector,
-                obj2str(rules[i])
-            );
+        if (styleObj.sheet.addRule) {
+            for (i=0; i<rules.length; i++) {
+                styleObj.sheet.addRule(
+                    rules[i]._selector,
+                    obj2str(rules[i])
+                );
+            }
+        }
+        else if (styleObj.sheet.insertRule) {
+            for (i=0; i<rules.length; i++) {
+                styleObj.sheet.insertRule(
+                    rules[i]._selector+" { "+obj2str(rules[i])+" }",
+                    0
+                );
+            }
+        }
+        else {
+            console.error("No addRule method...");
         }
 
 	}

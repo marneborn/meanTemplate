@@ -22,29 +22,11 @@ var express = require('express'),
 	// Create the express app
 	app = express(),
 
-    // Setup to connect to the DB
-    mongooseDB = require('./server/mongooseDB'),
-    dbConnection,
-
-    // server components to put at the top
-    userComponent = require('./server/components/user'),
-
     // Keep track of initialization promises to hold off promises
     initPromises = [],
 
     // declare local variables.
     defaultApp, subAppName, subApp, opts, i;
-
-// Connect to the common mongooseDB
-dbConnection = mongooseDB.connect();
-initPromises.push(dbConnection);
-
-// Setup the user component
-initPromises.push(
-    userComponent.init({
-        mongooseDB : dbConnection
-    })
-);
 
 require('./server/logIncoming')(app);
 
@@ -58,7 +40,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // add passport middleware
-app.use(userComponent.authenticate(config.sessions));
+initPromises.push(
+    require('./server/user')(app)
+);
 
 // add middleware defining each sub app
 for (i=0; i<config.subApps.list.length; i++) {

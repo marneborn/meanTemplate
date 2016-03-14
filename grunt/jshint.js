@@ -3,7 +3,7 @@
 var _ = require('lodash'),
     fs = require('fs');
 
-module.exports = function(grunt) {
+module.exports = function gruntJshintCfg (grunt) {
 
     var allMyJS = getAllMyJS(),
         jshintConfig = {
@@ -76,20 +76,31 @@ module.exports = function(grunt) {
             },
             web : {
                 // FIXME - get web/dist from config
-                src: ['web/**/*.js', '!web/**/dist/**/*'],
+                src: ['web/**/*.js', '!web/**/dist/**/*', '!web/**/*.spec.js', '!web/karma.*.conf.js'],
                 options: {
                     browser: true,
-                    jquery: true,
                     globals: {
                         angular: true,
-                        web: true
+                        Symbol: true
                     }
                 }
             },
             server : {
-                src: ['server.js', 'server/**/*.js'],
+                src: ['server.js', 'server/**/*.js', '!server/**/*.spec.js', '!server/**/*.spec-helper.js'],
                 options: {
-                    node: true
+                    node: true,
+                    esversion: 6
+                }
+            },
+            common : {
+                src: ['common/**/*.js'],
+                options: {
+//                     browser: true,
+//                     node: true,
+//                     globals: {
+//                         angular: true,
+//                         Symbol: true
+//                     }
                 }
             },
             grunt: {
@@ -99,28 +110,34 @@ module.exports = function(grunt) {
                 }
             },
             'server-unit' : {
-                src: ['test/server-unit/**/*.js'],
+                src: ['server/**/*.spec.js', 'server/**/*.spec-helper.js'],
                 options: {
                     jasmine: true,
+                    esversion: 6,
                     node:true
                 }
             },
             'karma-conf': {
-                src: ['test/web-unit/**/karma.conf.js'],
+                src: ['web/karma.*.conf.js'],
                 options: {
                     jasmine:true,
+                    esversion: 6,
                     node:true
                 }
             },
             'web-unit' : {
-                src: ['test/web-unit/**/*.js', '!test/**/karma.conf.js'],
+                src: ['web/**/*.spec.js'],
                 options: {
                     jasmine: true,
                     globals: {
+                        window: true,
+                        jasmine: true,
+                        node: true,
                         inject: true,
                         angular: true,
                         document: true,
-                        module: true
+                        module: true,
+                        setTimeout: true
                     }
                 }
             }
@@ -235,6 +252,7 @@ function getAllMyJS () {
                 return thing+"/**/*.js";
             }),
             "!web/**/dist/**/*.js",
+            "!secrets/**/*",
             "!secrets.js"
         ]
     );
