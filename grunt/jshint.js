@@ -3,93 +3,104 @@
 var _ = require('lodash'),
     fs = require('fs');
 
-module.exports = function(grunt) {
+module.exports = function gruntJshintCfg (grunt) {
 
     var allMyJS = getAllMyJS(),
         jshintConfig = {
             options : {
 
-				maxerr : 9999,
+                maxerr : 9999,
 
-				// Enforcing options
-				// When set to true, these options will make JSHint produce more warnings about your code.
-				bitwise : true,
-				camelcase : false,
-				curly : false,
-				eqeqeq : true,
-// 				es5 : true,
-				forin : true,
-				freeze : true,
-				futurehostile : true,
-				immed : true,
-				indent : true,
-				iterator : true,
-				latedef : "nofunc", // OK to define functions late, but not variables
-				maxcomplexity : 8,
-				maxdepth : 4,
-				maxlen : 110,
-				maxparams : 4,
-				maxstatements : 25,
-				newcap : true,
-				noarg : true,
-				nocomma : true,
-				noempty : false, // OK to have explicit empty blocks like : {}
-				nonbsp : true,
-				nonew : true,
-				quotmark : false,
-				shadow : true,
-				singleGroups : true,
-				strict  : true,
-				undef : true,
-				unused : true,
+                // Enforcing options
+                // When set to true, these options will make JSHint produce more warnings about your code.
+                bitwise : true,
+                camelcase : false,
+                curly : false,
+                eqeqeq : true,
+//                 es5 : true,
+                forin : true,
+                freeze : true,
+                futurehostile : true,
+                immed : true,
+                indent : true,
+                iterator : true,
+                latedef : "nofunc", // OK to define functions late, but not variables
+                maxcomplexity : 8,
+                maxdepth : 4,
+                maxlen : 110,
+                maxparams : 4,
+                maxstatements : 25,
+                newcap : true,
+                noarg : true,
+                nocomma : true,
+                noempty : false, // OK to have explicit empty blocks like : {}
+                nonbsp : true,
+                nonew : true,
+                quotmark : false,
+                shadow : true,
+                singleGroups : true,
+                strict  : true,
+                undef : true,
+                unused : true,
 
-				// Relaxing options
-				// When set to true, these options will make JSHint produce fewer warnings about your code.
-				asi : false,
-				boss : false,
-				debug : false,
-				elision : false,
-				eqnull : true,
-				esnext : false,
-				evil : false,
-				expr : false,
-				globalstrict : false,
-				lastsemic : false,
-				laxbreak : true, // Allow things like '.', '+', '||' at start of continued line
-				laxcomma : true, // Allow comma at start of next line instead of end of previous.
-				loopfunc : false,
-				moz : false,
-				multistr : false,
-				noyield : false,
-				plusplus : false,
-				proto : false,
-				scripturl : false,
-				sub : false,
-				supernew : false,
-				validthis : false,
-				withstmt : false,
+                // Relaxing options
+                // When set to true, these options will make JSHint produce fewer warnings about your code.
+                asi : false,
+                boss : false,
+                debug : false,
+                elision : false,
+                eqnull : true,
+                esnext : false,
+                evil : false,
+                expr : false,
+                globalstrict : false,
+                lastsemic : false,
+                laxbreak : true, // Allow things like '.', '+', '||' at start of continued line
+                laxcomma : true, // Allow comma at start of next line instead of end of previous.
+                loopfunc : false,
+                moz : false,
+                multistr : false,
+                noyield : false,
+                plusplus : false,
+                proto : false,
+                scripturl : false,
+                sub : false,
+                supernew : false,
+                validthis : false,
+                withstmt : false,
 
-				// Environment
+                // Environment
                 // These options let JSHint know about some pre-defined global variables.
                 devel: !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
             },
             web : {
                 // FIXME - get web/dist from config
-                src: ['web/**/*.js', '!web/**/dist/**/*'],
+                src: ['web/**/*.js', '!web/**/dist/**/*', '!web/**/*.spec.js', '!web/karma.*.conf.js'],
                 options: {
                     browser: true,
-                    jquery: true,
                     globals: {
                         angular: true,
-                        web: true
+                        Symbol: true
                     }
                 }
             },
             server : {
-                src: ['server.js', 'server/**/*.js'],
+                src: ['server.js', 'server/**/*.js', '!server/**/*.spec.js', '!server/**/*.spec-helper.js'],
                 options: {
-                    node: true
+                    node: true,
+                    esversion: 6
+                }
+            },
+            common : {
+                src: ['common/**/*.js'],
+                options: {
+//                     browser: true,
+//                     node: true,
+//                     globals: {
+//                         angular: true,
+//                         Symbol: true
+//                     }
                 }
             },
             grunt: {
@@ -99,28 +110,34 @@ module.exports = function(grunt) {
                 }
             },
             'server-unit' : {
-                src: ['test/server-unit/**/*.js'],
+                src: ['server/**/*.spec.js', 'server/**/*.spec-helper.js'],
                 options: {
                     jasmine: true,
+                    esversion: 6,
                     node:true
                 }
             },
             'karma-conf': {
-                src: ['test/web-unit/**/karma.conf.js'],
+                src: ['web/karma.*.conf.js'],
                 options: {
                     jasmine:true,
+                    esversion: 6,
                     node:true
                 }
             },
             'web-unit' : {
-                src: ['test/web-unit/**/*.js', '!test/**/karma.conf.js'],
+                src: ['web/**/*.spec.js'],
                 options: {
                     jasmine: true,
                     globals: {
+                        window: true,
+                        jasmine: true,
+                        node: true,
                         inject: true,
                         angular: true,
                         document: true,
-                        module: true
+                        module: true,
+                        setTimeout: true
                     }
                 }
             }
@@ -235,6 +252,7 @@ function getAllMyJS () {
                 return thing+"/**/*.js";
             }),
             "!web/**/dist/**/*.js",
+            "!secrets/**/*",
             "!secrets.js"
         ]
     );

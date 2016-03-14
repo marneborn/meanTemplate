@@ -6,7 +6,7 @@ var path = require('path'),
 module.exports = function (req, res) {
     L.debug('Unhandled request: '+req.url+' - '+JSON.stringify(req.headers));
 
-	res.status(404);
+    res.status(404);
     if (req.accepts('html')) {
         res.sendFile(path.resolve('web/404.html'));
     }

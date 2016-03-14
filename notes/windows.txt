@@ -1,3 +1,13 @@
 ; to find and kill the process listening to a port
 netstat -a -n -o | grep -e PID -e "8080"
 taskkill /F /pid 119732
+
+; to map a url to an IP (127.0.0.1) edit C:/Windows/System32/drivers/etc/hosts
+ 127.0.0.1 local.meantemplate.com
+
+; to port forward in windows
+netsh interface portproxy add v4tov4 listenport=80 listenaddress=127.0.0.1 connectport=8080 connectaddress=127.0.0.1
+
+; find and kill mysqld
+tasklist | grep -i mysqld
+taskkill /F /pid 14000

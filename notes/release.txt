@@ -1,0 +1,41 @@
+git co develop
+git pull gh develop
+
+git co <mybranch>
+git merge --no-ff develop
+git co develop
+git merge --squash <mybranch>
+git add .
+git ci 
+git branch -D <mybranch>
+
+git co -b release-<version>
+grunt build:css
+grunt jshint-all
+grunt jasmine_nodejs:server-unit
+grunt karma:web-full
+
+grunt build:dist
+grunt prd-web-tests
+
+npm version patch --no-git-tag-version
+git add package.json
+git ci -m "Updated version"
+
+git co master
+git merge --no-ff release-<version>
+git add .
+git tag -a -m "nm" v<version>
+git ci -m "Released version: <version>"
+
+git co develop
+git merge --no-ff release-<version>
+
+git push --follow-tags gh develop master
+
+git branch -D release-<version>
+
+## On production server
+git fetch gh
+git pull gh master
+./scripts/restart.ps1

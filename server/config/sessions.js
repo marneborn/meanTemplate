@@ -1,18 +1,17 @@
 "use strict";
 
-var _ = require('lodash'),
-    db = _.cloneDeep(require('./db')),
-    config = {
-        db : _.extend(
-            db,
+const _ = require('lodash'),
+      userDB = _.cloneDeep(require('./dbs')).user;
+
+module.exports = {
+        db : _.merge(
+        {},
+        userDB,
             {
-	            "type"         : "mongo",
-	            "collection"   : "sessions",
-	            "stringify"    : false,
-	            "autoReconnect": true
+                "type"         : "mongo",
+                "collection"   : "sessions",
+                "stringify"    : false,
+                "autoReconnect": true
             }
         )
     };
-
-_.extend(config, require('./secrets').sessions);
-module.exports = config;

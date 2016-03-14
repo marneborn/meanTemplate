@@ -3,7 +3,6 @@ node_modules
 bower_components
 .tmp
 logs
-secrets.js
-
-// This is removed in master branch
-web/**/dist
+/secrets.js
+secrets
+npm-debug.log

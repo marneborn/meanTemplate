@@ -4,9 +4,9 @@
  * Tasks to help with web browser
  */
 
-module.exports = function ( grunt ) {
+module.exports = function gruntBrowserCfg ( grunt ) {
 
-	var opn = require('opn'),
+    var opn = require('opn'),
         serverConfig = require('../server/config'),
 
         gruntConfig = {
@@ -51,17 +51,17 @@ module.exports = function ( grunt ) {
     }
 
     gruntConfig.watch.livereload.files.push('web/**/*.html');
-	grunt.config.merge(gruntConfig);
+    grunt.config.merge(gruntConfig);
 
-	grunt.task.registerTask('open-browser', 'open the browser to the front page', function (page) {
+    grunt.task.registerTask('open-browser', 'open the browser to the front page', function (page) {
 
-		var done = this.async();
+        var done = this.async();
 
-		if (!page)
-			page = '';
+        if (!page)
+            page = '';
 
-		opn("http://"+serverConfig.host+":"+serverConfig.port, done);
-	});
+        opn("http://"+serverConfig.host+":"+serverConfig.port, done);
+    });
 
     grunt.registerTask('dev-browser'  , ['open-browser', 'build:css', 'focus:dev-browser']);
     grunt.registerTask('watch-browser', ['open-browser', 'watch:livereload']);

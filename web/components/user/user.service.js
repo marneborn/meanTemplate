@@ -6,10 +6,10 @@
     window.registerModule(moduleName)
     .provider('user', UserProvider);
 
-	function UserProvider () {
+    function UserProvider () {
 
         var thisUser = {};
-		initUser();
+        initUser();
 
         return {
             init: function (user) {
@@ -34,10 +34,10 @@
                  *
                  */
                 function signup (info) {
-			        initUser();
+                    initUser();
 
-			        return $http
-			        .post(
+                    return $http
+                    .post(
                         '/user/signup',
                         info,
                         {
@@ -47,13 +47,13 @@
                             }
                         }
                     )
-			        .success(function(data) {
+                    .success(function(data) {
                         mergeUser(data);
                         thisUser.isLoggedIn = true;
-			        })
-			        .error(function(data, status) {
-				        console.error('error - '+status+' - '+angular.toJson(data));
-			        });
+                    })
+                    .error(function(data, status) {
+                        console.error('error - '+status+' - '+angular.toJson(data));
+                    });
                 }
 
                 /*
@@ -61,7 +61,7 @@
                  *
                  */
                 function signin (username, password) {
-			        initUser();
+                    initUser();
 
                     return $http
                     .post(
@@ -77,16 +77,16 @@
                             }
                         }
                     )
-			        .success(function(data) {
+                    .success(function(data) {
                         // FIXME - Do I need to validate here?
                         mergeUser(data);
                         thisUser.isLoggedIn = true;
-			        })
-			        .error(function(data, status) {
+                    })
+                    .error(function(data, status) {
                         console.error('Error logging in');
                         console.error('status> '+JSON.stringify(status));
                         console.error('data> '+JSON.stringify(data));
-			        })
+                    })
                     .catch(function (response) {
                         if (response.data)
                             return $q.reject(response.data.message);
@@ -99,10 +99,10 @@
                  */
                 function signout () {
 
-			        initUser();
+                    initUser();
 
-			        return $http
-			        .get(
+                    return $http
+                    .get(
                         '/user/signout',
                         {
                             cache : false,
@@ -111,11 +111,11 @@
                             }
                         }
                     )
-			        .success(function() {
-			        })
-			        .error(function(data, status) {
-				        console.error('error - '+status+' - '+angular.toJson(data));
-			        });
+                    .success(function() {
+                    })
+                    .error(function(data, status) {
+                        console.error('error - '+status+' - '+angular.toJson(data));
+                    });
                 }
 
                 /*
@@ -123,8 +123,8 @@
                  */
                 function update (info) {
 
-			        return $http
-			        .post(
+                    return $http
+                    .post(
                         '/user/update',
                         info,
                         {
@@ -134,13 +134,13 @@
                             }
                         }
                     )
-			        .success(function(data) {
-			            initUser();
+                    .success(function(data) {
+                        initUser();
                         mergeUser(data);
-			        })
-			        .error(function(data, status) {
-				        console.error('error - '+status+' - '+angular.toJson(data));
-			        })
+                    })
+                    .error(function(data, status) {
+                        console.error('error - '+status+' - '+angular.toJson(data));
+                    })
                     .catch(function (err) {
                         return $q.reject(err.data);
                     });
@@ -151,20 +151,20 @@
         /*
          *
          */
-		function initUser () {
-		    thisUser = {
+        function initUser () {
+            thisUser = {
                 _id         : null,
                 email       : '',
                 displayname : '',
                 roles       : [],
                 isLoggedIn  : false
-		    };
+            };
         }
 
         /*
          *
          */
-		function mergeUser (newInfo) {
+        function mergeUser (newInfo) {
             angular.extend(thisUser, newInfo);
         }
 

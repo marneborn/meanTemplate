@@ -10,9 +10,9 @@
 
         var vm = this;
 
-        vm.error = "";
+        vm.errors = [];
 
-	    vm.signup = signup;
+        vm.signup = signup;
         vm.credentials = {
             username : "",
             email    : "",
@@ -22,7 +22,7 @@
         function signup () {
 
             vm.dataLoading = true;
-            vm.error = "";
+            vm.errors = [];
 
             user.signup({
                 username: vm.username,
@@ -30,14 +30,21 @@
                 password: vm.password
             })
             .then(function () {
-			    $location.path('/');
+                $location.path('/');
             })
             .catch(function (err) {
-                vm.error = err;
+                if (err.data._type) {
+                    vm.errors = Object.keys(err.data.errors).map(function (key) {
+                        return err.data.errors[key];
+                    });
+                }
+                else {
+                    vm.errors.push(err.data);
+                }
             })
             .finally(function () {
                 vm.dataLoading = false;
             });
-	    }
+        }
     }
 })();

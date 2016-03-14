@@ -1,13 +1,23 @@
+// Wrapper for secrets handling.
 "use strict";
+const fs = require('fs'),
+      path = require('path'),
+      argv = require('yargs').argv;
 
-module.exports = {
-    sessions : {
-        secret : 'be very very quiet'
-    },
-    authenticate : {
-        google: {
-            "clientID": "428499199082-tfgs70ueug1ipu1bqith8b367t491he0.apps.googleusercontent.com",
-            "clientSecret": "hor657E1YfpH9ZlqmOlntNkS"
-        }
+let secretsFile;
+if (argv.secrets) {
+    secretsFile = path.resolve(argv.secrets);
+    try {
+        fs.statSync(secretsFile).isFile();
     }
-};
+    catch (err) {
+        console.error(""+err);
+        throw new Error("Can't find the secrets file you told me to use: "+argv.secrets);
+    }
+}
+
+if (!secretsFile) {
+    secretsFile = path.resolve('secrets.js');
+}
+
+module.exports = require(secretsFile);
