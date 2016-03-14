@@ -1,40 +1,60 @@
-$small-width:   384px;
-$large-width:  1024px;
-$small-height:  300px;
-$large-height:  512px;
+/* xs : 0 -> 768 */
+/* sm : 768 -> 992 */
+/* md : 992 -> 1200 */
+/* lg : 1200 -> inf */
 
-@mixin if-width-md {
-  @media screen and (min-width: #{$small-width + 1px}) and (max-width: #{$large-width}) {
+$sm-width: 768px;
+$md-width: 992px;
+$lg-width: 1200px;
+
+$sm-height:  300px;
+$lg-height:  512px;
+
+@mixin if-width-xs {
+  @media screen and (max-width: #{$sm-width}) {
     @content;
   }
 }
 
-@mixin if-width-lg {
-  @media screen and (min-width: #{$large-width + 1px}) {
+@mixin if-width-sm {
+  @media screen and (min-width: #{$sm-width + 1px}) and (max-width: #{$md-width}) {
+    @content;
+  }
+}
+
+@mixin if-width-md {
+  @media screen and (min-width: #{$md-width + 1px}) and (max-width: #{$lg-width}) {
     @content;
   }
 }
 
 @mixin if-width-md-lg {
-  @media screen and (min-width: #{$small-width + 1px}) {
+  @media screen and (min-width: #{$md-width + 1px}) {
+    /* hello there */
+    @content;
+  }
+}
+
+@mixin if-width-lg {
+  @media screen and (min-width: #{$lg-width + 1px}) {
     @content;
   }
 }
 
 @mixin if-height-md {
-  @media screen and (min-height: #{$small-height + 1px}) and (max-height: #{$large-height}) {
+  @media screen and (min-height: #{$sm-height + 1px}) and (max-height: #{$lg-height}) {
     @content;
   }
 }
 
 @mixin if-height-lg {
-  @media screen and (min-height: #{$large-height + 1px}) {
+  @media screen and (min-height: #{$lg-height + 1px}) {
     @content;
   }
 }
 
 @mixin if-height-md-lg {
-  @media screen and (min-height: #{$small-height + 1px}) {
+  @media screen and (min-height: #{$sm-height + 1px}) {
     @content;
   }
 }

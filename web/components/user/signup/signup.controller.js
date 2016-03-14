@@ -12,7 +12,7 @@
 
         vm.errors = [];
 
-	    vm.signup = signup;
+        vm.signup = signup;
         vm.credentials = {
             username : "",
             email    : "",
@@ -30,7 +30,7 @@
                 password: vm.password
             })
             .then(function () {
-			    $location.path('/');
+                $location.path('/');
             })
             .catch(function (err) {
                 if (err.data._type) {
@@ -45,6 +45,6 @@
             .finally(function () {
                 vm.dataLoading = false;
             });
-	    }
+        }
     }
 })();

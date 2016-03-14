@@ -15,12 +15,12 @@ module.exports = function (app) {
     }
 
     origFormat = debug.formatArgs;
-	app.use( function (req, res, next) {
-		debug.formatArgs = formatArgs;
-		first("URL = "+req.method+' '+req.url);
-		debug.formatArgs = origFormat;
-		next();
-	});
+    app.use( function (req, res, next) {
+        debug.formatArgs = formatArgs;
+        first("URL = "+req.method+' '+req.url);
+        debug.formatArgs = origFormat;
+        next();
+    });
 };
 
 
@@ -29,28 +29,28 @@ module.exports = function (app) {
  */
 function formatArgs () {
 
-	var self     = this, /* jshint ignore:line */
+    var self     = this, /* jshint ignore:line */
         args     = arguments,
-		name     = self.namespace,
-		bgOpen   = '\u001b[41m', // red background
-		bgClose  = '\u001b[49m',
-		fg1Open  = '\u001b[30m', // black foreground
-		fg1Close = '\u001b[39m',
-		fg2Open  = '\u001b[31m', // red foreground
-		fg2Close = '\u001b[39m';
+        name     = self.namespace,
+        bgOpen   = '\u001b[41m', // red background
+        bgClose  = '\u001b[49m',
+        fg1Open  = '\u001b[30m', // black foreground
+        fg1Close = '\u001b[39m',
+        fg2Open  = '\u001b[31m', // red foreground
+        fg2Close = '\u001b[39m';
 
-	args[0] = '  '
-		+ bgOpen
-		+ fg1Open
-		+ name
-		+ fg1Close
-		+ bgClose
-		+ ' '
-		+ args[0]
-		+ fg2Open
-		+ ' +'
-		+ debug.humanize(self.diff)
-		+ fg2Close;
+    args[0] = '  '
+        + bgOpen
+        + fg1Open
+        + name
+        + fg1Close
+        + bgClose
+        + ' '
+        + args[0]
+        + fg2Open
+        + ' +'
+        + debug.humanize(self.diff)
+        + fg2Close;
 
-	return args;
+    return args;
 }

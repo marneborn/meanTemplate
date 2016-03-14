@@ -1,12 +1,13 @@
 "use strict";
 
-var path = require('path'),
-    globule = require('globule'),
-    express = require('express'),
-    subConfig = require('./config'),
-    thisDir = 'server/'+subConfig.name,
-	L = require('../logger')(subConfig.name),
-    app = express();
+const path = require('path'),
+      globule = require('globule'),
+      express = require('express'),
+      subConfig = require('./config'),
+      name = subConfig.name,
+      thisDir = 'server/'+name,
+      L = require('../logger')(name),
+      app = express();
 
 module.exports = {
     app: app
@@ -17,10 +18,10 @@ L.debug("Starting app");
 globule.find(
     thisDir+'/**/*.routes.js'
 )
-.forEach(function (file) {
-    L.debug("Adding routes from: "+file);
-    app.use(require(path.resolve(file)));
-});
+    .forEach(function (file) {
+        L.debug("Adding routes from: "+file);
+        app.use(require(path.resolve(file)));
+    });
 
 require('../subAppUtils/engine')(app, subConfig);
 

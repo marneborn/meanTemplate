@@ -14,7 +14,7 @@
         vm.error = "";
         vm.username = "";
         vm.password = "";
-	    vm.signin = signin;
+        vm.signin = signin;
 
         function signin () {
 
@@ -31,6 +31,6 @@
             .finally(function () {
                 vm.dataLoading = false;
             });
-	    }
+        }
     }
 })();

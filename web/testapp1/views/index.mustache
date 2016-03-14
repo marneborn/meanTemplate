@@ -7,13 +7,13 @@
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-	{{ #vendorCss }}
+    {{ #vendorCss }}
     <link rel="stylesheet" href="{{.}}" />
-	{{ /vendorCss }}
+    {{ /vendorCss }}
 
-	{{ #appCss }}
+    {{ #appCss }}
     <link rel="stylesheet" href="{{.}}" />
-	{{ /appCss }}
+    {{ /appCss }}
 
   </head>
   <body data-ng-app="testapp1">
@@ -35,38 +35,38 @@
       <section data-ng-view=""></section>
     </div>
 
-	<footer data-ng-include="'footer/footer.view.html'"></footer>
+    <footer data-ng-include="'footer/footer.view.html'"></footer>
 
-	{{ #googleAnalytics }}
+    {{ #googleAnalytics }}
     <script>
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
       /* jshint ignore:start */
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-      ga('create', 'UA-XXXXX-X');ga('send', 'pageview');
+     ga('create', 'UA-XXXXX-X');ga('send', 'pageview');
       /* jshint ignore:end */
     </script>
-	{{ /googleAnalytics }}
+    {{ /googleAnalytics }}
 
     <!--[if lt IE 9]>
-	{{ #shimJs }}
-    <script type="text/javascript" src="{{.}}"></script>
-	{{ /shimJs }}
+      {{ #shimJs }}
+      <script type="text/javascript" src="{{.}}"></script>
+      {{ /shimJs }}
     <![endif]-->
 
-	{{ #vendorJs }}
+    {{ #vendorJs }}
     <script type="text/javascript" src="{{.}}"></script>
-	{{ /vendorJs }}
+    {{ /vendorJs }}
 
-	{{ #appJs }}
+    {{ #appJs }}
     <script type="text/javascript" src="{{.}}"></script>
-	{{ /appJs }}
+    {{ /appJs }}
 
     <!-- User Config should go here -->
-	{{ > userConfig }}
+    {{ > userConfig }}
 
-	{{ #livereload }}
-	<script type="text/javascript" src="http://localhost:35729/livereload.js"></script>
-	{{ /livereload }}
+    {{ #livereload }}
+    <script type="text/javascript" src="http://localhost:35729/livereload.js"></script>
+    {{ /livereload }}
 
-</body>
+  </body>
 </html>
