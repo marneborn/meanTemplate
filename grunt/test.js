@@ -5,8 +5,8 @@
  */
 
 module.exports = function gruntTestCfg ( grunt ) {
-    var MyReporter = require('./test/MyReporter'),
-        myReporter = new MyReporter();
+    const MyReporter = require('./test/MyReporter'),
+          myReporter = new MyReporter();
 
     grunt.config.merge({
         'jasmine_nodejs': {
