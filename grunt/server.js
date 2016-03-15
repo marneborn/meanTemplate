@@ -58,6 +58,10 @@ module.exports = function gruntServerCfg ( grunt ) {
             );
         }
 
+        if (grunt.option('production')) {
+            config.nodemon.dev.options.args.push('--production');
+        }
+
         grunt.config.merge(config);
         grunt.task.run('nodemon:dev');
     });
