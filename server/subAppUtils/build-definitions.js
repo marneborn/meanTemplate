@@ -28,12 +28,12 @@ function buildDefinitions (subConfig) {
 
         shimJs : { // FIXME - add watch for nodemon?
             dist : distDir+'/js/shims.js',
-            src  : shims.map(toMin)
+            src  : shims.map(vendorMin)
         },
 
         vendorJs : { // FIXME - add watch for nodemon?
             dist : distDir+'/js/vendor.js',
-            src  : findVendorJsFiles().map(toMin)
+            src  : findVendorJsFiles().map(vendorMin)
         },
 
         vendorCss : { // FIXME - add watch for nodemon
@@ -74,7 +74,7 @@ function buildDefinitions (subConfig) {
     /*
      *
      */
-    function toMin (file) {
+    function vendorMin (file) {
 
         if (!buildConfig.vendorMin) {
             return file;

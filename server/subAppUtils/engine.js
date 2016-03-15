@@ -96,34 +96,68 @@ module.exports = function (app, subConfig) {
             locals.strictDI = 'ng-strict-di';
         }
 
-        if (mainConfig.build.type === 'min' || mainConfig.build.type === 'ann') {
-            locals.shimJs     = [ subConfig.shimJs.dist   ].map(useFilereved).map(makeStaticURL);
-            locals.vendorJs   = [ subConfig.vendorJs.dist ].map(useFilereved).map(makeStaticURL);
-            locals.vendorCss  = [ subConfig.vendorCss.dist].map(useFilereved).map(makeStaticURL);
-            locals.appCss     = [ subConfig.appCss.dist].map(useFilereved).map(makeStaticURL);
-        }
-        else {
-            locals.shimJs     = subConfig.shimJs   .src.map(makeStaticURL);
-            locals.vendorJs   = subConfig.vendorJs .src.map(makeStaticURL);
-            locals.vendorCss  = subConfig.vendorCss.src.map(makeStaticURL);
-            locals.appCss     = [ subConfig.appCss.dev ].map(makeStaticURL);
-        }
-
-        if (mainConfig.build.type === 'min') {
-            locals.appJs      = [ subConfig.appJs.dist ].map(useFilereved).map(makeStaticURL);
-        }
-
-        else if (mainConfig.build.type === 'ann') {
-            locals.appJs      = [ subConfig.appJs.dist ].map(useAnnotated).map(makeStaticURL);
-        }
-
-        else {
-            locals.appJs      = subConfig.appJs.src     .map(makeStaticURL);
-        }
+        locals.shimJs    = pickJs (subConfig.shimJs   ).map(makeStaticURL);
+        locals.vendorJs  = pickJs (subConfig.vendorJs ).map(makeStaticURL);
+        locals.vendorCss = pickCss(subConfig.vendorCss).map(makeStaticURL);
+        locals.appJs     = pickJs (subConfig.appJs    ).map(makeStaticURL);
+        locals.appCss    = pickCss(subConfig.appCss   ).map(makeStaticURL);
 
         return locals;
     }
+
+    /*
+     * Create a list of .js files to load
+     */
+    function pickJs (cfg) {
+
+        let reved = useFilereved(cfg.dist);
+        if (fileExists(reved)) {
+            return [reved];
+        }
+
+        if (fileExists(cfg.dist)) {
+            return [cfg.dist];
+        }
+
+        let ann = cfg.dist.replace(/(\.min)?\.js$/, '.ngAnn.js');
+        if (fileExists(ann)) {
+            return [ann];
+        }
+
+        return cfg.src;
+    }
+
+    /*
+     * Create a list of .css files to load
+     */
+    function pickCss (cfg) {
+
+        let reved = useFilereved(cfg.dist);
+        if (fileExists(reved)) {
+            return [reved];
+        }
+
+        if (fileExists(cfg.dist)) {
+            return [cfg.dist];
+        }
+
+        if (fileExists(cfg.dev)) {
+            return [cfg.dev];
+        }
+
+        return _.isArray(cfg.src) ? cfg.src : [];
+    }
 };
+
+function fileExists (file) {
+    try {
+        if (fs.statSync(file).isFile()) {
+            return true;
+        }
+    }
+    catch (err) {}
+    return false;
+}
 
 /*
  *
@@ -153,7 +187,7 @@ function findPartials (thisDir, componentDir, viewsDir) {
  */
 function useFilereved (from) {
     let reved = filerevMapping[from];
-    if (reved && fs.statSync(reved).isFile()) {
+    if (fileExists(reved)) {
         return reved;
     }
     return from;
@@ -164,7 +198,7 @@ function useFilereved (from) {
  */
 function useAnnotated (from) {
     let ann = from.replace(/\.js$/, '.ngAnn.js');
-    if (ann && fs.statSync(ann).isFile()) {
+    if (fileExists(ann)) {
         return ann;
     }
     return from;
