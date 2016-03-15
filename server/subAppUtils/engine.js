@@ -37,45 +37,7 @@ module.exports = function (app, subConfig) {
     app.set('views', viewsDir);
     app.set('view engine', 'mustache');
 
-    app.locals.googleAnalytics = true;
-    app.locals.livereload      = false;
-    app.locals.strictDI        = '';
-
-    if (mainConfig.isDev) {
-        app.locals.googleAnalytics = false;
-        app.locals.livereload      = true;
-    }
-
-    if (mainConfig.build.type === 'ann') {
-        app.locals.strictDI = 'ng-strict-di';
-    }
-
-    if (mainConfig.build.type === 'min' || mainConfig.build.type === 'ann') {
-        app.locals.shimJs     = [ subConfig.shimJs.dist   ].map(useFilereved).map(makeStaticURL);
-        app.locals.vendorJs   = [ subConfig.vendorJs.dist ].map(useFilereved).map(makeStaticURL);
-        app.locals.vendorCss  = [ subConfig.vendorCss.dist].map(useFilereved).map(makeStaticURL);
-        app.locals.appCss     = [ subConfig.appCss.dist].map(useFilereved).map(makeStaticURL);
-    }
-    else {
-        app.locals.shimJs     = subConfig.shimJs   .src.map(makeStaticURL);
-        app.locals.vendorJs   = subConfig.vendorJs .src.map(makeStaticURL);
-        app.locals.vendorCss  = subConfig.vendorCss.src.map(makeStaticURL);
-        app.locals.appCss     = [ subConfig.appCss.dev ].map(makeStaticURL);
-    }
-
-    if (mainConfig.build.type === 'min') {
-        app.locals.appJs      = [ subConfig.appJs.dist ].map(useFilereved).map(makeStaticURL);
-    }
-
-    else if (mainConfig.build.type === 'ann') {
-        app.locals.appJs      = [ subConfig.appJs.dist ].map(useAnnotated).map(makeStaticURL);
-    }
-
-    else {
-        app.locals.appJs      = subConfig.appJs.src     .map(makeStaticURL);
-    }
-
-    console.log(JSON.stringify(app.locals, null, 4));
+    _.merge(app.locals, createLocals(subConfig));
 
     app.get('/', function (req, res) {
         res.render('index', {
@@ -115,6 +77,52 @@ module.exports = function (app, subConfig) {
         return path.posix.relative(thisDir, file);
     }
 
+    /*
+     *
+     */
+    function createLocals (subConfig) {
+        let locals = {};
+
+        locals.googleAnalytics = true;
+        locals.livereload      = false;
+        locals.strictDI        = '';
+
+        if (mainConfig.isDev) {
+            locals.googleAnalytics = false;
+            locals.livereload      = true;
+        }
+
+        if (mainConfig.build.type === 'ann') {
+            locals.strictDI = 'ng-strict-di';
+        }
+
+        if (mainConfig.build.type === 'min' || mainConfig.build.type === 'ann') {
+            locals.shimJs     = [ subConfig.shimJs.dist   ].map(useFilereved).map(makeStaticURL);
+            locals.vendorJs   = [ subConfig.vendorJs.dist ].map(useFilereved).map(makeStaticURL);
+            locals.vendorCss  = [ subConfig.vendorCss.dist].map(useFilereved).map(makeStaticURL);
+            locals.appCss     = [ subConfig.appCss.dist].map(useFilereved).map(makeStaticURL);
+        }
+        else {
+            locals.shimJs     = subConfig.shimJs   .src.map(makeStaticURL);
+            locals.vendorJs   = subConfig.vendorJs .src.map(makeStaticURL);
+            locals.vendorCss  = subConfig.vendorCss.src.map(makeStaticURL);
+            locals.appCss     = [ subConfig.appCss.dev ].map(makeStaticURL);
+        }
+
+        if (mainConfig.build.type === 'min') {
+            locals.appJs      = [ subConfig.appJs.dist ].map(useFilereved).map(makeStaticURL);
+        }
+
+        else if (mainConfig.build.type === 'ann') {
+            locals.appJs      = [ subConfig.appJs.dist ].map(useAnnotated).map(makeStaticURL);
+        }
+
+        else {
+            locals.appJs      = subConfig.appJs.src     .map(makeStaticURL);
+        }
+
+        return locals;
+    }
 };
 
 /*

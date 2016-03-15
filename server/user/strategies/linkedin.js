@@ -5,7 +5,7 @@ const LinkedInStrategy = require('passport-linkedin').Strategy,
 
 module.exports.load = function (passport, User) {
 
-    new User() /* jshint ignore:line */
+    let users = new User(); /* jshint ignore:line */
 
     passport.use(
         new LinkedInStrategy(

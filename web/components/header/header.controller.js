@@ -9,7 +9,9 @@
         .controller('headerController', HeaderController);
 
     HeaderController.$inject = ['$location', '$scope', '$httpParamSerializer', 'appConfig', 'user'];
+    /* jshint -W072 */
     function HeaderController ($location, $scope, $httpParamSerializer, appConfig, user) {
+        /* jshint +W072 */
         var vm = this,
             basePath = getBasePath(),
             search = $location.search();

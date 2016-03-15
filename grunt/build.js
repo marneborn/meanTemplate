@@ -6,7 +6,9 @@
 const fs = require('fs');
 
 //---------------------------------------------------------------------------
+/* jshint -W071 */
 module.exports = function gruntBuildCfg (grunt) {
+/* jshint -W072 */
 
     const serverConfig = require('../server/config'),
 

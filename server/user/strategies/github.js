@@ -4,7 +4,8 @@ const GithubStrategy = require('passport-github').Strategy,
       config = require('../../config');
 
 module.exports.load = function (passport, User) {
-    new User(); /* jshint ignore:line */
+
+    let users = new User(); /* jshint ignore:line */
 
     passport.use(new GithubStrategy(
         {

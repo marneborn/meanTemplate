@@ -93,7 +93,7 @@ function startListening () {
  * Build the SSL Options needed by nodes https.createServer
  */
 function config2sslOptions (config) {
-    var sslOptions = {
+    let sslOptions = {
         key:    fs.readFileSync(path.resolve(process.cwd(), config.sslOptions.key)).toString(),
         cert:    fs.readFileSync(path.resolve(process.cwd(), config.sslOptions.cert)).toString()
     };
