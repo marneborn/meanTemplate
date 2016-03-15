@@ -96,7 +96,6 @@ module.exports = function gruntJshintCfg (grunt) {
                   options: {
                       browser: true,
                       node: true,
-                      esversion: 5,
                       globals: {
                           angular: true,
                           Symbol: true
@@ -106,7 +105,8 @@ module.exports = function gruntJshintCfg (grunt) {
               grunt: {
                   src: ['Gruntfile.js', 'grunt/**/*.js'],
                   options: {
-                      node: true
+                      node: true,
+                      esversion: 6
                   }
               },
               'server-unit' : {
