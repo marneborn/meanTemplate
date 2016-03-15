@@ -1,11 +1,10 @@
 (function () {
     "use strict";
 
-    var moduleName = 'commonUser';
+    window.registerModule('commonUser')
+        .controller('signupController', SignupController);
 
-    window.registerModule(moduleName)
-    .controller('signupController', SignupController);
-
+    /*@ngInject*/
     function SignupController ($http, $location, user) {
 
         var vm = this;

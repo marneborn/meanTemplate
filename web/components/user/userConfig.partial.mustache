@@ -1,16 +1,14 @@
 <script>
 
-(function () {
-  "use strict";
-
-  var moduleName = 'commonUser';
-
-  window.registerModule(moduleName)
-    .config(function (userProvider) {
-      userProvider.init(
- {{{ user }}}
-      );
-    });
-})();
+ (function () {
+   "use strict";
+   
+   window.registerModule('commonUser')
+         .config(function (userProvider) {
+           userProvider.init(
+             {{{ user }}}
+           );
+         });
+ })();
 
 </script>

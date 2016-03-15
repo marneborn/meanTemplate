@@ -2,10 +2,10 @@
 (function () {
     'use strict';
 
-    var moduleName = 'commonUser';
-    window.registerModule(moduleName)
-    .provider('user', UserProvider);
+    window.registerModule('commonUser')
+        .provider('user', UserProvider);
 
+    /*@ngInject*/
     function UserProvider () {
 
         var thisUser = {};
@@ -19,6 +19,7 @@
                     thisUser.isLoggedIn = true;
                 }
             },
+            /*@ngInject*/
             $get: function ($http, $q) {
 
                 return {
@@ -37,23 +38,23 @@
                     initUser();
 
                     return $http
-                    .post(
-                        '/user/signup',
-                        info,
-                        {
-                            cache : false,
-                            headers: {
-                                accept : 'application/json'
+                        .post(
+                            '/user/signup',
+                            info,
+                            {
+                                cache : false,
+                                headers: {
+                                    accept : 'application/json'
+                                }
                             }
-                        }
-                    )
-                    .success(function(data) {
-                        mergeUser(data);
-                        thisUser.isLoggedIn = true;
-                    })
-                    .error(function(data, status) {
-                        console.error('error - '+status+' - '+angular.toJson(data));
-                    });
+                        )
+                        .success(function(data) {
+                            mergeUser(data);
+                            thisUser.isLoggedIn = true;
+                        })
+                        .error(function(data, status) {
+                            console.error('error - '+status+' - '+angular.toJson(data));
+                        });
                 }
 
                 /*
@@ -64,34 +65,34 @@
                     initUser();
 
                     return $http
-                    .post(
-                        '/user/signin',
-                        {
-                            username : username,
-                            password : password
-                        },
-                        {
-                            cache : false,
-                            headers: {
-                                accept : 'application/json'
+                        .post(
+                            '/user/signin',
+                            {
+                                username : username,
+                                password : password
+                            },
+                            {
+                                cache : false,
+                                headers: {
+                                    accept : 'application/json'
+                                }
                             }
-                        }
-                    )
-                    .success(function(data) {
+                        )
+                        .success(function(data) {
                         // FIXME - Do I need to validate here?
-                        mergeUser(data);
-                        thisUser.isLoggedIn = true;
-                    })
-                    .error(function(data, status) {
-                        console.error('Error logging in');
-                        console.error('status> '+JSON.stringify(status));
-                        console.error('data> '+JSON.stringify(data));
-                    })
-                    .catch(function (response) {
-                        if (response.data)
-                            return $q.reject(response.data.message);
-                        return response;
-                    });
+                            mergeUser(data);
+                            thisUser.isLoggedIn = true;
+                        })
+                        .error(function(data, status) {
+                            console.error('Error logging in');
+                            console.error('status> '+JSON.stringify(status));
+                            console.error('data> '+JSON.stringify(data));
+                        })
+                        .catch(function (response) {
+                            if (response.data)
+                                return $q.reject(response.data.message);
+                            return response;
+                        });
                 }
 
                 /*
@@ -102,20 +103,20 @@
                     initUser();
 
                     return $http
-                    .get(
-                        '/user/signout',
-                        {
-                            cache : false,
-                            headers: {
-                                accept : 'application/json'
+                        .get(
+                            '/user/signout',
+                            {
+                                cache : false,
+                                headers: {
+                                    accept : 'application/json'
+                                }
                             }
-                        }
-                    )
-                    .success(function() {
-                    })
-                    .error(function(data, status) {
-                        console.error('error - '+status+' - '+angular.toJson(data));
-                    });
+                        )
+                        .success(function() {
+                        })
+                        .error(function(data, status) {
+                            console.error('error - '+status+' - '+angular.toJson(data));
+                        });
                 }
 
                 /*
@@ -124,26 +125,26 @@
                 function update (info) {
 
                     return $http
-                    .post(
-                        '/user/update',
-                        info,
-                        {
-                            cache : false,
-                            headers: {
-                                accept : 'application/json'
+                        .post(
+                            '/user/update',
+                            info,
+                            {
+                                cache : false,
+                                headers: {
+                                    accept : 'application/json'
+                                }
                             }
-                        }
-                    )
-                    .success(function(data) {
-                        initUser();
-                        mergeUser(data);
-                    })
-                    .error(function(data, status) {
-                        console.error('error - '+status+' - '+angular.toJson(data));
-                    })
-                    .catch(function (err) {
-                        return $q.reject(err.data);
-                    });
+                        )
+                        .success(function(data) {
+                            initUser();
+                            mergeUser(data);
+                        })
+                        .error(function(data, status) {
+                            console.error('error - '+status+' - '+angular.toJson(data));
+                        })
+                        .catch(function (err) {
+                            return $q.reject(err.data);
+                        });
                 }
             }
         };

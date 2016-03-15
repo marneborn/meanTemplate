@@ -6,22 +6,9 @@ const path         = require('path'),
       wiredep      = require('wiredep'),
       globule      = require('globule'),
       rootDir      = path.join(__dirname, '../..'),
+      config       = require('../config'),
       componentDir = 'web/components',
       commonDir    = 'common';
-
-let filerevMapping;
-
-try {
-    filerevMapping = require('../../filerev-mapping');
-}
-catch (err) {
-    if (err.message === "Cannot find module '../../filerev-mapping'") {
-        filerevMapping = {};
-    }
-    else {
-        throw err;
-    }
-}
 
 module.exports = buildDefinitions;
 
@@ -40,33 +27,28 @@ function buildDefinitions (subConfig) {
         distDir : distDir,
 
         shimJs : { // FIXME - add watch for nodemon?
-            dist : distDir+'/js/shims.min.js',
-            reved: filereved(distDir+'/js/shims.min.js'),
-            src  : shims
+            dist : distDir+'/js/shims.js',
+            src  : shims.map(toMin)
         },
 
         vendorJs : { // FIXME - add watch for nodemon?
-            dist : distDir+'/js/vendor.min.js',
-            reved: filereved(distDir+'/js/vendor.min.js'),
-            src  : findVendorJsFiles()
+            dist : distDir+'/js/vendor.js',
+            src  : findVendorJsFiles().map(toMin)
         },
 
         vendorCss : { // FIXME - add watch for nodemon
-            dist : distDir+'/css/vendor.min.css',
-            reved: filereved(distDir+'/css/vendor.min.css'),
+            dist : distDir+'/css/vendor.css',
             src  : findVendorCssFiles()
         },
 
         appJs : {
-            dist : distDir+'/js/'+subConfig.name+'.min.js',
-            reved: filereved(distDir+'/js/'+subConfig.name+'.min.js'),
+            dist : distDir+'/js/'+subConfig.name+'.js',
             src  : findAppJsFiles()
         },
 
         appCss : {
             dev  : distDir+'/css/'+subConfig.name+'.css',
             dist : distDir+'/css/'+subConfig.name+'.min.css',
-            reved: filereved(distDir+'/css/'+subConfig.name+'.min.css'),
             src  : thisDir+'/'+subConfig.name+'.scss',
             watch: _.flatten([ // FIXME - can top.scss be parsed to get includes?
                 thisDir+'/**/*.scss',
@@ -84,9 +66,37 @@ function buildDefinitions (subConfig) {
      */
     function findShimJsFiles () {
         return [
-            'bower_components/es5-shim/es5-shim.min.js',
-            'bower_components/json3/lib/json3.min.js'
+            'bower_components/es5-shim/es5-shim.js',
+            'bower_components/json3/lib/json3.js'
         ];
+    }
+
+    /*
+     *
+     */
+    function toMin (file) {
+
+        if (!config.build.vendorMin) {
+            return file;
+        }
+
+        let min = file.replace(/\.js$/, '.min.js');
+
+        try {
+            if (fs.statSync(min).isFile()) {
+                return min;
+            }
+        }
+        catch (err) {
+        }
+        return file;
+    }
+
+    /*
+     *
+     */
+    function forwardSlash (file) {
+        return path.relative(rootDir, file).replace(/\\/g, '/');
     }
 
     /*
@@ -95,20 +105,10 @@ function buildDefinitions (subConfig) {
      * FIXME - ignore shim if not loading .min.js's
      */
     function findVendorJsFiles () {
-
         return wiredepRes.js
-            .map(function (file) {
-
-                if (subConfig.vendorMin) {
-                    let min = file.replace(/\.js$/, '.min.js');
-                    if (fs.existsSync(min))
-                        file = min;
-                }
-
-                return path.relative(rootDir, file).replace(/\\/g, '/');
-            })
+            .map(forwardSlash)
             .filter(function (file) {
-            // Force exclusion of bootstrap.js file because we don't have jquery...
+                // Force exclusion of bootstrap.js file because we don't have jquery...
                 if  (file.match(/\/bootstrap(?:\.min)?\.js/)) {
                     return false;
                 }
@@ -181,9 +181,5 @@ function buildDefinitions (subConfig) {
         }
 
         return all;
-    }
-
-    function filereved (from) {
-        return filerevMapping[from]  !== undefined ? filerevMapping[from] : from;
     }
 }

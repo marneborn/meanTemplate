@@ -3,45 +3,79 @@
 // FIXME - There can probably be one common constructor for this for all pages
 
 const path          = require('path'),
+      fs            = require('fs'),
       _             = require('lodash'),
       consolidate   = require('consolidate'),
       globule       = require('globule'),
+      L = require('../logger')('subAppUtils:engine'),
       mainConfig    = require('../config'),
       componentDir  = 'web/components';
 
+let filerevMapping;
+
+try {
+    filerevMapping = require('../../filerev-mapping');
+}
+catch (err) {
+    if (err.message === "Cannot find module '../../filerev-mapping'") {
+        filerevMapping = {};
+    }
+    else {
+        throw err;
+    }
+}
+
 module.exports = function (app, subConfig) {
 
+    L.debug("Setting up the render engine for: "+subConfig.name);
+
     let thisDir  = 'web/'+subConfig.name,
-          viewsDir = thisDir + '/views',  // relative to the root dir
-          partials = findPartials(thisDir, componentDir, viewsDir);
+        viewsDir = thisDir + '/views',  // relative to the root dir
+        partials = findPartials(thisDir, componentDir, viewsDir);
 
     app.engine('mustache', consolidate.mustache);
     app.set('views', viewsDir);
     app.set('view engine', 'mustache');
 
-    if (mainConfig.isPrd) {
+    app.locals.googleAnalytics = true;
+    app.locals.livereload      = false;
+    app.locals.strictDI        = '';
 
-        app.locals.googleAnalytics = true;
-        app.locals.livereload = false;
-        app.locals.shimJs     = [ subConfig.shimJs.dist    ].map(makeStaticURL);
-        app.locals.vendorJs   = [ subConfig.vendorJs.dist  ].map(makeStaticURL);
-        app.locals.vendorCss  = [ subConfig.vendorCss.dist ].map(makeStaticURL);
-        app.locals.appJs      = [ subConfig.appJs.dist     ].map(makeStaticURL);
-        app.locals.appCss     = [ subConfig.appCss.dist    ].map(makeStaticURL);
+    if (mainConfig.isDev) {
+        app.locals.googleAnalytics = false;
+        app.locals.livereload      = true;
+    }
 
+    if (mainConfig.build.type === 'ann') {
+        app.locals.strictDI = 'ng-strict-di';
+    }
+
+    if (mainConfig.build.type === 'min' || mainConfig.build.type === 'ann') {
+        app.locals.shimJs     = [ subConfig.shimJs.dist   ].map(useFilereved).map(makeStaticURL);
+        app.locals.vendorJs   = [ subConfig.vendorJs.dist ].map(useFilereved).map(makeStaticURL);
+        app.locals.vendorCss  = [ subConfig.vendorCss.dist].map(useFilereved).map(makeStaticURL);
+        app.locals.appCss     = [ subConfig.appCss.dist].map(useFilereved).map(makeStaticURL);
+    }
+    else {
+        app.locals.shimJs     = subConfig.shimJs   .src.map(makeStaticURL);
+        app.locals.vendorJs   = subConfig.vendorJs .src.map(makeStaticURL);
+        app.locals.vendorCss  = subConfig.vendorCss.src.map(makeStaticURL);
+        app.locals.appCss     = [ subConfig.appCss.dev ].map(makeStaticURL);
+    }
+
+    if (mainConfig.build.type === 'min') {
+        app.locals.appJs      = [ subConfig.appJs.dist ].map(useFilereved).map(makeStaticURL);
+    }
+
+    else if (mainConfig.build.type === 'ann') {
+        app.locals.appJs      = [ subConfig.appJs.dist ].map(useAnnotated).map(makeStaticURL);
     }
 
     else {
-
-        app.locals.googleAnalytics = false;
-        app.locals.livereload = true;
-        app.locals.shimJs     = subConfig.shimJs    .src.map(makeStaticURL);
-        app.locals.vendorJs   = subConfig.vendorJs  .src.map(makeStaticURL);
-        app.locals.vendorCss  = subConfig.vendorCss .src.map(makeStaticURL);
-        app.locals.appJs      = subConfig.appJs     .src.map(makeStaticURL);
-        app.locals.appCss     = [ subConfig.appCss.dev ].map(makeStaticURL);
-
+        app.locals.appJs      = subConfig.appJs.src     .map(makeStaticURL);
     }
+
+    console.log(JSON.stringify(app.locals, null, 4));
 
     app.get('/', function (req, res) {
         res.render('index', {
@@ -74,6 +108,10 @@ module.exports = function (app, subConfig) {
             return '/'+file.substr(4);
         }
 
+        if (file.indexOf('common/') === 0) {
+            return '/'+file;
+        }
+
         return path.posix.relative(thisDir, file);
     }
 
@@ -100,4 +138,26 @@ function findPartials (thisDir, componentDir, viewsDir) {
     });
 
     return partials;
+}
+
+/**
+ * Use the filerev mapping
+ */
+function useFilereved (from) {
+    let reved = filerevMapping[from];
+    if (reved && fs.statSync(reved).isFile()) {
+        return reved;
+    }
+    return from;
+}
+
+/**
+ *
+ */
+function useAnnotated (from) {
+    let ann = from.replace(/\.js$/, '.ngAnn.js');
+    if (ann && fs.statSync(ann).isFile()) {
+        return ann;
+    }
+    return from;
 }

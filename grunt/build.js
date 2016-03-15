@@ -28,6 +28,12 @@ module.exports = function gruntBuildCfg (grunt) {
                   dist : { files : {} }
               },
 
+              concat: {
+                  options: {
+                      separator: ';\n'
+                  }
+              },
+
               copy: {
                   bootstrap : { files: [] },
                   "merge-build": {
@@ -36,6 +42,10 @@ module.exports = function gruntBuildCfg (grunt) {
               },
 
               ngAnnotate: {
+// FIXME - want implicit matching?
+//                   options: {
+//                       regexp : "^.*registerModule(.*)$"
+//                   },
                   dist : { files : {} }
               },
 
@@ -62,12 +72,15 @@ module.exports = function gruntBuildCfg (grunt) {
 
               build : {
                   css:  ['clean:pre-build', 'sass:dev'],
+                  ann:  [
+                      'clean:pre-build',
+                      'sass:dev', 'sass:dist', 'cssmin:dist',
+                      'ngAnnotate:dist', 'concat*', 'copy:bootstrap'
+                  ],
                   dist: [
                       'clean:save-build', 'rename:save-build',
-
                       'sass:dev', 'sass:dist', 'cssmin:dist',
-                      'ngAnnotate:dist', 'uglify:dist', 'copy:bootstrap',
-
+                      'ngAnnotate:dist', 'uglify:dist', 'concat*', 'copy:bootstrap',
                       'clean:ngAnn', 'filerev:dist', 'dump-filerev-dist',
                       'copy:merge-build', 'clean:save-build'
                   ]
@@ -75,9 +88,15 @@ module.exports = function gruntBuildCfg (grunt) {
 
           };
 
+
+    let concatIdx  = 0,
+        annOffset  = gruntConfig.build.ann.indexOf('concat*'),
+        distOffset = gruntConfig.build.dist.indexOf('concat*');
+
     for (let i=0; i<serverConfig.subApps.list.length; i++) {
 
-        let subAppConfig = require('../server/'+serverConfig.subApps.list[i]+'/config');
+        let subAppName = serverConfig.subApps.list[i],
+            subAppConfig = serverConfig.subApps[subAppName];
 
         //---------------------------------------------------------------------------
         gruntConfig.clean['pre-build'].push(subAppConfig.distDir);
@@ -95,7 +114,6 @@ module.exports = function gruntBuildCfg (grunt) {
             src:  ['**'],
             dest: subAppConfig.distDir+'/'
         });
-
 
         //---------------------------------------------------------------------------
         // Setup for sass build
@@ -131,18 +149,34 @@ module.exports = function gruntBuildCfg (grunt) {
 
         //---------------------------------------------------------------------------
         gruntConfig.uglify.dist.files[subAppConfig.appJs.dist]    = annotated;
-        gruntConfig.uglify.dist.files[subAppConfig.shimJs.dist]   = subAppConfig.shimJs.src;
-        gruntConfig.uglify.dist.files[subAppConfig.vendorJs.dist] = subAppConfig.vendorJs.src;
-        gruntConfig.uglify.dist.options = {
-            mangle: false
-        };
 
+        //---------------------------------------------------------------------------
+        gruntConfig.concat['concat'+concatIdx] = {
+            src  : subAppConfig.shimJs.src,
+            dest : subAppConfig.shimJs.dist
+        };
+        gruntConfig.build.ann.splice (concatIdx+annOffset , 0, 'concat:concat'+concatIdx);
+        gruntConfig.build.dist.splice(concatIdx+distOffset, 0, 'concat:concat'+concatIdx);
+        concatIdx++;
+
+        //---------------------------------------------------------------------------
+        gruntConfig.concat['concat'+concatIdx] = {
+            src  : subAppConfig.vendorJs.src,
+            dest : subAppConfig.vendorJs.dist
+        };
+        gruntConfig.build.ann.splice (concatIdx+annOffset , 0, 'concat:concat'+concatIdx);
+        gruntConfig.build.dist.splice(concatIdx+distOffset, 0, 'concat:concat'+concatIdx);
+        concatIdx++;
     }
 
+    gruntConfig.build.ann .splice(concatIdx+annOffset , 1);
+    gruntConfig.build.dist.splice(concatIdx+distOffset, 1);
+
+    console.log("------------\n"+JSON.stringify(gruntConfig, null, 4));
     grunt.config.merge(gruntConfig);
 
     grunt.registerTask('dump-filerev-dist', function () {
-        const file = './filerev-mapping.json',
+        let file = './filerev-mapping.json',
               newmapping = {},
               keys = Object.keys(grunt.filerev.summary);
 

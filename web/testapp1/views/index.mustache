@@ -16,7 +16,7 @@
     {{ /appCss }}
 
   </head>
-  <body data-ng-app="testapp1">
+  <body data-ng-app="testapp1" {{ strictDI }}>
 
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -64,9 +64,9 @@
     <!-- User Config should go here -->
     {{ > userConfig }}
 
-    {{ #livereload }}
-    <script type="text/javascript" src="http://localhost:35729/livereload.js"></script>
-    {{ /livereload }}
+    {{#livereload}}
+      <script type="text/javascript" src="http://localhost:35729/livereload.js"></script>
+    {{/livereload}}
 
   </body>
 </html>

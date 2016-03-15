@@ -3,8 +3,9 @@
 const L = require('../../logger')('dbs.memory'),
       BPromise = require('bluebird'),
       uuid = require('uuid'),
-      _ = require('lodash'),
-      DB = {};
+      _ = require('lodash');
+
+let DB = {};
 
 let connection = module.exports = {
     connect : connect,
