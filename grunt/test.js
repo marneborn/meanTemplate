@@ -100,7 +100,7 @@ module.exports = function gruntTestCfg ( grunt ) {
             'server-tests' : {
                 // FIXME - this should probably have a reporter that only summarizes (unless fails)
                 //         so that all tests can be seen.
-                include : ['server-unit', ]
+                include : ['server-unit']
             }
         }
     });

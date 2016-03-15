@@ -36,6 +36,8 @@ module.exports = function gruntServerCfg ( grunt ) {
                               watch: [
                                   'server.js',
                                   'server/**/*.js',
+                                  'web/*/dist/js/**/*.js',
+                                  'web/*/dist/css/**/*.css',
                                   '!server/**/*.spec.js',
                                   '!server/**/*.spec-helper.js',
                               ],

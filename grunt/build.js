@@ -174,7 +174,6 @@ module.exports = function gruntBuildCfg (grunt) {
     gruntConfig.build.ann .splice(concatIdx+annOffset , 1);
     gruntConfig.build.dist.splice(concatIdx+distOffset, 1);
 
-    console.log("------------\n"+JSON.stringify(gruntConfig, null, 4));
     grunt.config.merge(gruntConfig);
 
     grunt.registerTask('dump-filerev-dist', function () {
