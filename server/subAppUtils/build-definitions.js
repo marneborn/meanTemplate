@@ -6,7 +6,7 @@ const path         = require('path'),
       wiredep      = require('wiredep'),
       globule      = require('globule'),
       rootDir      = path.join(__dirname, '../..'),
-      config       = require('../config'),
+      buildConfig  = require('../config/build'),
       componentDir = 'web/components',
       commonDir    = 'common';
 
@@ -76,7 +76,7 @@ function buildDefinitions (subConfig) {
      */
     function toMin (file) {
 
-        if (!config.build.vendorMin) {
+        if (!buildConfig.vendorMin) {
             return file;
         }
 
