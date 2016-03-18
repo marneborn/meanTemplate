@@ -9,21 +9,8 @@ const path          = require('path'),
       globule       = require('globule'),
       L = require('../logger')('subAppUtils:engine'),
       mainConfig    = require('../config'),
+      createLocals  = require('./createLocals'),
       componentDir  = 'web/components';
-
-let filerevMapping;
-
-try {
-    filerevMapping = require('../../filerev-mapping');
-}
-catch (err) {
-    if (err.message === "Cannot find module '../../filerev-mapping'") {
-        filerevMapping = {};
-    }
-    else {
-        throw err;
-    }
-}
 
 module.exports = function (app, subConfig) {
 
@@ -76,88 +63,7 @@ module.exports = function (app, subConfig) {
 
         return path.posix.relative(thisDir, file);
     }
-
-    /*
-     *
-     */
-    function createLocals (subConfig) {
-        let locals = {};
-
-        locals.googleAnalytics = true;
-        locals.livereload      = false;
-        locals.strictDI        = '';
-
-        if (mainConfig.isDev) {
-            locals.googleAnalytics = false;
-            locals.livereload      = true;
-        }
-
-        if (mainConfig.build.type === 'ann') {
-            locals.strictDI = 'ng-strict-di';
-        }
-
-        locals.shimJs    = pickJs (subConfig.shimJs   ).map(makeStaticURL);
-        locals.vendorJs  = pickJs (subConfig.vendorJs ).map(makeStaticURL);
-        locals.vendorCss = pickCss(subConfig.vendorCss).map(makeStaticURL);
-        locals.appJs     = pickJs (subConfig.appJs    ).map(makeStaticURL);
-        locals.appCss    = pickCss(subConfig.appCss   ).map(makeStaticURL);
-
-        return locals;
-    }
-
-    /*
-     * Create a list of .js files to load
-     */
-    function pickJs (cfg) {
-
-        let reved = useFilereved(cfg.dist);
-        if (fileExists(reved)) {
-            return [reved];
-        }
-
-        if (fileExists(cfg.dist)) {
-            return [cfg.dist];
-        }
-
-        let ann = cfg.dist.replace(/(\.min)?\.js$/, '.ngAnn.js');
-        if (fileExists(ann)) {
-            return [ann];
-        }
-
-        return cfg.src;
-    }
-
-    /*
-     * Create a list of .css files to load
-     */
-    function pickCss (cfg) {
-
-        let reved = useFilereved(cfg.dist);
-        if (fileExists(reved)) {
-            return [reved];
-        }
-
-        if (fileExists(cfg.dist)) {
-            return [cfg.dist];
-        }
-
-        if (fileExists(cfg.dev)) {
-            return [cfg.dev];
-        }
-
-        return _.isArray(cfg.src) ? cfg.src : [];
-    }
 };
-
-function fileExists (file) {
-    try {
-        if (fs.statSync(file).isFile()) {
-            return true;
-        }
-    }
-    catch (err) {}
-    return false;
-}
 
 /*
  *
@@ -180,26 +86,4 @@ function findPartials (thisDir, componentDir, viewsDir) {
     });
 
     return partials;
-}
-
-/**
- * Use the filerev mapping
- */
-function useFilereved (from) {
-    let reved = filerevMapping[from];
-    if (fileExists(reved)) {
-        return reved;
-    }
-    return from;
-}
-
-/**
- *
- */
-function useAnnotated (from) {
-    let ann = from.replace(/\.js$/, '.ngAnn.js');
-    if (fileExists(ann)) {
-        return ann;
-    }
-    return from;
 }
