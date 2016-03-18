@@ -1,6 +1,6 @@
 "use strict";
 
-const argv = require('yargs').argv;
+const argv = require('./argv');
 
 if (argv.development || argv.dev) {
     module.exports = true;

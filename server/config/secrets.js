@@ -3,7 +3,7 @@
 const fs = require('fs'),
       path = require('path'),
       utils = require('../utils'),
-      argv = require('yargs').argv;
+      argv = require('./argv');
 
 let secretsFile;
 if (argv.secrets) {
