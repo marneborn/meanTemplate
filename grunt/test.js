@@ -58,10 +58,11 @@ module.exports = function gruntTestCfg ( grunt ) {
                     useHelpers: false
                 },
                 specs: [
-                    "server/**"
+                    // FIXME - differentiate between node and angular tests in common?
+                    "server/**", "common/**"
                 ],
                 helpers: [
-                    "server/**"
+                    "server/**", "common/**"
                 ]
             }
         },
@@ -92,7 +93,11 @@ module.exports = function gruntTestCfg ( grunt ) {
                 options : {
                     atBegin: true
                 },
-                files : ['server.js', 'server/**/*.js', 'test/server-unit/**/*', '!**/#*.js'],
+                files : [
+                    'server.js',
+                    'server/**/*.js', 'server/**/#*.js',
+                    'common/**/*.js', 'common/**/#*.js'
+                ],
                 tasks: ['jasmine_nodejs:server-unit']
             }
         },
