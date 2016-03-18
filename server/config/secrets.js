@@ -2,16 +2,13 @@
 "use strict";
 const fs = require('fs'),
       path = require('path'),
+      utils = require('../utils'),
       argv = require('yargs').argv;
 
 let secretsFile;
 if (argv.secrets) {
     secretsFile = path.resolve(argv.secrets);
-    try {
-        fs.statSync(secretsFile).isFile();
-    }
-    catch (err) {
-        console.error(""+err);
+    if (!utils.fileExists(secretsFile)) {
         throw new Error("Can't find the secrets file you told me to use: "+argv.secrets);
     }
 }

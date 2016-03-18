@@ -7,6 +7,7 @@ const path         = require('path'),
       globule      = require('globule'),
       rootDir      = path.join(__dirname, '../..'),
       buildConfig  = require('../config/build'),
+      utils        = require('../utils'),
       componentDir = 'web/components',
       commonDir    = 'common';
 
@@ -81,13 +82,8 @@ function buildDefinitions (subConfig) {
         }
 
         let min = file.replace(/\.js$/, '.min.js');
-
-        try {
-            if (fs.statSync(min).isFile()) {
-                return min;
-            }
-        }
-        catch (err) {
+        if (utils.fileExists(min)) {
+            return min;
         }
         return file;
     }
