@@ -9,7 +9,6 @@ const pkg  = require('../../package.json'),
 
 let config = module.exports = {
     name         : name,
-    isPrd        : !isDev,
     isDev        : isDev,
     host         : process.env.HOST || (isDev ? 'local.meantemplate.com' : 'meantemplate.com'),
     port         : process.env.PORT || (isDev ? 8080 : 80),
