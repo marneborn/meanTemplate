@@ -38,13 +38,13 @@ router.use(
 
 // for all .js and .css files that aren't found by the static route, return 404 with an empty body
 router.use(/.*\.(js|css)$/, function (req, res) {
-    L.debug("Request for a .js|.css that don't exits");
+    L.debug("Request for a .js|.css that don't exist");
     res.status(404).end();
 });
 
 // for all .html files that aren't found by the static route, return the 404 page
 // FIXME - for partials, should return empty?
 router.use(/.*\.html/, function (req, res) {
-    L.debug("Request for a .html that don't exits");
+    L.debug("Request for a .html that don't exist");
     res.status(404).sendFile(path.resolve('web/404.html'));
 });

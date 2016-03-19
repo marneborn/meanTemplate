@@ -1,7 +1,6 @@
 // Wrapper for secrets handling.
 "use strict";
-const fs = require('fs'),
-      path = require('path'),
+const path = require('path'),
       utils = require('../utils'),
       argv = require('./argv');
 

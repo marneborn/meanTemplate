@@ -3,12 +3,10 @@
 // FIXME - There can probably be one common constructor for this for all pages
 
 const path          = require('path'),
-      fs            = require('fs'),
       _             = require('lodash'),
       consolidate   = require('consolidate'),
       globule       = require('globule'),
-      L = require('../logger')('subAppUtils:engine'),
-      mainConfig    = require('../config'),
+      L             = require('../logger')('subAppUtils:engine'),
       createLocals  = require('./createLocals'),
       componentDir  = 'web/components';
 
@@ -36,33 +34,6 @@ module.exports = function (app, subConfig) {
     });
 
     return;
-
-    /**
-     * Figure out the relative path to this file
-     * @param {String} file - The file, relative to cwd()
-     * @return {String} The path that .static can find
-     */
-    function makeStaticURL (file) {
-
-        if (!file || !file.indexOf)
-            return file;
-
-        // all apps share one bower_components
-        if (file.indexOf('bower_components/') === 0) {
-            return '/'+file;
-        }
-
-        // common components will be have url that starts with /components
-        if (file.indexOf('web/components/') === 0) {
-            return '/'+file.substr(4);
-        }
-
-        if (file.indexOf('common/') === 0) {
-            return '/'+file;
-        }
-
-        return path.posix.relative(thisDir, file);
-    }
 };
 
 /*

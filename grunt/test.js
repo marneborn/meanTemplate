@@ -13,7 +13,7 @@ module.exports = function gruntTestCfg ( grunt ) {
 
             options: {
                 specNameSuffix: ".spec.js",
-                helperNameSuffix: ".helper.js",
+                helperNameSuffix: ".spec-helper.js",
                 useHelpers: false,
                 stopOnFailure: false,
                 // configure one or more built-in reporters

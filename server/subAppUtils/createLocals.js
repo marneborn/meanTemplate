@@ -1,18 +1,14 @@
 "use strict";
 
 const path          = require('path'),
-      _             = require('lodash'),
-      consolidate   = require('consolidate'),
-      globule       = require('globule'),
       L             = require('../logger')('subAppUtils:createLocals'),
       mainConfig    = require('../config'),
-      utils         = require('../utils'),
-      componentDir  = 'web/components';
-
+      utils         = require('../utils');
 let filerevMapping;
 
 try {
     filerevMapping = require('../../filerev-mapping');
+    L.debug("Getting filerev mapping");
 }
 catch (err) {
     if (err.message === "Cannot find module '../../filerev-mapping'") {
@@ -55,12 +51,12 @@ function createLocals (subConfig) {
     return locals;
 }
 
-/**
- * Figure out the relative path to this file
- * @param {String} file - The file, relative to cwd()
- * @return {String} The path that .static can find
- */
 function makeMakeStaticURL (thisDir) {
+    /**
+     * Figure out the relative path to this file
+     * @param {String} file - The file, relative to cwd()
+     * @return {String} The path that .static can find
+     */
     return function makeStaticURL (file) {
 
         if (!file || !file.indexOf)
@@ -146,17 +142,6 @@ function useFilereved (from) {
     let reved = filerevMapping[from];
     if (utils.fileExists(reved)) {
         return reved;
-    }
-    return from;
-}
-
-/**
- *
- */
-function useAnnotated (from) {
-    let ann = from.replace(/\.js$/, '.ngAnn.js');
-    if (utils.fileExists(ann)) {
-        return ann;
     }
     return from;
 }
