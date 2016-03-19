@@ -1,6 +1,6 @@
 {
   "name": "mean-template",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Basic template for a mean website",
   "main": "server.js",
   "scripts": {
