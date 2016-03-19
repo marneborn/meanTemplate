@@ -5,7 +5,7 @@ module.exports = {
     makeDotFormat: makeDotFormat
 };
 
-var parseFunctions = {
+const parseFunctions = {
     ValidationError : handleValidationError,
     MongoError : handleMongoError
 };
@@ -31,7 +31,7 @@ function parseError (err) {
  */
 function handleValidationError (err) {
 
-    var fields = Object.keys(err.errors),
+    let fields = Object.keys(err.errors),
         obj = {
             _type : err.name,
             errors : {}
@@ -49,7 +49,7 @@ function handleValidationError (err) {
  *
  */
 function handleMongoError (err) {
-    var match = err.errmsg.match(/^E11000 duplicate key error index: \S+\.(\S+)\.\$(\S+) dup key:\s*(\.*)/),
+    let match = err.errmsg.match(/^E11000 duplicate key error index: \S+\.(\S+)\.\$(\S+) dup key:\s*(\.*)/),
         coll, iname, val, op;
 
     if (!match) {
@@ -91,23 +91,21 @@ function handleMongoError (err) {
 
 // FIXME - This probably isn't correct for Arrays... Not sure how it should work...
 function makeDotFormat (obj) {
-    var flat = {},
-        keys = Object.keys(obj),
-        tmp, tmpKeys,
-        i, j;
+    let flat = {},
+        keys = Object.keys(obj);
 
     if (typeof obj !== 'object') {
         return obj;
     }
 
-    for (i=0; i<keys.length; i++) {
+    for (let i=0; i<keys.length; i++) {
         if (typeof obj[keys[i]] !== 'object') {
             flat[keys[i]] = obj[keys[i]];
         }
         else {
-            tmp = makeDotFormat(obj[keys[i]]);
-            tmpKeys = Object.keys(tmp);
-            for (j=0; j<tmpKeys.length; j++) {
+            let tmp = makeDotFormat(obj[keys[i]]);
+            let tmpKeys = Object.keys(tmp);
+            for (let j=0; j<tmpKeys.length; j++) {
                 flat[keys[i]+"."+tmpKeys[j]] = tmp[tmpKeys[j]];
             }
         }

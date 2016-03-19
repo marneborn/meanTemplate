@@ -24,10 +24,10 @@
  *   Get "Client ID" and "Client secret" assigned by google, enter into server/config/secrets.js
  */
 
-var L = require('../../logger')('user:authenticate:google'),
-    GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
-    config = require('../../config'),
-    common = require('./common');
+const L = require('../../logger')('user:authenticate:google'),
+      GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
+      config = require('../../config'),
+      common = require('./common');
 
 module.exports = {
     name: 'google',

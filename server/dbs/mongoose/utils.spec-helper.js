@@ -1,6 +1,6 @@
 "use strict";
 
-var _ = require('lodash');
+const _ = require('lodash');
 
 //FIXME - should I create actual errors? that would require create new errors with the same type...
 
@@ -104,7 +104,7 @@ module.exports.parseError = [
     .map(function (test) {
 
         if (test.error.op) {
-            var op = _.clone(test.error.op);
+            let op = _.clone(test.error.op);
             test.error.getOperation = function () { return op; };
             delete test.error.op;
         }

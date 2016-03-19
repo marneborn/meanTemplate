@@ -1,12 +1,15 @@
 "use strict";
 
-var path         = require('path'),
-    fs           = require('fs'),
-    _            = require('lodash'),
-    wiredep      = require('wiredep'),
-    globule      = require('globule'),
-    rootDir      = path.join(__dirname, '../..'),
-    componentDir = 'web/components';
+const path         = require('path'),
+      fs           = require('fs'),
+      _            = require('lodash'),
+      wiredep      = require('wiredep'),
+      globule      = require('globule'),
+      rootDir      = path.join(__dirname, '../..'),
+      buildConfig  = require('../config/build'),
+      utils        = require('../utils'),
+      componentDir = 'web/components',
+      commonDir    = 'common';
 
 module.exports = buildDefinitions;
 
@@ -15,7 +18,7 @@ module.exports = buildDefinitions;
  */
 function buildDefinitions (subConfig) {
 
-    var thisDir      = subConfig.thisDir,
+    let thisDir      = subConfig.thisDir,
         distDir      = 'web/'+subConfig.name+'/dist',
         wiredepRes   = wiredep(),
         shims        = findShimJsFiles();
@@ -25,23 +28,22 @@ function buildDefinitions (subConfig) {
         distDir : distDir,
 
         shimJs : { // FIXME - add watch for nodemon?
-            dist : distDir+'/js/shims.min.js',
-            src  : shims
+            dist : distDir+'/js/shims.js',
+            src  : shims.map(vendorMin)
         },
 
         vendorJs : { // FIXME - add watch for nodemon?
-            dist : distDir+'/js/vendor.min.js',
-            src  : findVendorJsFiles()
+            dist : distDir+'/js/vendor.js',
+            src  : findVendorJsFiles().map(vendorMin)
         },
 
         vendorCss : { // FIXME - add watch for nodemon
-            dist : distDir+'/css/vendor.min.css',
+            dist : distDir+'/css/vendor.css',
             src  : findVendorCssFiles()
         },
 
         appJs : {
-            dev  : distDir+'/js/'+subConfig.name+'.js',
-            dist : distDir+'/js/'+subConfig.name+'.min.js',
+            dist : distDir+'/js/'+subConfig.name+'.js',
             src  : findAppJsFiles()
         },
 
@@ -65,9 +67,32 @@ function buildDefinitions (subConfig) {
      */
     function findShimJsFiles () {
         return [
-            'bower_components/es5-shim/es5-shim.min.js',
-            'bower_components/json3/lib/json3.min.js'
+            'bower_components/es5-shim/es5-shim.js',
+            'bower_components/json3/lib/json3.js'
         ];
+    }
+
+    /*
+     *
+     */
+    function vendorMin (file) {
+
+        if (!buildConfig.vendorMin) {
+            return file;
+        }
+
+        let min = file.replace(/\.js$/, '.min.js');
+        if (utils.fileExists(min)) {
+            return min;
+        }
+        return file;
+    }
+
+    /*
+     *
+     */
+    function forwardSlash (file) {
+        return path.relative(rootDir, file).replace(/\\/g, '/');
     }
 
     /*
@@ -76,28 +101,18 @@ function buildDefinitions (subConfig) {
      * FIXME - ignore shim if not loading .min.js's
      */
     function findVendorJsFiles () {
-
         return wiredepRes.js
-        .map(function (file) {
-
-            if (subConfig.vendorMin) {
-                var min = file.replace(/\.js$/, '.min.js');
-                if (fs.existsSync(min))
-                    file = min;
-            }
-
-            return path.relative(rootDir, file).replace(/\\/g, '/');
-        })
-        .filter(function (file) {
-            // Force exclusion of bootstrap.js file because we don't have jquery...
-            if  (file.match(/\/bootstrap(?:\.min)?\.js/)) {
-                return false;
-            }
-            if (shims.indexOf(file) >= 0) {
-                return false;
-            }
-            return true;
-        });
+            .map(forwardSlash)
+            .filter(function (file) {
+                // Force exclusion of bootstrap.js file because we don't have jquery...
+                if  (file.match(/\/bootstrap(?:\.min)?\.js/)) {
+                    return false;
+                }
+                if (shims.indexOf(file) >= 0) {
+                    return false;
+                }
+                return true;
+            });
     }
 
     /*
@@ -106,31 +121,30 @@ function buildDefinitions (subConfig) {
     function findVendorCssFiles () {
 
         return !wiredepRes || !wiredepRes.css ? [] : wiredepRes.css
-        .map(function (file) {
-            var min = file.replace(/\.css$/, '.min.css');
-            if (fs.existsSync(min))
-                file = min;
-            return path.relative(rootDir, file).replace(/\\/g, '/');
-        });
+            .map(function (file) {
+                let min = file.replace(/\.css$/, '.min.css');
+                if (fs.existsSync(min))
+                    file = min;
+                return path.relative(rootDir, file).replace(/\\/g, '/');
+            });
     }
 
     /*
      *
      */
     function findAppJsFiles () {
-
-        var i, j,
-            types = [
+        let all,
+            types = [ // FIXME - is order actually important, angular is Lazy isn't it?
                 '/**/*.service.js',
                 '/**/*.directive.js',
                 '/**/*.routes.js',
                 '/**/*.controller.js',
-                '/**/*.js',
+                '/**/*.js'
             ],
             dirs = _.flatten([
                 thisDir,
-                subConfig.components.map(function (component) {
-                    return componentDir+'/'+component;
+                !subConfig.components ? [] : subConfig.components.map(function (module) {
+                       return componentDir+'/'+module;
                 })
             ]),
             pats = [
@@ -138,15 +152,30 @@ function buildDefinitions (subConfig) {
                 thisDir+'/'+subConfig.name+'.js'
             ];
 
-        for (j=0; j<types.length; j++) {
-            for (i=0; i<dirs.length; i++) {
+        for (let j=0; j<types.length; j++) {
+            for (let i=0; i<dirs.length; i++) {
                 pats.push(dirs[i]+types[j]);
             }
         }
 
-        return globule.match(
-            ['**/*', '!'+distDir+'/**/*'],
+        all = globule.match(
+            [
+                '**/*',
+                '!'+distDir+'/**/*',
+                '!**/*.spec.js'
+            ],
             globule.find(pats)
         );
+
+        if (subConfig.common) {
+            Array.prototype.push.apply(
+                all,
+                subConfig.common.map(function (module) {
+                    return commonDir+'/'+module+".js";
+                })
+            );
+        }
+
+        return all;
     }
 }

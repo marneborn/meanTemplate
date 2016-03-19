@@ -1,26 +1,23 @@
 <div class="header" data-ng-controller="headerController as header">
+
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
 
-
       <div class="navbar-header">
-
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <button type="button" class="navbar-toggle" data-ng-init="header.navCollapsed = true" ng-click="header.navCollapsed = !header.navCollapsed">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-
-        <a class="navbar-brand" href="#">testApp1 {{ header.isLoggedIn() ? "yes" : "no" }} {{ header.userName }} </a>
+        <a class="pull-left logo navbar-brand" href="#"> {{ header.appName }} </a>
       </div>
 
-      <div id="navbar" class="navbar-collapse collapse">
-
+      <div id="navbar" class="navbar-collapse collapse" uib-collapse="header.navCollapsed">
         <!-- FIXME: remove isLoggedIn and username -->
         <ul data-ng-if="!header.isLoggedIn()" class="nav navbar-nav navbar-right">
-          <li data-ng-class="{ active : header.isActive('/user/signup')}"> <a data-ng-href="#/user/signup">Sign Up</a></li>
-          <li data-ng-class="{ active : header.isActive('/user/signin')}"> <a data-ng-href="#/user/signin">Login</a></li>
+          <li data-ng-class="{ active : header.isActive('/user/signup')}"> <a data-ng-href="#/user/signup" data-ng-click="header.navCollapsed = true">Sign Up</a></li>
+          <li data-ng-class="{ active : header.isActive('/user/signin')}"> <a data-ng-href="#/user/signin" data-ng-click="header.navCollapsed = true">Login</a></li>
         </ul>
 
         <ul data-ng-if="header.isLoggedIn()" class="nav navbar-nav navbar-right">
@@ -28,8 +25,8 @@
           <li data-ng-class="{ active : header.isActive('/user/profile')}"><a href="#/user/profile">Profile</a></li>
           <li data-ng-click="header.doLogout()"> <a data-ng-href="#/">Logout</a></li>
         </ul>
-
       </div>
+
     </div>
   </nav>
 </div>

@@ -1,12 +1,11 @@
 "use strict";
 
-var LinkedInStrategy = require('passport-linkedin').Strategy,
-    config = require('../../config'),
-    users; // FIXME - tmp
+const LinkedInStrategy = require('passport-linkedin').Strategy,
+    config = require('../../config');
 
 module.exports.load = function (passport, User) {
 
-    new User() /* jshint ignore:line */
+    let users = new User(); /* jshint ignore:line */
 
     passport.use(
         new LinkedInStrategy(
@@ -21,12 +20,12 @@ module.exports.load = function (passport, User) {
             function(req, accessToken, refreshToken, profile, done) { /* jshint ignore:line */
 
                 // Set the provider data and include tokens
-                var providerData = profile._json;
+                let providerData = profile._json;
                 providerData.accessToken = accessToken;
                 providerData.refreshToken = refreshToken;
 
                 // Create the user OAuth profile
-                var providerUserProfile = {
+                let providerUserProfile = {
                     firstName: profile.name.givenName,
                     lastName: profile.name.familyName,
                     displayName: profile.displayName,

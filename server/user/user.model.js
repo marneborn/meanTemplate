@@ -5,20 +5,19 @@
 /**
  * Module dependencies.
  */
-var _ = require('lodash'),
-    BPromise = require('bluebird'),
-    mongoose = require('mongoose'),
-    Schema   = mongoose.Schema,
-    bcrypt   = require('bcrypt'),
-    L        = require('../logger')('user:model'),
-    HASH_ROUNDS = 10,
-    User;
+const _ = require('lodash'),
+      BPromise = require('bluebird'),
+      mongoose = require('mongoose'),
+      Schema   = mongoose.Schema,
+      bcrypt   = require('bcrypt'),
+      L        = require('../logger')('user:model'),
+      HASH_ROUNDS = 10;
 
 /**
  * A password is only required for local provider.
  * For that case make sure that it's secure enough (length >= 6 for now)
  */
-var checkPassword = function (password) {
+let checkPassword = function (password) {
     return !isLocal(this) || password && password.length >= 6;
 };
 
@@ -26,7 +25,7 @@ var checkPassword = function (password) {
  * determine if there is a local provider
  */
 function isLocal (doc) {
-    for (var i=0; i<doc.providers.length; i++) {
+    for (let i=0; i<doc.providers.length; i++) {
         if (doc.providers[i].source === 'local') {
             return true;
         }
@@ -37,7 +36,7 @@ function isLocal (doc) {
 /**
  * User Schema
  */
-var userSchema = new Schema({
+let userSchema = new Schema({
 
     email: {
         type: String,
@@ -111,7 +110,7 @@ userSchema.index({ "providers.source": 1, "providers.lookup": 1 }, { unique : tr
  * Encrypt the password on a save, if it's changed.
  */
 userSchema.pre('save', function(next) {
-    var self = this;
+    let self = this;
 
     self.touched = new Date();
 
@@ -148,8 +147,8 @@ userSchema.methods.authenticate = function (password, callback) {
 };
 
 userSchema.methods.getProvider = function (providerName, uniqueID) {
-    var i;
-    for (i=0; i<this.providers.length; i++) {
+
+    for (let i=0; i<this.providers.length; i++) {
 
         if ( this.providers[i].source !== providerName )
             continue;
@@ -171,12 +170,12 @@ userSchema.methods.scrub = function () {
 
 userSchema.methods.forClient = function () {
 
-    var copy = _.cloneDeep(this.toObject());
+    let copy = _.cloneDeep(this.toObject());
     copy._id = this._id.toString();
     delete copy.created;
     delete copy.touched;
     delete copy.__v;
-    for (var i=0; i<copy.providers.length; i++) {
+    for (let i=0; i<copy.providers.length; i++) {
         delete copy.providers[i].details;
         if (copy.providers[i].source !== 'local') {
             delete copy.providers[i].lookup;
@@ -189,7 +188,7 @@ userSchema.methods.forClient = function () {
     return copy;
 };
 
-module.exports = User = mongoose.model('User', userSchema);
+let User = module.exports = mongoose.model('User', userSchema);
 L.debug("Defined User model");
 
 // bluebirdify some collection functions.

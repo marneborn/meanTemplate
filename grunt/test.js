@@ -5,15 +5,15 @@
  */
 
 module.exports = function gruntTestCfg ( grunt ) {
-    var MyReporter = require('./test/MyReporter'),
-        myReporter = new MyReporter();
+    const MyReporter = require('./test/MyReporter'),
+          myReporter = new MyReporter();
 
     grunt.config.merge({
         'jasmine_nodejs': {
 
             options: {
                 specNameSuffix: ".spec.js",
-                helperNameSuffix: ".helper.js",
+                helperNameSuffix: ".spec-helper.js",
                 useHelpers: false,
                 stopOnFailure: false,
                 // configure one or more built-in reporters
@@ -58,10 +58,11 @@ module.exports = function gruntTestCfg ( grunt ) {
                     useHelpers: false
                 },
                 specs: [
-                    "server/**"
+                    // FIXME - differentiate between node and angular tests in common?
+                    "server/**", "common/**"
                 ],
                 helpers: [
-                    "server/**"
+                    "server/**", "common/**"
                 ]
             }
         },
@@ -92,7 +93,11 @@ module.exports = function gruntTestCfg ( grunt ) {
                 options : {
                     atBegin: true
                 },
-                files : ['server.js', 'server/**/*.js', 'test/server-unit/**/*', '!**/#*.js'],
+                files : [
+                    'server.js',
+                    'server/**/*.js', 'server/**/#*.js',
+                    'common/**/*.js', 'common/**/#*.js'
+                ],
                 tasks: ['jasmine_nodejs:server-unit']
             }
         },
@@ -100,7 +105,7 @@ module.exports = function gruntTestCfg ( grunt ) {
             'server-tests' : {
                 // FIXME - this should probably have a reporter that only summarizes (unless fails)
                 //         so that all tests can be seen.
-                include : ['server-unit', ]
+                include : ['server-unit']
             }
         }
     });

@@ -20,7 +20,7 @@ function makeMongoURI (obj) {
     if (!obj.db)
         throw new Error("Need a db to create a mongo URI");
 
-    var str = 'mongodb://';
+    let str = 'mongodb://';
 
     if (obj.username && obj.password)
         str += obj.username + ':' + obj.password + '@';

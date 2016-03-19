@@ -6,34 +6,33 @@
 
 module.exports = function gruntBrowserCfg ( grunt ) {
 
-    var opn = require('opn'),
-        serverConfig = require('../server/config'),
+    const opn = require('opn'),
+          serverConfig = require('../server/config'),
 
-        gruntConfig = {
-            watch : {
-                'sass-dev': {
-                    files: [],
-                    tasks: ['build:css']
-                },
-                livereload: {
-                    files : [],
-                    events: ['added', 'chagned'],
-                    options: {
-                        livereload: true
-                    }
-                }
-            },
-            focus: {
-                'dev-browser': {
-                    include: ['sass-dev', 'livereload']
-                }
-            }
-        },
-        i, subAppConfig;
+          gruntConfig = {
+              watch : {
+                  'sass-dev': {
+                      files: [],
+                      tasks: ['build:css']
+                  },
+                  livereload: {
+                      files : [],
+                      events: ['added', 'chagned'],
+                      options: {
+                          livereload: true
+                      }
+                  }
+              },
+              focus: {
+                  'dev-browser': {
+                      include: ['sass-dev', 'livereload']
+                  }
+              }
+          };
 
-    for (i=0; i<serverConfig.subApps.list.length; i++) {
+    for (let i=0; i<serverConfig.subApps.list.length; i++) {
 
-        subAppConfig = require('../server/'+serverConfig.subApps.list[i]+'/config');
+        let subAppConfig = require('../server/'+serverConfig.subApps.list[i]+'/config');
 
         Array.prototype.push.apply(
             gruntConfig.watch['sass-dev'].files,
@@ -55,7 +54,7 @@ module.exports = function gruntBrowserCfg ( grunt ) {
 
     grunt.task.registerTask('open-browser', 'open the browser to the front page', function (page) {
 
-        var done = this.async();
+        let done = this.async();
 
         if (!page)
             page = '';

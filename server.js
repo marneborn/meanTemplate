@@ -93,7 +93,7 @@ function startListening () {
  * Build the SSL Options needed by nodes https.createServer
  */
 function config2sslOptions (config) {
-    var sslOptions = {
+    let sslOptions = {
         key:    fs.readFileSync(path.resolve(process.cwd(), config.sslOptions.key)).toString(),
         cert:    fs.readFileSync(path.resolve(process.cwd(), config.sslOptions.cert)).toString()
     };
@@ -103,12 +103,10 @@ function config2sslOptions (config) {
 
     if (config.sslOptions.ca.length) {
         sslOptions.ca = [];
-        for (let ca = 0; ca < config.sslOptions.ca.length; ca++) {
+        for (let i = 0; i < config.sslOptions.ca.length; i++)
             sslOptions.ca.push(
-                fs.readFileSync(path.resolve(process.cwd(), config.sslOptions.ca[ca]))
-                    .toString()
+                fs.readFileSync(path.resolve(process.cwd(), config.sslOptions.ca[i])).toString()
             );
-        }
     }
 
     return sslOptions;

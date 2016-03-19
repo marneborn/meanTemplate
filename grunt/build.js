@@ -3,82 +3,102 @@
 // FIXME - imagemin, svgmin???
 // FIXME - need to handle relative paths in .scss files? smart copy?
 
-var fs = require('fs');
+const fs = require('fs');
 
 //---------------------------------------------------------------------------
+/* jshint -W071 */
 module.exports = function gruntBuildCfg (grunt) {
+/* jshint -W072 */
 
-    var serverConfig = require('../server/config'),
+    const serverConfig = require('../server/config'),
 
-        gruntConfig = {
+          gruntConfig = {
 
-            clean: {
-                "pre-build" : ['filerev-mapping.json', 'web/*/dist/**/*'],
-                "save-build" : ['web/*/dist.save/**/*'],
-                "ngAnn": [],
-                "post-build": []
-            },
+              clean: {
+                  "pre-build" : ['filerev-mapping.json', 'web/*/dist/**/*'],
+                  "save-build" : ['web/*/dist.save/**/*'],
+                  "ngAnn": [],
+                  "post-build": []
+              },
 
-            sass: {
-                dev  : { files : {} },
-                dist : { files : {} }
-            },
+              sass: {
+                  dev  : { files : {} },
+                  dist : { files : {} }
+              },
 
-            cssmin: {
-                dist : { files : {} }
-            },
+              cssmin: {
+                  dist : { files : {} }
+              },
 
-            copy: {
-                bootstrap : { files: [] },
-                "merge-build": {
-                    files: []
-                }
-            },
+              concat: {
+                  options: {
+                      separator: ';\n'
+                  }
+              },
 
-            ngAnnotate: {
-                dist : { files : {} }
-            },
+              copy: {
+                  bootstrap : { files: [] },
+                  "merge-build": {
+                      files: []
+                  }
+              },
 
-            uglify: {
-                dist : {
-                    files : {}
-                }
-            },
+              ngAnnotate: {
+// FIXME - want implicit matching?
+//                   options: {
+//                       regexp : "^.*registerModule(.*)$"
+//                   },
+                  dist : { files : {} }
+              },
 
-            filerev: {
-                dist: {
-                    src: [
-                        'web/*/dist/**/*.js',
-                        'web/*/dist/**/*.css'
-                    ]
-                }
-            },
+              uglify: {
+                  dist : {
+                      files : {}
+                  }
+              },
 
-            rename: {
-                'save-build': {
-                    files: []
-                }
-            },
+              filerev: {
+                  dist: {
+                      src: [
+                          'web/*/dist/**/*.js',
+                          'web/*/dist/**/*.css'
+                      ]
+                  }
+              },
 
-            build : {
-                css:  ['clean:pre-build', 'sass:dev'],
-                dist: [
-                    'clean:save-build', 'rename:save-build',
+              rename: {
+                  'save-build': {
+                      files: []
+                  }
+              },
 
-                    'sass:dev', 'sass:dist', 'cssmin:dist',
-                    'ngAnnotate:dist', 'uglify:dist', 'copy:bootstrap',
+              build : {
+                  css:  ['clean:pre-build', 'sass:dev'],
+                  ann:  [
+                      'clean:pre-build',
+                      'sass:dev', 'sass:dist', 'cssmin:dist',
+                      'ngAnnotate:dist', 'concat*', 'copy:bootstrap'
+                  ],
+                  dist: [
+                      'clean:save-build', 'rename:save-build',
+                      'sass:dev', 'sass:dist', 'cssmin:dist',
+                      'ngAnnotate:dist', 'uglify:dist', 'concat*', 'copy:bootstrap',
+                      'clean:ngAnn', 'filerev:dist', 'dump-filerev-dist',
+                      'copy:merge-build', 'clean:save-build'
+                  ]
+              }
 
-                    'clean:ngAnn', 'filerev:dist', 'dump-filerev-dist',
-                    'copy:merge-build', 'clean:save-build'
-                ]
-            }
+          };
 
-        },
-        annotated, i, subAppConfig;
 
-    for (i=0; i<serverConfig.subApps.list.length; i++) {
+    let concatIdx  = 0,
+        annOffset  = gruntConfig.build.ann.indexOf('concat*'),
+        distOffset = gruntConfig.build.dist.indexOf('concat*');
 
-        subAppConfig = require('../server/'+serverConfig.subApps.list[i]+'/config');
+    for (let i=0; i<serverConfig.subApps.list.length; i++) {
+
+        let subAppName = serverConfig.subApps.list[i],
+            subAppConfig = serverConfig.subApps[subAppName];
 
         //---------------------------------------------------------------------------
         gruntConfig.clean['pre-build'].push(subAppConfig.distDir);
@@ -96,7 +116,6 @@ module.exports = function gruntBuildCfg (grunt) {
             src:  ['**'],
             dest: subAppConfig.distDir+'/'
         });
-
 
         //---------------------------------------------------------------------------
         // Setup for sass build
@@ -122,7 +141,7 @@ module.exports = function gruntBuildCfg (grunt) {
 
         //---------------------------------------------------------------------------
         // setup for js build
-        annotated = subAppConfig.appJs.dist.replace(/(\.min)?\.js$/, '.ngAnn.js');
+        let annotated = subAppConfig.appJs.dist.replace(/(\.min)?\.js$/, '.ngAnn.js');
         gruntConfig.clean.ngAnn.push(annotated);
 
         gruntConfig.ngAnnotate.dist.files[annotated] = subAppConfig.appJs.src;
@@ -132,25 +151,39 @@ module.exports = function gruntBuildCfg (grunt) {
 
         //---------------------------------------------------------------------------
         gruntConfig.uglify.dist.files[subAppConfig.appJs.dist]    = annotated;
-        gruntConfig.uglify.dist.files[subAppConfig.shimJs.dist]   = subAppConfig.shimJs.src;
-        gruntConfig.uglify.dist.files[subAppConfig.vendorJs.dist] = subAppConfig.vendorJs.src;
-        gruntConfig.uglify.dist.options = {
-            mangle: false
-        };
 
+        //---------------------------------------------------------------------------
+        gruntConfig.concat['concat'+concatIdx] = {
+            src  : subAppConfig.shimJs.src,
+            dest : subAppConfig.shimJs.dist
+        };
+        gruntConfig.build.ann.splice (concatIdx+annOffset , 0, 'concat:concat'+concatIdx);
+        gruntConfig.build.dist.splice(concatIdx+distOffset, 0, 'concat:concat'+concatIdx);
+        concatIdx++;
+
+        //---------------------------------------------------------------------------
+        gruntConfig.concat['concat'+concatIdx] = {
+            src  : subAppConfig.vendorJs.src,
+            dest : subAppConfig.vendorJs.dist
+        };
+        gruntConfig.build.ann.splice (concatIdx+annOffset , 0, 'concat:concat'+concatIdx);
+        gruntConfig.build.dist.splice(concatIdx+distOffset, 0, 'concat:concat'+concatIdx);
+        concatIdx++;
     }
+
+    gruntConfig.build.ann .splice(concatIdx+annOffset , 1);
+    gruntConfig.build.dist.splice(concatIdx+distOffset, 1);
 
     grunt.config.merge(gruntConfig);
 
     grunt.registerTask('dump-filerev-dist', function () {
-        var file = './filerev-mapping.json',
-            newmapping = {},
-            keys = Object.keys(grunt.filerev.summary),
-            i, newsrc, newdest;
+        let file = './filerev-mapping.json',
+              newmapping = {},
+              keys = Object.keys(grunt.filerev.summary);
 
-        for (i=0; i<keys.length; i++) {
-            newsrc  = keys[i].replace(/\\/g, '/');
-            newdest = grunt.filerev.summary[keys[i]].replace(/\\/g, '/');
+        for (let i=0; i<keys.length; i++) {
+            let newsrc  = keys[i].replace(/\\/g, '/');
+            let newdest = grunt.filerev.summary[keys[i]].replace(/\\/g, '/');
             newmapping[newsrc] = newdest;
         }
         fs.writeFileSync(file, JSON.stringify(newmapping, null, 2));

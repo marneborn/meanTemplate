@@ -47,7 +47,7 @@ module.exports = {
 
 function createPassportFunction (User, strategy) {
 
-    var L = require('../../logger')('user:authenticate:'+strategy.name);
+    let L = require('../../logger')('user:authenticate:'+strategy.name);
 
     return function(req, accessToken, refreshToken, profile, done) { /* jshint ignore:line */
 
@@ -59,7 +59,7 @@ function createPassportFunction (User, strategy) {
             req.logout();
 
         // Set the provider data and include tokens
-        var providerData = profile._json,
+        let providerData = profile._json,
             findByProvider = {
                 providers : {
                     $elemMatch: {
@@ -85,7 +85,7 @@ function createPassportFunction (User, strategy) {
                     return;
                 }
 
-                var existingProvider,
+                let existingProvider,
                     changed = false;
 
                 // README.txt Handling provider signup case #1

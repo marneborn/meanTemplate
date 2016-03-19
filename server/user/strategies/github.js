@@ -1,11 +1,11 @@
 "use strict";
 
-var GithubStrategy = require('passport-github').Strategy,
-    config = require('../../config'),
-    users; //FIXME placeholder
+const GithubStrategy = require('passport-github').Strategy,
+      config = require('../../config');
 
 module.exports.load = function (passport, User) {
-    var user = new User(); /* jshint ignore:line */
+
+    let users = new User(); /* jshint ignore:line */
 
     passport.use(new GithubStrategy(
         {
@@ -18,12 +18,12 @@ module.exports.load = function (passport, User) {
         function(req, accessToken, refreshToken, profile, done) { /* jshint ignore:line */
 
             // Set the provider data and include tokens
-            var providerData = profile._json;
+            let providerData = profile._json;
             providerData.accessToken = accessToken;
             providerData.refreshToken = refreshToken;
 
             // Create the user OAuth profile
-            var providerUserProfile = {
+            let providerUserProfile = {
                 displayName: profile.displayName,
                 email: profile.emails[0].value,
                 username: profile.username,

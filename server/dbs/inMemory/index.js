@@ -1,13 +1,13 @@
 "use strict";
 
-var L = require('../../logger')('dbs.memory'),
-    BPromise = require('bluebird'),
-    uuid = require('uuid'),
-    _ = require('lodash'),
-    DB = {},
-    connection;
+const L = require('../../logger')('dbs.memory'),
+      BPromise = require('bluebird'),
+      uuid = require('uuid'),
+      _ = require('lodash');
 
-connection = module.exports = {
+let DB = {};
+
+let connection = module.exports = {
     connect : connect,
     disconnect: disconnect,
     add : add,
@@ -28,7 +28,7 @@ function disconnect () {
 }
 
 function add () {
-    var items = _.toArray(arguments),
+    let items = _.toArray(arguments),
         collection = items.shift();
 
     if (DB[collection] === undefined) {
@@ -38,7 +38,7 @@ function add () {
     L.debug("Adding "+items.length+" items to "+collection);
     return new BPromise(function (resolve) {
         items.map(function (item) {
-            var id = uuid.v1();
+            let id = uuid.v1();
             item.id = id;
             DB[collection][id] = item;
             return item;
@@ -53,8 +53,6 @@ function add () {
 function find (collection, selector) {
 
     L.debug("Looking in "+collection+" for "+JSON.stringify(selector));
-
-    var id, matched;
 
     if (DB[collection] === undefined) {
         L.err("Trying to get an item from a non-existent collection: "+collection);
@@ -71,8 +69,8 @@ function find (collection, selector) {
         });
     }
 
-    matched = [];
-    for (id in DB[collection]) {
+    let matched = [];
+    for (let id in DB[collection]) {
         if (selectObject(selector, DB[collection][id])) {
             matched.push(DB[collection][id]);
         }
@@ -94,9 +92,7 @@ function selectObject (selector, obj) {
         return false;
     }
 
-    var key;
-
-    for (key in selector) {
+    for (let key in selector) {
         if (obj[key] !== selector[key]) {
             return false;
         }

@@ -6,6 +6,7 @@ const _ = require('lodash'),
           name : name,
           thisDir : 'web/'+name,
           components : [
+              'header',
               'user',
               'makeStyleSheet',
               'mngCoverup'

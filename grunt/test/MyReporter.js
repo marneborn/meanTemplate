@@ -2,13 +2,13 @@
 
 module.exports = exports = ConsoleReporter;
 
-var util = require('util'),
-    jasmineCorePath = require('jasmine-core').files.path;
+const util = require('util'),
+      jasmineCorePath = require('jasmine-core').files.path;
 
 function Timer(options) {
     options = options || {};
 
-    var startTime;
+    let startTime;
 
     this.start = function() {
         startTime = new Date().getTime();
@@ -20,24 +20,25 @@ function Timer(options) {
 }
 
 function ConsoleReporter() {
-    var showColors = true,
-        print = function() {
-            process.stdout.write(util.format.apply(this, arguments));
-        },
-        timer = new Timer(),
-        specCount,
+    const showColors = true,
+          print = function() {
+              process.stdout.write(util.format.apply(this, arguments));
+          },
+          timer = new Timer(),
+          ansi = {
+              green: '\x1B[32m',
+              red: '\x1B[31m',
+              yellow: '\x1B[33m',
+              none: '\x1B[0m'
+          },
+          failedSuites = [],
+          failedSpecs = [],
+          pendingSpecs = [],
+          stackFilter = defaultStackFilter;
+
+    let specCount,
         executableSpecCount,
-        failureCount,
-        failedSpecs = [],
-        pendingSpecs = [],
-        ansi = {
-            green: '\x1B[32m',
-            red: '\x1B[31m',
-            yellow: '\x1B[33m',
-            none: '\x1B[0m'
-        },
-        failedSuites = [],
-        stackFilter = defaultStackFilter;
+        failureCount;
 
     this.jasmineStarted = function() {
         specCount = 0;
@@ -54,16 +55,9 @@ function ConsoleReporter() {
         if(failedSpecs.length > 0) {
             print('Failures:');
         }
-        for (var i = 0; i < failedSpecs.length; i++) {
+        for (let i = 0; i < failedSpecs.length; i++) {
             specFailureDetails(failedSpecs[i], i + 1);
         }
-
-//         if (pendingSpecs.length > 0) {
-//             print("Pending:");
-//         }
-//         for(i = 0; i < pendingSpecs.length; i++) {
-//             pendingSpecDetails(pendingSpecs[i], i + 1);
-//         }
 
         if(specCount > 0) {
             printNewline();
@@ -72,7 +66,7 @@ function ConsoleReporter() {
                 print('Ran ' + executableSpecCount + ' of ' + specCount + plural(' spec', specCount));
                 printNewline();
             }
-            var specCounts = executableSpecCount + ' ' + plural('spec', executableSpecCount) + ', ' +
+            let specCounts = executableSpecCount + ' ' + plural('spec', executableSpecCount) + ', ' +
                     failureCount + ' ' + plural('failure', failureCount);
 
             if (pendingSpecs.length) {
@@ -85,11 +79,11 @@ function ConsoleReporter() {
         }
 
         printNewline();
-        var seconds = timer.elapsed() / 1000;
+        let seconds = timer.elapsed() / 1000;
         print('Finished in ' + seconds + ' ' + plural('second', seconds));
         printNewline();
 
-        for(i = 0; i < failedSuites.length; i++) {
+        for(let i = 0; i < failedSuites.length; i++) {
             suiteFailureDetails(failedSuites[i]);
         }
 
@@ -146,24 +140,24 @@ function ConsoleReporter() {
     }
 
     function repeat(thing, times) {
-        var arr = [];
-        for (var i = 0; i < times; i++) {
+        let arr = [];
+        for (let i = 0; i < times; i++) {
             arr.push(thing);
         }
         return arr;
     }
 
     function indent(str, spaces) {
-        var lines = (str || '').split('\n');
-        var newArr = [];
-        for (var i = 0; i < lines.length; i++) {
+        let lines = (str || '').split('\n');
+        let newArr = [];
+        for (let i = 0; i < lines.length; i++) {
             newArr.push(repeat(' ', spaces).join('') + lines[i]);
         }
         return newArr.join('\n');
     }
 
     function defaultStackFilter(stack) {
-        var filteredStack = stack.split('\n').filter(function(stackLine) {
+        let filteredStack = stack.split('\n').filter(function(stackLine) {
             return stackLine.indexOf(jasmineCorePath) === -1;
         }).join('\n');
         return filteredStack;
@@ -174,8 +168,8 @@ function ConsoleReporter() {
         print(failedSpecNumber + ') ');
         print(result.fullName);
 
-        for (var i = 0; i < result.failedExpectations.length; i++) {
-            var failedExpectation = result.failedExpectations[i];
+        for (let i = 0; i < result.failedExpectations.length; i++) {
+            let failedExpectation = result.failedExpectations[i];
             printNewline();
             print(indent('Message:', 2));
             printNewline();
@@ -190,7 +184,7 @@ function ConsoleReporter() {
     }
 
     function suiteFailureDetails(result) {
-        for (var i = 0; i < result.failedExpectations.length; i++) {
+        for (let i = 0; i < result.failedExpectations.length; i++) {
             printNewline();
             print(colored('red', 'An error was thrown in an afterAll'));
             printNewline();

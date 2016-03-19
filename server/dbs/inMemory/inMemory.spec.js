@@ -1,6 +1,6 @@
 "use strict";
 
-var memoryDB = require('./index');
+const memoryDB = require('./index');
 
 describe("Testing the inMemory DB store", function () {
 

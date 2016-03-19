@@ -27,10 +27,10 @@
  *     (Button) Save Changes
  */
 
-var L = require('../../logger')('user:authenticate:facebook'),
-    FacebookStrategy = require('passport-facebook').Strategy,
-    config = require('../../config'),
-    common = require('./common');
+const L = require('../../logger')('user:authenticate:facebook'),
+      FacebookStrategy = require('passport-facebook').Strategy,
+      config = require('../../config'),
+      common = require('./common');
 
 module.exports = {
     name: 'facebook',

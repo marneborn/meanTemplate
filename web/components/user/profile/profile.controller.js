@@ -1,11 +1,10 @@
 (function () {
     "use strict";
 
-    var moduleName = 'commonUser';
+    window.registerModule('commonUser')
+        .controller('profileController', ProfileController);
 
-    window.registerModule(moduleName)
-    .controller('profileController', ProfileController);
-
+    /* @ngInject */
     function ProfileController ($location, $scope, $timeout, user) {
 
         var vm = this;

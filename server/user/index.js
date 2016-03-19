@@ -12,7 +12,7 @@ module.exports = function setupUser (app) {
 
     return DB.connect(config.dbs.user)
         .then(function () {
-            var file = path.resolve(__dirname, './user.model.js');
+            let file = path.resolve(__dirname, './user.model.js');
             L.debug("Adding model: "+file);
             // FIXME - want to pass connection into model...
             require(file);

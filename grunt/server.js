@@ -1,49 +1,51 @@
 "use strict";
 
-var path = require('path'),
-    defaultEnvVars = {
-        NODE_ENV: 'development',
-        DEBUG: '*,-send,-connect:dispatcher,-express:router*,-express:application,-body-parser:*',
-        DEBUG_COLOR: 1,
-        PASSDOWN_EMAIL: null,
-        PASSDOWN_SMTP: null
-    };
+const path = require('path'),
+      defaultEnvVars = {
+          NODE_ENV: 'development',
+          DEBUG: '*,-send,-connect:dispatcher,-express:router*,-express:application,-body-parser:*',
+          DEBUG_COLOR: 1,
+          PASSDOWN_EMAIL: null,
+          PASSDOWN_SMTP: null
+      };
 
 module.exports = function gruntServerCfg ( grunt ) {
 
     grunt.registerTask('dev-server', function () {
 
-        var watchWeb = grunt.option('watch-web'),
-            config = {
-                nodemon: {
-                    dev: {
-                        script: 'server.js',
-                        options: {
-                            restartable: "rs",
-                            args: [],
-                            env: buildEnvVars(),
-                            cwd: path.resolve(__dirname, '..'),
-                            ext: 'js',
-                            verbose: true,
-                            ignore: [
-                                '/.git$',
-                                '/node_modules$',
-                                '/bower_components$',
-                                '/.sass-cache$',
-                                '/grunt$',
-                                '/logs$'
-                            ],
-                            watch: [
-                                'server.js',
-                                'server/**/*.js',
-                                '!server/**/*.spec.js',
-                                '!server/**/*.spec-helper.js',
-                            ],
-                            delay: 1000
-                        }
-                    }
-                }
-            };
+        const watchWeb = grunt.option('watch-web'),
+              config = {
+                  nodemon: {
+                      dev: {
+                          script: 'server.js',
+                          options: {
+                              restartable: "rs",
+                              args: [],
+                              env: buildEnvVars(),
+                              cwd: path.resolve(__dirname, '..'),
+                              ext: 'js',
+                              verbose: true,
+                              ignore: [
+                                  '/.git$',
+                                  '/node_modules$',
+                                  '/bower_components$',
+                                  '/.sass-cache$',
+                                  '/grunt$',
+                                  '/logs$'
+                              ],
+                              watch: [
+                                  'server.js',
+                                  'server/**/*.js',
+                                  'web/*/dist/js/**/*.js',
+                                  'web/*/dist/css/**/*.css',
+                                  '!server/**/*.spec.js',
+                                  '!server/**/*.spec-helper.js',
+                              ],
+                              delay: 1000
+                          }
+                      }
+                  }
+              };
 
         if (watchWeb == null || watchWeb) {
             // Need to watch stuff in web to update list of js and css files included by render
@@ -58,16 +60,19 @@ module.exports = function gruntServerCfg ( grunt ) {
             );
         }
 
+        if (grunt.option('production')) {
+            config.nodemon.dev.options.args.push('--production');
+        }
+
         grunt.config.merge(config);
         grunt.task.run('nodemon:dev');
     });
 
     function buildEnvVars () {
-        var keys = Object.keys(defaultEnvVars),
-            env = {},
-            i;
+        const keys = Object.keys(defaultEnvVars),
+              env = {};
 
-        for (i=0; i<keys.length; i++) {
+        for (let i=0; i<keys.length; i++) {
 
             // simply copy if it's set
             if (process.env[keys[i]] != null) {

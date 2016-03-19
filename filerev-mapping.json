@@ -1,0 +1,16 @@
+{
+  "web/testapp1/dist/js/shims.js": "web/testapp1/dist/js/shims.a527b8f8.js",
+  "web/testapp1/dist/js/testapp1.js": "web/testapp1/dist/js/testapp1.e63ce9ae.js",
+  "web/testapp1/dist/js/vendor.js": "web/testapp1/dist/js/vendor.8c861d07.js",
+  "web/testapp2/dist/js/shims.js": "web/testapp2/dist/js/shims.a527b8f8.js",
+  "web/testapp2/dist/js/testapp2.js": "web/testapp2/dist/js/testapp2.47149468.js",
+  "web/testapp2/dist/js/vendor.js": "web/testapp2/dist/js/vendor.8c861d07.js",
+  "web/testapp1/dist/css/testapp1.css": "web/testapp1/dist/css/testapp1.b8fe6c43.css",
+  "web/testapp1/dist/css/testapp1.css.map": "web/testapp1/dist/css/testapp1.b8fe6c43.css.map",
+  "web/testapp1/dist/css/testapp1.min.css": "web/testapp1/dist/css/testapp1.min.be1d8644.css",
+  "web/testapp1/dist/css/vendor.css": "web/testapp1/dist/css/vendor.100c4a57.css",
+  "web/testapp2/dist/css/testapp2.css": "web/testapp2/dist/css/testapp2.e45e65ca.css",
+  "web/testapp2/dist/css/testapp2.css.map": "web/testapp2/dist/css/testapp2.e45e65ca.css.map",
+  "web/testapp2/dist/css/testapp2.min.css": "web/testapp2/dist/css/testapp2.min.be1d8644.css",
+  "web/testapp2/dist/css/vendor.css": "web/testapp2/dist/css/vendor.100c4a57.css"
+}

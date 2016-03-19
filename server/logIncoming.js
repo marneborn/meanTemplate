@@ -1,26 +1,35 @@
 "use strict";
 
-var debug      = require('debug');
+const debug = require('debug'),
+      pkg = require('../package');
 
 /*
  * Show each incoming request on the screen if DEBUG contains first
  */
 module.exports = function (app) {
 
-    var first = debug('first'),
+    let first = debug([pkg.name, 'first'].join(':')),
         origFormat;
 
     if (!first.enabled) {
         return;
     }
 
-    origFormat = debug.formatArgs;
-    app.use( function (req, res, next) {
-        debug.formatArgs = formatArgs;
-        first("URL = "+req.method+' '+req.url);
-        debug.formatArgs = origFormat;
-        next();
-    });
+    if (debug.useColors()) {
+       origFormat = debug.formatArgs;
+       app.use( function (req, res, next) {
+            debug.formatArgs = formatArgs;
+                  first("URL = "+req.method+' '+req.url);
+            debug.formatArgs = origFormat;
+            next();
+       });
+    }
+    else {
+        app.use( function (req, res, next) {
+                  first("URL = "+req.method+' '+req.url);
+            next();
+        });
+    }
 };
 
 
@@ -29,7 +38,7 @@ module.exports = function (app) {
  */
 function formatArgs () {
 
-    var self     = this, /* jshint ignore:line */
+    let self     = this, /* jshint ignore:line */
         args     = arguments,
         name     = self.namespace,
         bgOpen   = '\u001b[41m', // red background

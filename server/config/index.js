@@ -1,16 +1,14 @@
 "use strict";
 
-var pkg  = require('../../package.json'),
-    _ = require('lodash'),
-    fs = require('fs'),
-    L = require('../logger')('config'),
-    name = pkg.name,
-    isDev = require('./isDev'),
-    config;
+const pkg  = require('../../package.json'),
+      _ = require('lodash'),
+      fs = require('fs'),
+      L = require('../logger')('config'),
+      name = pkg.name,
+      isDev = require('./isDev');
 
-module.exports = config = {
+let config = module.exports = {
     name         : name,
-    isPrd        : !isDev,
     isDev        : isDev,
     host         : process.env.HOST || (isDev ? 'local.meantemplate.com' : 'meantemplate.com'),
     port         : process.env.PORT || (isDev ? 8080 : 80),
@@ -37,10 +35,9 @@ dumpConfig();
 
 function dumpConfig () {
 
-    var numBUs = 4,
+    let numBUs = 4,
         dir = './logs',
-        currentLog = dir+'/currentConfig.log',
-        i;
+        currentLog = dir+'/currentConfig.log';
 
     L.log(
         "^^^^ Configuration ^^^^\n"
@@ -53,7 +50,7 @@ function dumpConfig () {
     }
     catch (err) {}
 
-    for (i=numBUs-1; i>=0; i--) {
+    for (let i=numBUs-1; i>=0; i--) {
         try {
             fs.renameSync(
                 i === 0 ? currentLog : currentLog+"."+i,
