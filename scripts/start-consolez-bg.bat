@@ -1,29 +1,36 @@
 @echo off
 
 echo "Starting jobs that should run forever"
-echo "MongoDB is %MONGODB%"
 
+set cmd="%CONSOLEZ%"
+
+REM add a mongoDB tab unless mongo's already running.
+set size=0
 IF EXIST "%MONGODB%\mongod.lock" (
-   echo Using mongoDB that is already running
-   %CONSOLEZ% ^
-	   -t server  -d %WORK% ^
-	   -t browser -d %WORK% ^
-	   -t jshint  -d %WORK% ^
-	   -t test    -d %WORK%
-
-   GOTO END
+   CALL :setsize "%MONGODB%\mongod.lock"
+)
+IF %size% EQU 0 (
+   set cmd=%cmd% -t Mongo -d %MONGODB%
+   echo MongoDB is: %MONGODB%
+) ELSE (
+   echo "Using mongoDB that is already running"
+   echo If the db has crashed, and the lock is still there, try this:
+   echo rm %MONGODB%\mongod.lock
+   echo mongod --dbpath %MONGODB%
 )
 
-echo MongoDB is: %MONGODB%
+REM simply add all of these tabs
+set cmd=%cmd% -t server  -d %WORK%
+set cmd=%cmd% -t browser -d %WORK%
+set cmd=%cmd% -t jshint  -d %WORK%
+set cmd=%cmd% -t serverTests -d %WORK%
+set cmd=%cmd% -t webTests    -d %WORK%
 
-%CONSOLEZ% ^
-   -t Mongo   -d %MONGODB% ^
-   -t server  -d %WORK% ^
-   -t browser -d %WORK% ^
-   -t jshint  -d %WORK% ^
-   -t serverTests -d %WORK% ^
-   -t webTests    -d %WORK%
-
-:END
+echo Running: %cmd%
+%cmd%
 
 exit
+
+:setsize
+set size=%~z1
+goto :eof
