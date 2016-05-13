@@ -148,4 +148,12 @@ module.exports = function gruntTestCfg ( grunt ) {
         process.env.NODE_ENV = undefined;
         grunt.task.run('karma:web-full');
     });
+    grunt.registerTask('watch-web-tests', function () {
+        process.env.NODE_ENV = undefined;
+        grunt.task.run('karma:web-watch');
+    });
+
+    // FIXME - start webdriver here?
+    grunt.registerTask('dev-e2e-tests', 'protractor:watch');
+    grunt.registerTask('prd-e2e-tests', 'protractor:all');
 };

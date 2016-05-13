@@ -1,7 +1,11 @@
 "use strict";
 
-const config = require('../server/config'),
-      baseURL = 'http://local.meantemplate.com:8080/';
+const config = require('../server/config');
+let baseURL = config.fullHost;
+
+if (baseURL.substr(-1) !== '/') {
+    baseURL += '/';
+}
 
 describe('Load pages:', function() {
 
@@ -10,14 +14,13 @@ describe('Load pages:', function() {
         expect(browser.getTitle()).toEqual(config.subApps[config.subApps.default].title);
     });
 
-    for (let i=0; i<config.subApps.list; i++) {
-        let saName = config.subApps[i];
+    config.subApps.list.forEach(function (saName) {
         let saConfig = config.subApps[saName];
 
         it('Should load '+saConfig.name+' witout errors', function() {
             browser.get(baseURL+saConfig.name);
             expect(browser.getTitle()).toEqual(saConfig.title);
         });
-    }
+    });
 
 });

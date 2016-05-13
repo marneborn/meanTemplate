@@ -1,3 +1,5 @@
+"use strict";
+
 afterEach(function () {
     browser.manage().logs().get('browser').then(function(browserLog) {
         browserLog = browserLog.filter(function (msg) {

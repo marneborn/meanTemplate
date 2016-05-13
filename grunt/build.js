@@ -27,7 +27,9 @@ module.exports = function gruntBuildCfg (grunt) {
     };
     grunt.config.merge({build: buildConfig});
 
-    grunt.task.registerTask('prep-build', function () {
+    grunt.task.registerTask('prep-build', prepBuild);
+
+    function prepBuild () {
         /* jshint maxstatements:32 */
         let serverConfig = require('../server/config'),
 
@@ -178,7 +180,7 @@ module.exports = function gruntBuildCfg (grunt) {
 
         grunt.config.merge(gruntConfig);
         grunt.config.merge({build: buildConfig});
-    });
+    }
 
     grunt.registerTask('dump-filerev-dist', function () {
         let file = './filerev-mapping.json',
@@ -195,7 +197,7 @@ module.exports = function gruntBuildCfg (grunt) {
 
     grunt.registerMultiTask('build', function() {
         let data = buildConfig[this.target];
-        data.unshift('prep-build');
+        prepBuild();
         grunt.task.run(data);
     });
 

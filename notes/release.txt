@@ -9,27 +9,36 @@ git add .
 git ci 
 git branch -D <mybranch>
 
-git co -b release-<version>
+;; make sure everything works in dev
 grunt jshint-all
 grunt jasmine_nodejs:server-unit
 grunt build:css
-grunt prd-web-tests
+grunt dev-web-tests
 webdriver-manager start
+node server.js --development --port=8080
 grunt prd-e2e-tests
 
-git co master -- web/*/dist
-grunt clean:build-save
+;; make sure everything works in prd
 grunt build:dist
 grunt prd-web-tests
 webdriver-manager start
+node server.js --production --host=local --port=8080
 grunt prd-e2e-tests
+
+;; create release branch
+git co -b release-<version>
 
 npm version patch --no-git-tag-version
 git add package.json
 git ci -m "Updated version"
 
 git co master
+;; Only keep the one previous version.
+grunt clean:pre-build build:dist
 git merge --no-ff release-<version>
+git mergetool -- .gitignore
+;; Run all tests
+
 git add .
 git tag -a -m "nm" v<version>
 git ci -m "Released version: <version>"

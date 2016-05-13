@@ -10,8 +10,8 @@ const pkg  = require('../../package.json'),
 let config = module.exports = {
     name         : name,
     isDev        : isDev,
-    host         : process.env.HOST || (isDev ? 'local.meantemplate.com' : 'meantemplate.com'),
-    port         : process.env.PORT || (isDev ? 8080 : 80),
+    host         : require('./host'),
+    port         : require('./port'),
     dbs          : require('./dbs'),
     sessions     : require('./sessions'),
     authenticate : require('./authenticate'),
@@ -20,6 +20,7 @@ let config = module.exports = {
     build        : require('./build')
 };
 
+// FIXME - protocol should be configurable
 config.fullHost = "http://" + config.host + (config.port === 80 ? "" : ":"+config.port);
 
 try {

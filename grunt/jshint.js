@@ -151,6 +151,20 @@ module.exports = function gruntJshintCfg (grunt) {
                         setTimeout: true
                     }
                 }
+            },
+            e2e : {
+                src: ['e2e/**/*.js'],
+                options: {
+                    jasmine: true,
+                    browser: true,
+                    node: true,
+                    esversion: 6,
+                    globals: {
+                        browser: true,
+                        element: true,
+                        by: true
+                    }
+                }
             }
         };
 
