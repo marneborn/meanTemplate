@@ -10,15 +10,19 @@ git ci
 git branch -D <mybranch>
 
 git co -b release-<version>
-grunt build:css
 grunt jshint-all
 grunt jasmine_nodejs:server-unit
-grunt karma:web-full
+grunt build:css
+grunt prd-web-tests
+webdriver-manager start
+grunt prd-e2e-tests
 
 git co master -- web/*/dist
 grunt clean:build-save
 grunt build:dist
 grunt prd-web-tests
+webdriver-manager start
+grunt prd-e2e-tests
 
 npm version patch --no-git-tag-version
 git add package.json

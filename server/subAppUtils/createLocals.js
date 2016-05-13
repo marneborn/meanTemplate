@@ -28,6 +28,7 @@ function createLocals (subConfig) {
     let makeStaticURL = makeMakeStaticURL(subConfig.thisDir),
         locals = {};
 
+    locals.title = subConfig.title != null ? subConfig.title : '';
     locals.googleAnalytics = true;
     locals.livereload      = false;
     locals.strictDI        = '';

@@ -8,7 +8,7 @@ module.exports = function gruntTestCfg ( grunt ) {
     const MyReporter = require('./test/MyReporter'),
           myReporter = new MyReporter();
 
-    grunt.config.merge({
+    let config = {
         'jasmine_nodejs': {
 
             options: {
@@ -88,7 +88,36 @@ module.exports = function gruntTestCfg ( grunt ) {
 
         },
 
+        protractor: {
+            all: {
+                options: {
+                    configFile: 'e2e/conf.js',
+                    keepAlive: false,
+                    noColor: false
+                }
+            },
+            watch: {
+                options: {
+                    configFile: 'e2e/conf.js',
+                    keepAlive: true,
+                    noColor: false
+                }
+            }
+        },
         watch: {
+            'e2e-tests': {
+                options: {
+                    atBegin: true
+                },
+                files: [
+                    'e2e/**/*.js',
+                    'server.js',
+                    'server/**/*.js', 'server/**/#*.js',
+                    'common/**/*.js', 'common/**/#*.js',
+                    'web/**/*.js', 'web/**/#*.js'
+                ],
+                tasks: ['protractor:all']
+            },
             'server-unit' : {
                 options : {
                     atBegin: true
@@ -108,15 +137,22 @@ module.exports = function gruntTestCfg ( grunt ) {
                 include : ['server-unit']
             }
         }
-    });
+    };
+
+    grunt.config.merge(config);
 
     grunt.registerTask('prd-web-tests', function () {
         process.env.NODE_ENV = 'production';
         grunt.task.run('karma:web-full');
     });
+
     grunt.registerTask('dev-server-tests', 'focus:server-tests');
     grunt.registerTask('dev-web-tests', function () {
         process.env.NODE_ENV = undefined;
-        grunt.task.run('karma:web-full');
+        grunt.task.run('karma:web-watch');
     });
+
+    // FIXME - start webdriver here?
+    grunt.registerTask('dev-e2e-tests', 'protractor:watch');
+    grunt.registerTask('prd-e2e-tests', 'protractor:all');
 };

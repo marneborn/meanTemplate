@@ -4,6 +4,7 @@ const _ = require('lodash'),
       name = 'testapp1',
       config = {
           name : name,
+          title: 'Test App1',
           thisDir : 'web/'+name,
           components : [
               'header',
