@@ -1,6 +1,7 @@
 git co develop
 git pull gh develop
 
+;; merge my branch into develop
 git co <mybranch>
 git merge --no-ff develop
 git co develop
@@ -37,10 +38,14 @@ git co master
 grunt clean:pre-build build:dist
 git merge --no-ff release-<version>
 git mergetool -- .gitignore
+grunt build:dist
 ;; Run all tests
 
+;; FIXME - foreach subApp, do automatically
+git rm -r --cached web/testapp1/dist
+git rm -r --cached web/testapp2/dist
 git add .
-git tag -a -m "nm" v<version>
+git tag -a -m "nm" <version>
 git ci -m "Released version: <version>"
 
 git co develop
