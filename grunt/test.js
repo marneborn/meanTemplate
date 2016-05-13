@@ -8,7 +8,7 @@ module.exports = function gruntTestCfg ( grunt ) {
     const MyReporter = require('./test/MyReporter'),
           myReporter = new MyReporter();
 
-    let config = {
+    grunt.config.merge({
         'jasmine_nodejs': {
 
             options: {
@@ -137,22 +137,15 @@ module.exports = function gruntTestCfg ( grunt ) {
                 include : ['server-unit']
             }
         }
-    };
-
-    grunt.config.merge(config);
+    });
 
     grunt.registerTask('prd-web-tests', function () {
         process.env.NODE_ENV = 'production';
         grunt.task.run('karma:web-full');
     });
-
     grunt.registerTask('dev-server-tests', 'focus:server-tests');
     grunt.registerTask('dev-web-tests', function () {
         process.env.NODE_ENV = undefined;
-        grunt.task.run('karma:web-watch');
+        grunt.task.run('karma:web-full');
     });
-
-    // FIXME - start webdriver here?
-    grunt.registerTask('dev-e2e-tests', 'protractor:watch');
-    grunt.registerTask('prd-e2e-tests', 'protractor:all');
 };
