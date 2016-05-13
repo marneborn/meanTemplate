@@ -11,9 +11,8 @@ describe("subAppUtils/engine", function () {
         app;
 
     beforeEach(function () {
-        mockConfig = makeMockConfig();
-        mockRequire('server/config/index.js', mockConfig);
-        mockRequire('filerev-mapping.json', makeMockFileRev());
+        mockConfig = mockRequire('../config/index.js', makeMockConfig());
+        mockRequire('../../filerev-mapping.json', makeMockFileRev());
         app    = express();
         utils  = require('../utils');
         engine = require('./engine');

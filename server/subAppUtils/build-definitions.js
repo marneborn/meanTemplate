@@ -3,7 +3,7 @@
 const path         = require('path'),
       fs           = require('fs'),
       _            = require('lodash'),
-      wiredep      = require('wiredep'),
+      wiredepRes   = require('./wiredep'),
       globule      = require('globule'),
       rootDir      = path.join(__dirname, '../..'),
       buildConfig  = require('../config/build'),
@@ -20,7 +20,6 @@ function buildDefinitions (subConfig) {
 
     let thisDir      = subConfig.thisDir,
         distDir      = 'web/'+subConfig.name+'/dist',
-        wiredepRes   = wiredep(),
         shims        = findShimJsFiles();
 
     return {

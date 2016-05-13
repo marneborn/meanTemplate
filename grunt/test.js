@@ -88,7 +88,36 @@ module.exports = function gruntTestCfg ( grunt ) {
 
         },
 
+        protractor: {
+            all: {
+                options: {
+                    configFile: 'e2e/conf.js',
+                    keepAlive: false,
+                    noColor: false
+                }
+            },
+            watch: {
+                options: {
+                    configFile: 'e2e/conf.js',
+                    keepAlive: true,
+                    noColor: false
+                }
+            }
+        },
         watch: {
+            'e2e-tests': {
+                options: {
+                    atBegin: true
+                },
+                files: [
+                    'e2e/**/*.js',
+                    'server.js',
+                    'server/**/*.js', 'server/**/#*.js',
+                    'common/**/*.js', 'common/**/#*.js',
+                    'web/**/*.js', 'web/**/#*.js'
+                ],
+                tasks: ['protractor:all']
+            },
             'server-unit' : {
                 options : {
                     atBegin: true
@@ -119,4 +148,12 @@ module.exports = function gruntTestCfg ( grunt ) {
         process.env.NODE_ENV = undefined;
         grunt.task.run('karma:web-full');
     });
+    grunt.registerTask('watch-web-tests', function () {
+        process.env.NODE_ENV = undefined;
+        grunt.task.run('karma:web-watch');
+    });
+
+    // FIXME - start webdriver here?
+    grunt.registerTask('dev-e2e-tests', 'protractor:watch');
+    grunt.registerTask('prd-e2e-tests', 'protractor:all');
 };

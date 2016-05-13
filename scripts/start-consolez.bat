@@ -33,14 +33,6 @@ REM - give the servers enough time to start before launching the tests, jshint, 
 REM - FIXME - need to add jshint
 REM - FIXME - need to finish test
 
-IF EXIST "%MONGODB%\mongod.lock" (
-   echo That mongoDB is already running or has crashed.
-   echo Do nothing and this app will use the running one
-   echo If the db has crashed try this:
-   echo rm %MONGODB%\mongod.lock
-   echo mongod --dbpath %MONGODB%
-)
-
 START /MIN %DIRNAME%start-consolez-bg.bat
 START /MIN %DIRNAME%start-consolez-int.bat
 START /b emacs

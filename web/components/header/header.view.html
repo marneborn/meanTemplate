@@ -16,8 +16,8 @@
       <div id="navbar" class="navbar-collapse collapse" uib-collapse="header.navCollapsed">
         <!-- FIXME: remove isLoggedIn and username -->
         <ul data-ng-if="!header.isLoggedIn()" class="nav navbar-nav navbar-right">
-          <li data-ng-class="{ active : header.isActive('/user/signup')}"> <a data-ng-href="#/user/signup" data-ng-click="header.navCollapsed = true">Sign Up</a></li>
-          <li data-ng-class="{ active : header.isActive('/user/signin')}"> <a data-ng-href="#/user/signin" data-ng-click="header.navCollapsed = true">Login</a></li>
+          <li data-ng-class="{ active : header.isActive('/user/signup')}"> <a href="#/user/signup" data-ng-click="header.navCollapsed = true">Sign Up</a></li>
+          <li data-ng-class="{ active : header.isActive('/user/signin')}"> <a href="#/user/signin" data-ng-click="header.navCollapsed = true">Login</a></li>
         </ul>
 
         <ul data-ng-if="header.isLoggedIn()" class="nav navbar-nav navbar-right">
