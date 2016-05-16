@@ -2,7 +2,7 @@
 
 echo "Starting jobs that should run forever"
 
-set cmd="%CONSOLEZ%"
+set cmd="%CONSOLEZ%" -c scripts\consoleZ\bg.xml
 
 REM add a mongoDB tab unless mongo's already running.
 set size=0
@@ -20,11 +20,11 @@ IF %size% EQU 0 (
 )
 
 REM simply add all of these tabs
-set cmd=%cmd% -t server  -d %WORK%
-set cmd=%cmd% -t browser -d %WORK%
-set cmd=%cmd% -t jshint  -d %WORK%
-set cmd=%cmd% -t serverTests -d %WORK%
-set cmd=%cmd% -t webTests    -d %WORK%
+set cmd=%cmd% -t server
+set cmd=%cmd% -t browser
+set cmd=%cmd% -t jshint
+set cmd=%cmd% -t serverTests
+set cmd=%cmd% -t webTests
 
 echo Running: %cmd%
 %cmd%

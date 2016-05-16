@@ -89,16 +89,17 @@ module.exports = function gruntTestCfg ( grunt ) {
         },
 
         protractor: {
+            options: {
+                configFile: 'e2e/conf.js'
+            },
             all: {
                 options: {
-                    configFile: 'e2e/conf.js',
                     keepAlive: false,
                     noColor: false
                 }
             },
             watch: {
                 options: {
-                    configFile: 'e2e/conf.js',
                     keepAlive: true,
                     noColor: false
                 }
