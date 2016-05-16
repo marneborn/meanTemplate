@@ -27,7 +27,7 @@ node server.js --production --host=local --port=8080
 grunt prd-e2e-tests
 
 ;; create release branch
-git co -b release-<version>
+git co -b release-v0.0.10
 
 npm version patch --no-git-tag-version
 git add package.json
@@ -35,9 +35,9 @@ git ci -m "Updated version"
 
 git co master
 ;; Only keep the one previous version.
-grunt clean:pre-build build:dist
-git merge --no-ff release-<version>
-git mergetool -- .gitignore
+grunt prep-build clean:pre-build build:dist
+git merge --no-ff release-v0.0.10
+;; will need to manually merge .gitignore if changed
 grunt build:dist
 ;; Run all tests
 
@@ -45,15 +45,15 @@ grunt build:dist
 git rm -r --cached web/testapp1/dist
 git rm -r --cached web/testapp2/dist
 git add .
-git tag -a -m "nm" <version>
-git ci -m "Released version: <version>"
+git tag -a -m "nm" v0.0.10
+git ci -m "Released version: v0.0.10"
 
 git co develop
-git merge --no-ff release-<version>
+git merge --no-ff release-v0.0.10
 
 git push --follow-tags gh develop master
 
-git branch -D release-<version>
+git branch -D release-v0.0.10
 
 ## On production server
 git fetch gh
