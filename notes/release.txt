@@ -35,9 +35,9 @@ git ci -m "Updated version"
 
 git co master
 ;; Only keep the one previous version.
-grunt clean:pre-build build:dist
+grunt prep-build clean:pre-build build:dist
 git merge --no-ff release-<version>
-git mergetool -- .gitignore
+;; may need to mergetool .gitignore
 grunt build:dist
 ;; Run all tests
 
