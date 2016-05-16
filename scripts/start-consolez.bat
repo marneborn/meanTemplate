@@ -4,7 +4,7 @@ SET DIRNAME=%~dp0
 
 REM Make sure %MONGODB% is set
 IF NOT DEFINED MONGODB ( 
-    set MONGODB=%USERPROFILE%\Programming\mongoDBs\common
+    setx MONGODB=%USERPROFILE%\Programming\mongoDBs\common
 )
 
 IF NOT EXIST %MONGODB% (
@@ -12,9 +12,15 @@ IF NOT EXIST %MONGODB% (
   GOTO END
 )
 
-REM Make sure we know where ConsoleZ livs
+REM Make sure we know where various tools live.
 IF NOT DEFINED CONSOLEZ (
    set CONSOLEZ=C:\Users\Mikael\Programming\Tools\ConsoleZ\Console.exe
+)
+IF NOT DEFINED PYCMDEXE (
+   setx PYCMDEXE %USERPROFILE%\Programming\Tools\PyCmd\PyCmd.exe
+)
+IF NOT DEFINED GRUNTCMD (
+   setx GRUNTCMD %USERPROFILE%\AppData\Roaming\npm\grunt.cmd
 )
 
 echo Running in: %CD%

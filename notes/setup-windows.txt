@@ -1,0 +1,232 @@
+==== On Windows ====
+Path at the end:
+This is too long so use regedit – Remove from Computer -> Advanced -> env variable
+_HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+Path entry
+C:\Program Files (x86)\Lenovo\FusionEngine;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Motion Control\;C:\Program Files (x86)\Common Files\lenovo\easyplussdk\bin;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\nodejs\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Skype\Phone\;C:\Program Files (x86)\Java\jre1.8.0_40/bin;%USERPROFILE%\bin;C:\Program Files\MongoDB 2.6 Standard\bin;C:\MinGW\bin;C:\MinGW\msys\1.0\bin;C:\Program Files (x86)\Meld;C:\MinGW\msys\1.0\bin;%USERPROFILE%\AppData\Roaming\npm;C:\Program Files\AWS EC2\ec2-api-tools-1.7.3.2/bin
+
+Create personal bin area:
+	open console (cmd.exe)
+	cd %USERPROFILE%
+	mkdir bin
+	setx PATH "%PATH%;%USERPROFILE%\bin"
+	setx HOME %USERPROFILE%
+
+Create aliases: Added aliases to a bat file and have that run on cmd prompt start Not visible in PyCmd
+	echo doskey ll=ls -ltr $* > %USERPROFILE%/bin/aliases.bat
+	echo doskey ngrep=grep --exclude-dir node_modules $* >> %USERPROFILE%/bin/aliases.bat
+	REG ADD "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v AutoRun /d "%USERPROFILE"%\bin\aliases.bat
+
+Create aliases: Couldn't figure out how to do it through one config file, so just create %USERPROFILE%\bin\<alias>.bat for each
+	echo ls -ltr %* > %USERPROFILE%\bin\ll.bat
+	echo grep --exclude-dir node_modules %* > %USERPROFILE%\bin\ngrep.bat
+
+Install 7-Zip: open source zip tool
+	http://www.7-zip.org/
+	Download and run: http://www.7-zip.org/a/7z920-x64.msi
+
+Install ansicon? Properly render Ansi in cmd terminal. Doesn't seem to be needed
+	Suggested from here: http://www.kevwebdev.com/blog/in-search-of-a-better-windows-console-using-ansicon-console2-and-git-bash.html
+	https://github.com/adoxa/ansicon
+	Download: https://github.com/adoxa/ansicon/archive/master.zip
+
+Install PyCmd: Alternative to cmd.exe
+	http://pycmd.sourceforge.net/
+	Download: http://downloads.sourceforge.net/project/pycmd/pycmd/0.9/PyCmd-0.9-w32.zip
+	unzip to C:\Program Files\ (zip starts at PyCmd)
+	setx PYCMDEXE "C:\Program Files\PyCmd\PyCmd.exe" 
+
+Install ConsoleZ: Wrapper to various shells, allows tabs, different shells with hot key
+	https://github.com/cbucher/console)
+	Download: https://github.com/cbucher/console/releases/download/1.13.0/ConsoleZ.x64.1.13.0.15044.zip
+	unzip and put in C:\Program Files (x86)\ConsoleZ
+	go to dir, right click on 'Console.exe' and select 'Add to Start Menu'
+	Open ConsoleZ, ctrl-s (options)
+		Under console
+			set 'Startup dir' to be %USERPROFILE%
+		Under 'Tabs' create shells
+			PyCmd
+				shell="C:\Program Files\PyCmd\PyCmd.exe"
+				run as='user'
+				icon=C:\Program Files\PyCmd\PyCmd.exe
+			Git Bash (This won't work until git is installed below, but want console to do git install...)
+				shell="C:\Windows\SysWOW64\cmd.exe /c ""C:\Program Files (x86)\Git\bin\sh.exe" --login -i""
+				run as='user'
+				icon=C:\Program Files (x86)\Git\etc\git.ico
+			PyCmd(admin)
+				shell="C:\Program Files\PyCmd\PyCmd.exe"
+				run as='admin'
+				icon=C:\Program Files\PyCmd\PyCmd.exe
+		Under Appearance
+			set tab format to: %n.?A(ADMIN.)%t		
+
+Install Visual Studio: This is needed for C++(?) libraries for bcyrpt
+	Download and run: http://go.microsoft.com/?linkid=9816758
+
+Install MinGW - Add linux like cmds to cmd shell, adds perl, some gcc stuff.
+	http://www.mingw.org/
+	download and run: http://sourceforge.net/projects/mingw/files/Installer/mingw-get-setup.exe/download
+	Follow instructions: http://www.mingw.org/wiki/Getting_Started
+	Run C:\MinGW\bin\mingw-get.exe
+	For everything in Basic Setup, 'mark to install' (it's not all needed, but I don't know what isn't...)
+	Installation -> apply changes (this takes a while, has errors... not sure why FIXME)
+	In console (admin)
+		setx PATH "%PATH%;C:\MinGW\bin;C:\MinGW\msys\1.0\bin"
+
+Install git: git for windows
+	http://msysgit.github.io/)
+	download and run: https://github.com/msysgit/msysgit/releases/download/Git-1.9.5-preview20141217/Git-1.9.5-preview20141217.exe 
+	select "Use Git from Windows Command Prompt"
+	select: "Checkout as-is" (personal preferencez part)
+	Add Git Bash to ConsoleZ (instructions in Console
+	In console
+		git config --global user.email "mikael@arneborn.net"
+		git config --global user.name "Mikael Arneborn"
+		git config --global alias.ci commit
+		git config --global alias.co checkout
+		git config --global alias.st status
+		git config --global alias.br branch
+		git config --global alias.dfw "diff --ignore-space-change"
+		git config --global alias.dfwtool "difftool --ignore-space-change"
+		git config --global merge.tool meld
+		git config --global merge.keepBackup false
+		git config --global mergetool.keepBackup false
+		git config --global mergetool.meld.path "C:\Program Files (x86)\Meld\Meld.exe"
+		git config --global mergetool.meld.keepBackup false
+		git config --global mergetool.meld.trustExitCode false
+		git config --global core.editor "%USERPROFILE%\.emacs.d\emacs.bat"
+		git config --global core.excludefile "%USERPROFILE%\.gitignore"
+		git config --global core.autocrlf true
+	Create .gitignore FIXME
+		echo *~ > ~/.gitignore
+
+Install python: 
+	https://www.python.org/
+	Need 2.7 (for meld, doesn't support 3.x)
+	Download and run: https://www.python.org/ftp/python/2.7.9/python-2.7.9.amd64.msi
+
+Install meld: tool for diffing and merging in git
+	http://meldmerge.org/
+	Download and run: https://download.gnome.org/binaries/win32/meld/3.12/Meld-3.12.3-win32.msi
+	Add meld to favorites in start menu
+
+Install perl: 
+	MinGW install above gets perl, or do I want ActivePerl?
+
+Install emacs: text editor/IDE
+	http://www.gnu.org/software/emacs/manual/html_mono/efaq-w32.html
+	download http://ftp.kaist.ac.kr/gnu/gnu/emacs/windows/emacs-24.3-bin-i386.zip
+	unzip and put in C:\Program Files (x86)
+	in console (opened as admin, this is needed so calling "emacs" works from cmdline)
+		cd %USERPROFILE%
+		git clone https://github.com/marneborn/dotemacs.git .emacs.d
+		cd .emacs.d	
+		git submodule init
+		git submodule update
+		mklink %USERPROFILE%\bin\emacs.bat "%USERPROFILE%\.emacs.d\emacs.bat"
+	in explorer (this is needed so that it's seen in the start menu)
+		goto %USERPROFILE%\bin
+			rename to "emacs" instead of "emacs (shortcut)"
+			right mouse properties, "Change Icon", "C:\Program Files (x86)\emacs-24.3\bin\emacs.exe", OK 
+			right click on 'emacs.lnk' and select 'Add to Start Menu'
+
+Install VirtualBox
+	instructions: https://help.ubuntu.com/community/VirtualBox
+	download and run: http://download.virtualbox.org/virtualbox/4.3.22/VirtualBox-4.3.22-98236-Win.exe
+	download ubuntu 12.04.4 iso (current version on AWS): http://releases.ubuntu.com/12.04.4/ubuntu-12.04.4-desktop-i386.iso
+	follow instructions at: http://www.psychocats.net/ubuntu/virtualbox
+		Max memory is 3.5G (windows limit for 32bit ubuntu)
+	Settings -> General -> Advanced
+		Shared Clipboard - bidirectional
+	FIXME: setup shared drives
+	??In console: "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" setextradata global GUI/MaxGuestResolution 1366,768
+
+Install putty: ssh client for windows (
+	http://www.putty.org/
+	download http://the.earth.li/~sgtatham/putty/latest/x86/putty.exe 
+	download http://the.earth.li/~sgtatham/putty/latest/x86/puttygen.exe (converts .pem to .ppk)
+	Move both to %USERPROFILE%\bin
+	mkdir %USERPROFILE%\.ssh
+	Get songlily.ppk and put it in ~\.ssh
+	Get putty.reg and import into registry (regedit -> import)
+	Get songlily.ppk and put in %USERPROFILE%\.ssh\.
+
+Install WinSCP: secure copy for windows, uses putty profiles
+	download and run: http://winscp.net/download/winscp570setup.exe	
+
+Install curl: (http://curl.haxx.se/)
+	http://curl.haxx.se/gknw.net/7.40.0/dist-w64/curl-7.40.0-rtmp-ssh2-ssl-sspi-zlib-winidn-static-bin-w64.7z
+	Unzip to C:\Program Files
+	rename to curl
+	in console (admin): mklink %USERPROFILE%\bin\curl.exe C:\Program Files\curl\curl.exe
+	In explorer, got to C:\Users\<user>\bin, right click putty, add to start
+
+Install nodejs:
+	aws has 10.26, so install that.
+	http://nodejs.org/dist/v0.10.26/node-v0.10.26-x86.msi
+
+Install mongoDB: local mongo db access
+	currently using 2.6.6 on production server (2.6.7 is latest).
+	Download and run https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2008plus-2.6.6-signed.msi?_ga=1.251667212.480255984.1424455621
+	in console (admin): setx PATH "%PATH%;C:\Program Files\MongoDB 2.6 Standard\bin"
+    setup environment variable pointing to local/common DB
+        setx MONGODB %USERPROFILE%\Programming\MongoDBs\common
+
+Enable SSH to AWS:
+	Get ubuntu.pem and put in ~/.ssh
+	May need to run ssh -o StrictHostKeyChecking=no ubuntu@test.songlily.com once.
+
+Install java JDK - for protractor
+    go here and download appropriate JDK version http://www.oracle.com/technetwork/java/javase/downloads/index.html
+
+Install some global node packages
+    Grunt - task runner
+		  npm install -g grunt-cli
+		  setx GRUNTCMD %USERPROFILE%\AppData\Roaming\npm\grunt.cmd
+
+	protractor - for e2e tests (uses jasmine-node internally and selenium)
+	    npm install -g protractor
+	    webdriver-manager update
+
+Install Ruby:
+	Download and run :
+       http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-2.1.6.exe
+	Select – ’Add to PATH’
+
+Install sass:
+	gem install sass
+
+==== On Ubuntu ====
+Install virtualbox stuff:
+    sudo apt-get install virtualbox-guest-dkms virtualbox-guest-utils virtualbox-guest-x11
+
+Install git:
+    sudo apt-get install git
+	Same git config's as above then:
+		git config --global mergetool.meld.path /usr/bin/meld
+		git config --global core.editor /usr/bin/emacs
+		git config --global core.excludefile "~/.gitignore"
+
+Install curl: (what did I need this for??? maybe emacs)
+	sudo apt-get install curl
+
+Install emacs:
+	sudo apt-get install emacs
+	TODO: get .emacs stuff
+
+Install meld:
+	sudo apt-get install meld
+
+Install nodejs:
+	sudo apt-get install build-essential
+       sudo apt-get install nodejs
+
+Install g++: (needed for bcrypt)
+	sudo apt-get install bcrypt
+
+Install mongo 2.6.9:
+    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+    echo "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" | sudo tee /etc/apt/sources.list+.d/mongodb-org.list
+    sudo apt-get update
+    sudo apt-get mongodb-org
+

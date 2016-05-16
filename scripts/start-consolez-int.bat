@@ -2,8 +2,8 @@
 
 echo "Opening interactive tabs"
 
-%CONSOLEZ% ^
- -t PyCmd   -d %WORK% ^
- -t PyCmd   -d %WORK%
+%CONSOLEZ% -c scripts\consoleZ\int.xml ^
+ -t PyCmd ^
+ -t PyCmd
 
 exit
